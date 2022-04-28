@@ -67,7 +67,7 @@ paths:
         '400':
           description: Bad request. User ID must be an integer and larger than 0.
         '401':
-          description: Authorization information is missing or invalid.
+          description: Unauthorized or authorization information is missing or invalid.
         '404':
           description: A user with the specified ID was not found.
         '5XX':
@@ -94,7 +94,7 @@ paths:
         '400':
           description: Bad request. Invalid request body.
         '401':
-          description: Authorization information is missing or invalid.
+          description: Unauthorized or authorization information is missing or invalid.
         '404':
           description: A user with the specified ID was not found.
         '5XX':
@@ -129,7 +129,7 @@ paths:
         '400':
           description: Bad request. User ID must be an integer and larger than 0.
         '401':
-          description: Authorization information is missing or invalid.
+          description: Unauthorized or authorization information is missing or invalid.
         '404':
           description: A user with the specified ID was not found.
         '5XX':
@@ -153,6 +153,12 @@ paths:
           schema:
             type: integer
             example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCustomerDTO'
+        description: New customer details
       responses:
         '200':
           description: Result of the modified customer
@@ -163,7 +169,7 @@ paths:
         '400':
           description: Bad request. Invalid request body.
         '401':
-          description: Authorization information is missing or invalid.
+          description: Unauthorized or authorization information is missing or invalid.
         '404':
           description: A user with the specified ID was not found.
         '5XX':
@@ -173,8 +179,13 @@ paths:
       tags:
         - Accounts
       summary: Gets all the accounts available
+               
       operationId: getAccounts
-      description: Gets accounts in the system
+      description: |
+                    Gets accounts in the system
+                    
+                    Permissions:
+                    - Employees
       parameters:
         - in: query
           name: skip
@@ -201,7 +212,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/AccountDTO'
         '401':
-          description: Authorization information is missing or invalid.
+          description: authorization information is missing or invalid.
         '5XX':
           description: Unexpected error.
     post:
@@ -209,7 +220,11 @@ paths:
         - Accounts
       summary: Creates a new account
       operationId: CreateAccount
-      description: Create new Account. 
+      description: |
+                    Create new Account.
+                    
+                    Permissions:
+                    - Employees 
       requestBody:
         content:
           application/json:
@@ -226,7 +241,7 @@ paths:
         '400':
           description: Bad request. Invalid request body.
         '401':
-          description: Authorization information is missing or invalid.
+          description: Unauthorized or authorization information is missing or invalid.
         '5XX':
           description: Unexpected error.
   /Accounts/{Iban}:
@@ -235,7 +250,12 @@ paths:
         - Accounts
       summary: Gets a account by Iban
       operationId: GetAccount
-      description: Gets a ccount by Iban
+      description: |
+                    Gets a ccount by Iban
+                    
+                    Permissions:
+                    - Employees
+                    - Customers (only if it is their own information)
       parameters:
         - in: path
           name: Iban
@@ -256,7 +276,7 @@ paths:
         '400':
           description: Bad request. Iban is not in the right format.
         '401':
-          description: Authorization information is missing or invalid.
+          description: Unauthorized or authorization information is missing or invalid.
         '404':
           description: An account with the specified Iban was not found.
         '5XX':
@@ -267,7 +287,11 @@ paths:
         - Accounts
       summary: Open selected account 
       operationId: Open
-      description: Open account provided in the parameters. If already opened, gives appropriate response.
+      description: |
+                    Open account provided in the parameters. If already opened, gives appropriate response.
+                    
+                    Permissions:
+                    - Employees
       parameters:
         - in: path
           name: Iban
@@ -288,7 +312,7 @@ paths:
         '400':
           description: Bad request. Iban is not in the right format.
         '401':
-          description: Authorization information is missing or invalid.
+          description: Unauthorized or authorization information is missing or invalid.
         '404':
           description: An account with the specified Iban was not found.
         '5XX':
@@ -299,7 +323,11 @@ paths:
         - Accounts
       summary: Close selected account 
       operationId: Close
-      description: Closes account provided in the parameters. If already closed, gives appropriate response.
+      description: |
+                    Closes account provided in the parameters. If already closed, gives appropriate response.
+                    
+                    Permissions:
+                    - Employees
       parameters:
         - in: path
           name: Iban
@@ -320,7 +348,7 @@ paths:
         '400':
           description: Bad request. Iban is not in the right format.
         '401':
-          description: Authorization information is missing or invalid.
+          description: Unauthorized or authorization information is missing or invalid.
         '404':
           description: An account with the specified Iban was not found.
         '5XX':
@@ -331,7 +359,11 @@ paths:
         - Accounts
       summary: Deposit to selected account. 
       operationId: Deposit
-      description: Deposit to selected account. This method will mostly be used by ATM machines. 
+      description: |
+                    Deposit to selected account. This method will mostly be used by ATM machines. 
+                    
+                    Permissions:
+                    - Customers
       parameters:
         - in: path
           name: Iban
@@ -356,14 +388,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransactionDepositDTO'
         '400':
-          description: 'invalid input, object invalid'
+          description: Bad request. Iban is not in the right format.
+        '401':
+          description: Unauthorized or authorization information is missing or invalid.
+        '404':
+          description: The account with the specified Iban was not found.
+        '5XX':
+          description: Unexpected error.
   /Accounts/{Iban}/Withdraw:
     put:
       tags:
         - Accounts
       summary: Withdraw from selected account. 
       operationId: Withdraw
-      description: Withdraw from selected account. This method will mostly be used by ATM machines. 
+      description:  |
+                    Withdraw from selected account. This method will mostly be used by ATM machines. 
+                    
+                    Permissions:
+                    - Customers
       parameters:
         - in: path
           name: Iban
@@ -388,7 +430,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransactionWithdrawlDTO'
         '400':
-          description: 'invalid input, object invalid'
+          description: Bad request. Iban is not in the right format.
+        '401':
+          description: Unauthorized or authorization information is missing or invalid.
+        '404':
+          description: The account with the specified Iban was not found.
+        '5XX':
+          description: Unexpected error.
   /Transactions:
     post:
       tags:
@@ -458,15 +506,6 @@ components:
           example: Netherlands
     CustomerDTO:
       type: object
-      required:
-        - FirstName
-        - LastName
-        - BirthDate
-        - StreetName
-        - HouseNumber
-        - ZipCode
-        - City
-        - Country
       properties:
         CustomerId:
           type: integer
@@ -499,15 +538,6 @@ components:
           example: Netherlands
     CustomerWithAccountsDTO:
       type: object
-      required:
-        - FirstName
-        - LastName
-        - BirthDate
-        - StreetName
-        - HouseNumber
-        - ZipCode
-        - City
-        - Country
       properties:
         CustomerId:
           type: integer
@@ -690,11 +720,6 @@ components:
           description: The amount to transfer
     TransactionDepositDTO:
       type: object
-      required:
-        - Id
-        - From
-        - To
-        - Amount
       properties:
         transactionId:
           type: string
