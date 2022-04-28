@@ -384,13 +384,13 @@ paths:
         '201':
           description: The created transaction object
           content:
-            application/json:
+            application/json: 
               schema:
                 $ref: '#/components/schemas/TransactionWithdrawlDTO'
         '400':
           description: 'invalid input, object invalid'
   /Transactions:
-    post:
+    put:
       tags:
         - Transactions
       summary: Create a transaction 
@@ -410,7 +410,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransactionDTO'
         '400':
-          description: 'invalid input, object invalid'    
+          description: 'invalid input, object invalid' 
+        '403':
+          description: Forbidden, you do not have access rights
+  /Transactions/{iban}:
+    get:
+      tags:
+        - Transactions
+      summary: Get all transactions for a certain account by Iban
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maximum: 34
+            type: string
+            example: NL03INHO0033573247
+      responses:
+        '200':
+          description: transactions received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/transactionDTO'
+   
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
