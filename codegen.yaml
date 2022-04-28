@@ -22,12 +22,143 @@ tags:
 security:
   - bearerAuth: []         # use the same name as above
 paths:
+  /Employees:
+    get:
+      tags:
+        - Employees
+      summary: Gets all employees available
+      operationId: GetEmployees
+      parameters:
+        - in: query
+          name: name
+          description: search for this substring
+          schema:
+            type: string
+        - in: query
+          name: offset
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses:
+        '200':
+          description: All accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeDTO'
+        '400':
+          description: Bad request.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: Something went wrong.
+        '5XX':
+          description: Internal Server Error.
+    post:
+      tags:
+        - Employees
+      summary: Creates a new Employee
+      operationId: CreateEmployee
+      description: Create new Employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEmployeeDTO'
+        description: New Employee details
+      responses:
+        '201':
+          description: Employee Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDTO'
+        '400':
+          description: Bad request. Invalid request body.
+        '401':
+          description: Authorization information missing or invalid
+        '404':
+          description: Something went wrong.
+        '5XX':
+          description: Internal Server Error.
+  /Employees/{emplyeeId}:
+    get:
+      tags:
+        - Employees
+      summary: Get an employee by Id
+      operationId: GetEmployee
+      description: Gets a specific Employee by Id
+      parameters:
+        - in: path
+          name: employeeId
+          required: true
+          description: the employeeId of the desired employee
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Result of the selected employee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDTO'
+        '400':
+          description: Bad request.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: Employee with the specified ID was not found.
+        '5XX':
+          description: Unexpected error.
+    put:
+      tags:
+        - Employees
+      summary: Updates employee by Id
+      operationId: UpdateEmployee
+      description: Updates employee by ID
+      parameters:
+        - in: path
+          name: employeeId
+          required: true
+          description: The employeeId of the employee to update
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Result of the modified employee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDTO'
+        '400':
+          description: Bad request. Invalid request body.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: A user with the specified ID was not found.
+        '5XX':
+          description: Unexpected error.
+    #delete: should we want this?
   /Costumers:
     get:
       tags:
         - Customers
       summary: Gets all the customers available
-      operationId: get
+      operationId: GetCustomers
       description: Gets customers in the system
       parameters:
         - in: query
@@ -173,7 +304,7 @@ paths:
       tags:
         - Accounts
       summary: Gets all the accounts available
-      operationId: getAccounts
+      operationId: GetAccounts
       description: Gets accounts in the system
       parameters:
         - in: query
@@ -418,6 +549,73 @@ components:
       scheme: bearer
       bearerFormat: JWT    # optional, arbitrary value for documentation purposes
   schemas:
+    NewEmployeeDTO:
+      type: object
+      required:
+        - FirstName
+        - LastName
+        - BirthDate
+        - StreetName
+        - HouseNumber
+        - ZipCode
+        - City
+        - Country
+      properties:
+        FirstName: 
+          type: string
+          example: New
+        LastName:
+          type: string
+          example: Employee
+        BirthDate:
+          type: string
+          example: "1997-07-12"
+        StreetName:
+          type: string
+          example: Eenhoornstraat
+        HouseNumber:
+          type: integer
+          example: 1234
+        ZipCode:
+          type: string
+          example: "1973 SH"
+        City:
+          type: string
+          example: IJmuiden
+        Country:
+          type: string
+          example: Netherlands
+    EmployeeDTO:
+      type: object
+      properties:
+        EmployeeId:
+          type: integer
+          format: int32
+          example: 1
+        FirstName: 
+          type: string
+          example: Existing
+        LastName:
+          type: string
+          example: Employee
+        BirthDate:
+          type: string
+          example: "1997-07-12"
+        StreetName:
+          type: string
+          example: Eenhoornstraat
+        HouseNumber:
+          type: integer
+          example: 1234
+        ZipCode:
+          type: string
+          example: "1973 SH"
+        City:
+          type: string
+          example: IJmuiden
+        Country:
+          type: string
+          example: Netherlands
     NewCustomerDTO:
       type: object
       required:
