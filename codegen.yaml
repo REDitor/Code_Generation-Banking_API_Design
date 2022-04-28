@@ -1,0 +1,721 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: Code Generation REST API Design
+    url: https://virtserver.swaggerhub.com/brunocm/CodeGeneration/1.0.0
+info:
+  description: Banking API that will be used for the Code Generation Project
+  version: "1.0.0"
+  title: Banking API
+  contact:
+    email: brunocm@pm.me
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: Customers
+    description: Operations available to customers
+  - name: Employees
+    description: Operations available to employees
+  - name: Transactions
+    description: Operations available when creating transactions
+security:
+  - bearerAuth: []         # use the same name as above
+paths:
+  /Costumers:
+    get:
+      tags:
+        - Customers
+      summary: Gets all the customers available
+      operationId: get
+      description: Gets customers in the system
+      parameters:
+        - in: query
+          name: includeAccountInfo
+          description: include list of accounts of users
+          schema:
+            type: boolean
+        - in: query
+          name: name
+          description: search for this substring
+          schema:
+            type: string
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses:
+        '200':
+          description: The accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerDTO'
+        '400':
+          description: Bad request. User ID must be an integer and larger than 0.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: A user with the specified ID was not found.
+        '5XX':
+          description: Unexpected error.
+    post:
+      tags:
+        - Customers
+      summary: Creates a new customer
+      operationId: CreateCustomer
+      description: Create new Customer. 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCustomerDTO'
+        description: New customer details
+      responses:
+        '201':
+          description: Account Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDTO'
+        '400':
+          description: Bad request. Invalid request body.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: A user with the specified ID was not found.
+        '5XX':
+          description: Unexpected error.
+  /Customers/{customerId}:
+    get:
+      tags:
+        - Customers
+      summary: Gets a customer by ID
+      operationId: GetCustomer
+      description: Gets a customer by ID
+      parameters:
+        - in: query
+          name: includeAccountInfo
+          description: include list of accounts of selected user
+          schema:
+            type: boolean
+        - in: path
+          name: customerId
+          required: true
+          description: The customerID of the customer
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Result of the selected customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDTO'
+        '400':
+          description: Bad request. User ID must be an integer and larger than 0.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: A user with the specified ID was not found.
+        '5XX':
+          description: Unexpected error.
+    put:
+      tags:
+        - Customers
+      summary: Updates user selected ID
+      operationId: UpdateCustomer
+      description: Updates user selected ID
+      parameters:
+        - in: query
+          name: includeAccountInfo
+          description: include list of accounts of selected user
+          schema:
+            type: boolean
+        - in: path
+          name: customerId
+          required: true
+          description: The customerID of the customer
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Result of the modified customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDTO'
+        '400':
+          description: Bad request. Invalid request body.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: A user with the specified ID was not found.
+        '5XX':
+          description: Unexpected error.
+  /Accounts:
+    get:
+      tags:
+        - Accounts
+      summary: Gets all the accounts available
+      operationId: getAccounts
+      description: Gets accounts in the system
+      parameters:
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses:
+        '200':
+          description: The accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountDTO'
+        '401':
+          description: Authorization information is missing or invalid.
+        '5XX':
+          description: Unexpected error.
+    post:
+      tags:
+        - Accounts
+      summary: Creates a new account
+      operationId: CreateAccount
+      description: Create new Account. 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewAccountDTO'
+        description: New customer details
+      responses:
+        '201':
+          description: Account Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDTO'
+        '400':
+          description: Bad request. Invalid request body.
+        '401':
+          description: Authorization information is missing or invalid.
+        '5XX':
+          description: Unexpected error.
+  /Accounts/{Iban}:
+    get:
+      tags:
+        - Accounts
+      summary: Gets a account by Iban
+      operationId: GetAccount
+      description: Gets a ccount by Iban
+      parameters:
+        - in: path
+          name: Iban
+          required: true
+          description: The Iban of the account
+          schema:
+            type: string
+            minLength: 18
+            maxLength: 18
+            example: NL01INHO0000000002
+      responses:
+        '200':
+          description: Result of the selected ccount
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDTO'
+        '400':
+          description: Bad request. Iban is not in the right format.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: An account with the specified Iban was not found.
+        '5XX':
+          description: Unexpected error.
+  /Accounts/{Iban}/Open:
+    put:
+      tags:
+        - Accounts
+      summary: Open selected account 
+      operationId: Open
+      description: Open account provided in the parameters. If already opened, gives appropriate response.
+      parameters:
+        - in: path
+          name: Iban
+          required: true
+          description: The Iban for the account to open.
+          schema:
+            type: string
+            minLength: 18
+            maxLength: 18
+            example: NL01INHO0000000002
+      responses:
+        '201':
+          description: The created account with new status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDTO'
+        '400':
+          description: Bad request. Iban is not in the right format.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: An account with the specified Iban was not found.
+        '5XX':
+          description: Unexpected error.
+  /Accounts/{Iban}/Close:
+    put:
+      tags:
+        - Accounts
+      summary: Close selected account 
+      operationId: Close
+      description: Closes account provided in the parameters. If already closed, gives appropriate response.
+      parameters:
+        - in: path
+          name: Iban
+          required: true
+          description: The Iban for the account to close.
+          schema:
+            type: string
+            minLength: 18
+            maxLength: 18
+            example: NL01INHO0000000002
+      responses:
+        '201':
+          description: The created account with new status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDTO'
+        '400':
+          description: Bad request. Iban is not in the right format.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: An account with the specified Iban was not found.
+        '5XX':
+          description: Unexpected error.
+  /Accounts/{Iban}/Deposit:
+    put:
+      tags:
+        - Accounts
+      summary: Deposit to selected account. 
+      operationId: Deposit
+      description: Deposit to selected account. This method will mostly be used by ATM machines. 
+      parameters:
+        - in: path
+          name: Iban
+          required: true
+          description: The Iban for the account to deposit to
+          schema:
+            type: string
+            minLength: 18
+            maxLength: 18
+            example: NL01INHO0000000002
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepositDTO'
+        description: Deposit details
+      responses:
+        '201':
+          description: The created transaction object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDepositDTO'
+        '400':
+          description: 'invalid input, object invalid'
+  /Accounts/{Iban}/Withdraw:
+    put:
+      tags:
+        - Accounts
+      summary: Withdraw from selected account. 
+      operationId: Withdraw
+      description: Withdraw from selected account. This method will mostly be used by ATM machines. 
+      parameters:
+        - in: path
+          name: Iban
+          required: true
+          description: The Iban for the account to withdraw from
+          schema:
+            type: string
+            minLength: 18
+            maxLength: 18
+            example: NL01INHO0000000001
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawDTO'
+        description: Withdraw details
+      responses:
+        '201':
+          description: The created transaction object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionWithdrawlDTO'
+        '400':
+          description: 'invalid input, object invalid'
+  /Transactions:
+    post:
+      tags:
+        - Transactions
+      summary: Create a transaction 
+      operationId: CreateTransaction
+      description: Create a transaction 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionDTO'
+        description: Transaction details
+      responses:
+        '201':
+          description: The created transaction object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDTO'
+        '400':
+          description: 'invalid input, object invalid'    
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+  schemas:
+    NewCustomerDTO:
+      type: object
+      required:
+        - FirstName
+        - LastName
+        - BirthDate
+        - StreetName
+        - HouseNumber
+        - ZipCode
+        - City
+        - Country
+      properties:
+        FirstName:
+          type: string
+          example: Bruno
+        LastName:
+          type: string
+          example: Coimbra Marques
+        BirthDate:
+          type: string
+          format: date
+          description: Date of birth
+          example: "1999-10-12"
+        StreetName:
+          type: string
+          example: Pietersbergweg
+        HouseNumber:
+          type: integer
+          example: 1234
+        ZipCode:
+          type: string
+          example: "0987 MB"
+        City:
+          type: string
+          example: Amsterdam
+        Country:
+          type: string
+          example: Netherlands
+    CustomerDTO:
+      type: object
+      required:
+        - FirstName
+        - LastName
+        - BirthDate
+        - StreetName
+        - HouseNumber
+        - ZipCode
+        - City
+        - Country
+      properties:
+        CustomerId:
+          type: integer
+          example: 1
+        FirstName:
+          type: string
+          example: Bruno
+        LastName:
+          type: string
+          example: Coimbra Marques
+        BirthDate:
+          type: string
+          format: date
+          description: Date of birth
+          example: "1999-10-12"
+        StreetName:
+          type: string
+          example: Pietersbergweg
+        HouseNumber:
+          type: integer
+          example: 1234
+        ZipCode:
+          type: string
+          example: "0987 MB"
+        City:
+          type: string
+          example: Amsterdam
+        Country:
+          type: string
+          example: Netherlands
+    CustomerWithAccountsDTO:
+      type: object
+      required:
+        - FirstName
+        - LastName
+        - BirthDate
+        - StreetName
+        - HouseNumber
+        - ZipCode
+        - City
+        - Country
+      properties:
+        CustomerId:
+          type: integer
+          example: 1
+        FirstName:
+          type: string
+          example: Bruno
+        LastName:
+          type: string
+          example: Coimbra Marques
+        BirthDate:
+          type: string
+          format: date
+          description: Date of birth
+          example: "1999-10-12"
+        StreetName:
+          type: string
+          example: Pietersbergweg
+        HouseNumber:
+          type: integer
+          example: 1234
+        ZipCode:
+          type: string
+          example: "0987 MB"
+        City:
+          type: string
+          example: Amsterdam
+        Country:
+          type: string
+          example: Netherlands
+        Accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountDTO'
+    AccountDTO:
+      properties:
+        AccountId:
+          type: integer
+          example: 1
+        IBAN:
+          type: string
+          minLength: 18
+          maxLength: 18
+          example: NL01INHO0000000002
+        Type:
+          type: string
+          example: Current
+        Balance:
+          type: integer
+          example: 0
+        Status:
+          type: string
+          example: Open
+        MinimumBalance:
+          type: integer
+          example: 0
+        TransactionAmountLimit:
+          type: integer
+          example: 2000
+        DailyLimit:
+          type: integer
+          example: 500
+    NewAccountDTO:
+      properties:
+        Type:
+          type: string
+          example: Current
+        Balance:
+          type: integer
+          example: 0
+        Status:
+          type: string
+          example: Open
+        MinimumBalance:
+          type: integer
+          example: 0
+        TransactionAmountLimit:
+          type: integer
+          example: 2000
+        DailyLimit:
+          type: integer
+          example: 500
+    DepositDTO:
+      type: object
+      required:
+        - Amount
+      properties:
+        Amount:
+          type: number
+          example: 11.23
+    WithdrawDTO:
+      type: object
+      required:
+        - Amount
+      properties:
+        Amount:
+          type: number
+          example: 11.23
+    CreateTransactionDTO:
+      type: object
+      required:
+        - From
+        - To
+        - Amount
+      properties:
+        From:
+          type: string
+          minLength: 18
+          maxLength: 18
+          example: NL01INHO0000000001
+        To:
+          type: string
+          minLength: 18
+          maxLength: 18
+          example: NL01INHO0000000002       
+        Amount:
+          type: number
+          example: 11.23
+    TransactionDTO:
+      type: object
+      required:
+        - Id
+        - From
+        - To
+        - Amount
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: datetime
+          description: Date of birth
+          example: "2021-03-20T09:12:28Z"
+        From:
+          type: string
+          minLength: 18
+          maxLength: 18
+          example: NL01INHO0000000001
+        To:
+          type: string
+          minLength: 18
+          maxLength: 18
+          example: NL01INHO0000000002       
+        Amount:
+          type: number
+          format: double
+          example: 11.23
+          description: The amount to transfer
+    TransactionWithdrawlDTO:
+      type: object
+      required:
+        - Id
+        - From
+        - To
+        - Amount
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: datetime
+          description: Date of birth
+          example: "2021-03-20T09:12:28Z"
+        From:
+          type: string
+          minLength: 18
+          maxLength: 18
+          example: NL01INHO0000000002
+        To:
+          type: string
+          minLength: 18
+          maxLength: 18
+          example: null       
+        Amount:
+          type: number
+          format: double
+          example: 11.23
+          description: The amount to transfer
+    TransactionDepositDTO:
+      type: object
+      required:
+        - Id
+        - From
+        - To
+        - Amount
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: datetime
+          description: Date of birth
+          example: "2021-03-20T09:12:28Z"
+        From:
+          type: string
+          minLength: 18
+          maxLength: 18
+          example: null
+        To:
+          type: string
+          minLength: 18
+          maxLength: 18
+          example: NL01INHO0000000002       
+        Amount:
+          type: number
+          format: double
+          example: 11.23
+          description: The amount to transfer
