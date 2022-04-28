@@ -477,6 +477,8 @@ components:
         - ZipCode
         - City
         - Country
+        - TransactionAmountLimit
+        - DailyLimit
       properties:
         FirstName:
           type: string
@@ -504,6 +506,12 @@ components:
         Country:
           type: string
           example: Netherlands
+        TransactionAmountLimit:
+          type: integer
+          example: 2000
+        DailyLimit:
+          type: integer
+          example: 500
     CustomerDTO:
       type: object
       properties:
@@ -536,6 +544,12 @@ components:
         Country:
           type: string
           example: Netherlands
+        TransactionAmountLimit:
+          type: integer
+          example: 2000
+        DailyLimit:
+          type: integer
+          example: 500
     CustomerWithAccountsDTO:
       type: object
       properties:
@@ -568,15 +582,18 @@ components:
         Country:
           type: string
           example: Netherlands
+        TransactionAmountLimit:
+          type: integer
+          example: 2000
+        DailyLimit:
+          type: integer
+          example: 500
         Accounts:
           type: array
           items:
             $ref: '#/components/schemas/AccountDTO'
     AccountDTO:
       properties:
-        AccountId:
-          type: integer
-          example: 1
         IBAN:
           type: string
           minLength: 18
@@ -594,12 +611,6 @@ components:
         MinimumBalance:
           type: integer
           example: 0
-        TransactionAmountLimit:
-          type: integer
-          example: 2000
-        DailyLimit:
-          type: integer
-          example: 500
     NewAccountDTO:
       properties:
         Type:
@@ -614,12 +625,6 @@ components:
         MinimumBalance:
           type: integer
           example: 0
-        TransactionAmountLimit:
-          type: integer
-          example: 2000
-        DailyLimit:
-          type: integer
-          example: 500
     DepositDTO:
       type: object
       required:
