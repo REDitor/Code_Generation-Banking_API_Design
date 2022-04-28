@@ -281,6 +281,50 @@ paths:
           description: An account with the specified Iban was not found.
         '5XX':
           description: Unexpected error.
+    put:
+      tags:
+        - Accounts
+      summary: Update account information
+      operationId: Update Account
+      description: |
+                    Update Account information. 
+                    However, it is only possible to change the type of the account,
+                    and the amount limit.
+                    
+                    Permissions:
+                    - Employees
+                    - Customers (only if it is their own information)
+      parameters:
+        - in: path
+          name: Iban
+          required: true
+          description: The Iban of the account
+          schema:
+            type: string
+            minLength: 18
+            maxLength: 18
+            example: NL01INHO0000000002
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountDTO'
+        description: Fields that need to be updated
+      responses:
+        '200':
+          description: Result after updating account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDTO'
+        '400':
+          description: Bad request. Iban is not in the right format.
+        '401':
+          description: Unauthorized or authorization information is missing or invalid.
+        '404':
+          description: An account with the specified Iban was not found.
+        '5XX':
+          description: Unexpected error.
   /Accounts/{Iban}/Open:
     put:
       tags:
@@ -608,6 +652,17 @@ components:
         Status:
           type: string
           example: Open
+        MinimumBalance:
+          type: integer
+          example: 0
+    UpdateAccountDTO:
+      required:
+          - Type
+          - MinimumBalance
+      properties:
+        Type:
+          type: string
+          example: Current
         MinimumBalance:
           type: integer
           example: 0
