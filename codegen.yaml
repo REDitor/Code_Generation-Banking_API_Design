@@ -26,7 +26,7 @@ tags:
 security:
   - bearerAuth: []         # use the same name as above
 paths:
-  /Login:
+  /login:
     get:
       tags:
         - Authentication
@@ -52,7 +52,7 @@ paths:
           description: Unauthorized or authorization information is missing or invalid.
         '5XX':
           description: Unexpected error.
-  /Employees:
+  /employees:
     get:
       tags:
         - Employees
@@ -123,7 +123,7 @@ paths:
           description: Something went wrong.
         '5XX':
           description: Internal Server Error.
-  /Employees/{emplyeeId}:
+  /employees/{employeeId}:
     get:
       tags:
         - Employees
@@ -183,11 +183,11 @@ paths:
         '5XX':
           description: Unexpected error.
     #delete: should we want this?
-  # /Employees/Accounts/{IBAN}/Open: Should we?
-  # /Employees/Accounts/{IBAN}/Close: Should we?
-  # /Employees/Accounts/{IBAN}/Deposit: Should we?
-  # /Employees/Accounts/{IBAN}/Withdraw: Should we?
-  /Costumers:
+  # /employees/Accounts/{iban}/Open: Should we?
+  # /employees/Accounts/{iban}/Close: Should we?
+  # /employees/Accounts/{iban}/Deposit: Should we?
+  # /employees/Accounts/{iban}/Withdraw: Should we?
+  /customers:
     get:
       tags:
         - Customers
@@ -264,7 +264,7 @@ paths:
           description: A user with the specified ID was not found.
         '5XX':
           description: Unexpected error.
-  /Customers/{customerId}:
+  /customers/{customerId}:
     get:
       tags:
         - Customers
@@ -339,46 +339,7 @@ paths:
           description: A user with the specified ID was not found.
         '5XX':
           description: Unexpected error.
-  /Accounts:
-    get:
-      tags:
-        - Accounts
-      summary: Gets all the accounts available               
-      operationId: getAccounts
-      description: |
-                    Gets accounts in the system
-                    
-                    Permissions:
-                    - Employees
-      parameters:
-        - in: query
-          name: skip
-          description: number of records to skip for pagination
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 50
-      responses:
-        '200':
-          description: The accounts
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AccountDTO'
-        '401':
-          description: authorization information is missing or invalid.
-        '5XX':
-          description: Unexpected error.
+  /accounts:
     post:
       tags:
         - Accounts
@@ -408,7 +369,7 @@ paths:
           description: Unauthorized or authorization information is missing or invalid.
         '5XX':
           description: Unexpected error.
-  /Accounts/{Iban}:
+  /accounts/{iban}:
     get:
       tags:
         - Accounts
@@ -489,82 +450,74 @@ paths:
           description: An account with the specified Iban was not found.
         '5XX':
           description: Unexpected error.
-  /Accounts/{Iban}/Open:
-    put:
+  /transactions:
+    post:
       tags:
-        - Accounts
-      summary: Open selected account 
-      operationId: Open
-      description: |
-                    Open account provided in the parameters. If already opened, gives appropriate response.
-                    
-                    Permissions:
-                    - Employees
-      parameters:
-        - in: path
-          name: Iban
-          required: true
-          description: The Iban for the account to open.
-          schema:
-            type: string
-            minLength: 18
-            maxLength: 18
-            example: NL01INHO0000000002
+        - Transactions
+      summary: Create a transaction 
+      operationId: CreateTransaction
+      description: Create a transaction 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionDTO'
+        description: Transaction details
       responses:
         '201':
-          description: The created account with new status
+          description: The created transaction object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountDTO'
+                $ref: '#/components/schemas/TransactionDTO'
         '400':
-          description: Bad request. Iban is not in the right format.
-        '401':
-          description: Unauthorized or authorization information is missing or invalid.
-        '404':
-          description: An account with the specified Iban was not found.
-        '5XX':
-          description: Unexpected error.
-  /Accounts/{Iban}/Close:
-    put:
+          description: 'invalid input, object invalid' 
+        '403':
+          description: Forbidden, you do not have access rights
+  /transactions/{iban}:
+    get:
       tags:
-        - Accounts
-      summary: Close selected account 
-      operationId: Close
-      description: |
-                    Closes account provided in the parameters. If already closed, gives appropriate response.
-                    
-                    Permissions:
-                    - Employees
+        - Transactions
+      summary: Get all transactions for a certain account by Iban
       parameters:
-        - in: path
-          name: Iban
+        - name: Iban
+          in: path
           required: true
-          description: The Iban for the account to close.
+          style: simple
+          explode: false
+          schema:
+            maximum: 34
+            type: string
+            example: NL03INHO0033573247
+        - in: query
+          name: dateTimeFrom
+          description: search transaction from dateTime
           schema:
             type: string
-            minLength: 18
-            maxLength: 18
-            example: NL01INHO0000000002
+            format: datetime
+            description: Date of birth
+            example: "2021-03-20T09:12:28Z"
+        - in: query
+          name: dateTimeTo
+          description: search transaction to dateTime
+          schema:
+            type: string
+            format: datetime
+            description: Date of birth
+            example: "2021-07-20T09:12:28Z"
       responses:
-        '201':
-          description: The created account with new status
+        '200':
+          description: transactions received
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountDTO'
-        '400':
-          description: Bad request. Iban is not in the right format.
-        '401':
-          description: Unauthorized or authorization information is missing or invalid.
-        '404':
-          description: An account with the specified Iban was not found.
-        '5XX':
-          description: Unexpected error.
-  /Accounts/{Iban}/Deposit:
-    put:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionDTO'
+  /transactions/{iban}/Deposit:
+    post:
       tags:
-        - Accounts
+        - Transactions
       summary: Deposit to selected account. 
       operationId: Deposit
       description: |
@@ -603,10 +556,10 @@ paths:
           description: The account with the specified Iban was not found.
         '5XX':
           description: Unexpected error.
-  /Accounts/{Iban}/Withdraw:
-    put:
+  /transactions/{iban}/Withdraw:
+    post:
       tags:
-        - Accounts
+        - Transactions
       summary: Withdraw from selected account. 
       operationId: Withdraw
       description:  |
@@ -645,55 +598,6 @@ paths:
           description: The account with the specified Iban was not found.
         '5XX':
           description: Unexpected error.
-  /Transactions:
-    put:
-      tags:
-        - Transactions
-      summary: Create a transaction 
-      operationId: CreateTransaction
-      description: Create a transaction 
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTransactionDTO'
-        description: Transaction details
-      responses:
-        '201':
-          description: The created transaction object
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TransactionDTO'
-        '400':
-          description: 'invalid input, object invalid' 
-        '403':
-          description: Forbidden, you do not have access rights
-  /transactions/{Iban}:
-    get:
-      tags:
-        - Transactions
-      summary: Get all transactions for a certain account by Iban
-      parameters:
-        - name: Iban
-          in: path
-          required: true
-          style: simple
-          explode: false
-          schema:
-            maximum: 34
-            type: string
-            example: NL03INHO0033573247
-      responses:
-        '200':
-          description: transactions received
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionDTO'
-   
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
@@ -937,6 +841,9 @@ components:
         MinimumBalance:
           type: integer
           example: 0
+        Status:
+          type: string
+          example: Open
     NewAccountDTO:
       properties:
         fkCustomerID:
@@ -1018,6 +925,9 @@ components:
           format: double
           example: 11.23
           description: The amount to transfer
+        PerformedByID:
+          type: integer
+          example: 1
     TransactionWithdrawlDTO:
       type: object
       required:
@@ -1048,7 +958,10 @@ components:
           type: number
           format: double
           example: 11.23
-          description: The amount to transfer
+          description: The amount to transfer        
+        PerformedByID:
+          type: integer
+          example: 1
     TransactionDepositDTO:
       type: object
       properties:
@@ -1075,6 +988,9 @@ components:
           format: double
           example: 11.23
           description: The amount to transfer
+        PerformedByID:
+          type: integer
+          example: 1
     LoginDTO:
       type: object
       properties:
