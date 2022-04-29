@@ -662,7 +662,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/transactionDTO'
+                  $ref: '#/components/schemas/TransactionDTO'
    
 components:
   securitySchemes:
