@@ -14,11 +14,13 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
   - name: Customers
-    description: Operations available to customers
+    description: Operations available when handling customers
   - name: Employees
-    description: Operations available to employees
+    description: Operations available when handling employees
   - name: Transactions
     description: Operations available when creating transactions
+  - name: Accounts
+    description: Operations available when handling accounts
 security:
   - bearerAuth: []         # use the same name as above
 paths:
