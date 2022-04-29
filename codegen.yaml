@@ -669,13 +669,13 @@ paths:
           description: 'invalid input, object invalid' 
         '403':
           description: Forbidden, you do not have access rights
-  /Transactions/{iban}:
+  /transactions/{Iban}:
     get:
       tags:
         - Transactions
       summary: Get all transactions for a certain account by Iban
       parameters:
-        - name: iban
+        - name: Iban
           in: path
           required: true
           style: simple
@@ -693,6 +693,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TransactionDTO'
+   
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
