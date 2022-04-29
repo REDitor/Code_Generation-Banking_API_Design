@@ -11,7 +11,7 @@ info:
     email: brunocm@pm.me
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 tags:
   - name: Customers
     description: Operations available when handling customers
@@ -24,33 +24,43 @@ tags:
   - name: Authentication
     description: Operations available for authentication
 security:
-  - bearerAuth: []         # use the same name as above
+  - bearerAuth: [] # use the same name as above
 paths:
-  /login:
+  /login/email={email}&password={password}:
     get:
       tags:
         - Authentication
       summary: Login to account
       operationId: Login
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginDTO'
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email
+          schema:
+            type: string
+            example: brunocm@gmail.com
+        - in: path
+          name: password
+          required: true
+          description: Password
+          schema:
+            type: string
+            example: test..123
       responses:
-        '200':
+        "200":
           description: Account that user logged into
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CustomerWithAccountsDTO'
-        '400':
+                  $ref: "#/components/schemas/CustomerWithAccountsDTO"
+        "400":
           description: Bad request. Invalid request body.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '5XX':
+        "5XX":
           description: Unexpected error.
   /employees:
     get:
@@ -80,21 +90,21 @@ paths:
             minimum: 0
             maximum: 50
       responses:
-        '200':
+        "200":
           description: All accounts
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/EmployeeDTO'
-        '400':
+                  $ref: "#/components/schemas/EmployeeDTO"
+        "400":
           description: Bad request.
-        '401':
+        "401":
           description: Authorization information is missing or invalid.
-        '404':
+        "404":
           description: Something went wrong.
-        '5XX':
+        "5XX":
           description: Internal Server Error.
     post:
       tags:
@@ -106,22 +116,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewEmployeeDTO'
+              $ref: "#/components/schemas/NewEmployeeDTO"
         description: New Employee details
       responses:
-        '201':
+        "201":
           description: Employee Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmployeeDTO'
-        '400':
+                $ref: "#/components/schemas/EmployeeDTO"
+        "400":
           description: Bad request. Invalid request body.
-        '401':
+        "401":
           description: Authorization information missing or invalid
-        '404':
+        "404":
           description: Something went wrong.
-        '5XX':
+        "5XX":
           description: Internal Server Error.
   /employees/{employeeId}:
     get:
@@ -139,19 +149,19 @@ paths:
             type: integer
             example: 1
       responses:
-        '200':
+        "200":
           description: Result of the selected employee
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmployeeDTO'
-        '400':
+                $ref: "#/components/schemas/EmployeeDTO"
+        "400":
           description: Bad request.
-        '401':
+        "401":
           description: Authorization information is missing or invalid.
-        '404':
+        "404":
           description: Employee with the specified ID was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
     put:
       tags:
@@ -168,25 +178,20 @@ paths:
             type: integer
             example: 1
       responses:
-        '200':
+        "200":
           description: Result of the modified employee
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmployeeDTO'
-        '400':
+                $ref: "#/components/schemas/EmployeeDTO"
+        "400":
           description: Bad request. Invalid request body.
-        '401':
+        "401":
           description: Authorization information is missing or invalid.
-        '404':
+        "404":
           description: A user with the specified ID was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
-    #delete: should we want this?
-  # /employees/Accounts/{iban}/Open: Should we?
-  # /employees/Accounts/{iban}/Close: Should we?
-  # /employees/Accounts/{iban}/Deposit: Should we?
-  # /employees/Accounts/{iban}/Withdraw: Should we?
   /customers:
     get:
       tags:
@@ -221,48 +226,48 @@ paths:
             minimum: 0
             maximum: 50
       responses:
-        '200':
+        "200":
           description: The accounts
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CustomerDTO'
-        '400':
+                  $ref: "#/components/schemas/CustomerDTO"
+        "400":
           description: Bad request. User ID must be an integer and larger than 0.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '404':
+        "404":
           description: A user with the specified ID was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
     post:
       tags:
         - Customers
       summary: Creates a new customer
       operationId: CreateCustomer
-      description: Create new Customer. 
+      description: Create new Customer.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewCustomerDTO'
+              $ref: "#/components/schemas/NewCustomerDTO"
         description: New customer details
       responses:
-        '201':
+        "201":
           description: Account Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomerDTO'
-        '400':
+                $ref: "#/components/schemas/CustomerDTO"
+        "400":
           description: Bad request. Invalid request body.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '404':
+        "404":
           description: A user with the specified ID was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
   /customers/{customerId}:
     get:
@@ -285,19 +290,19 @@ paths:
             type: integer
             example: 1
       responses:
-        '200':
+        "200":
           description: Result of the selected customer
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomerDTO'
-        '400':
+                $ref: "#/components/schemas/CustomerDTO"
+        "400":
           description: Bad request. User ID must be an integer and larger than 0.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '404':
+        "404":
           description: A user with the specified ID was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
     put:
       tags:
@@ -322,22 +327,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewCustomerDTO'
+              $ref: "#/components/schemas/NewCustomerDTO"
         description: New customer details
       responses:
-        '200':
+        "200":
           description: Result of the modified customer
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomerDTO'
-        '400':
+                $ref: "#/components/schemas/CustomerDTO"
+        "400":
           description: Bad request. Invalid request body.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '404':
+        "404":
           description: A user with the specified ID was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
   /accounts:
     post:
@@ -346,28 +351,28 @@ paths:
       summary: Creates a new account
       operationId: CreateAccount
       description: |
-                    Create new Account.
-                    
-                    Permissions:
-                    - Employees 
+        Create new Account.
+
+        Permissions:
+        - Employees
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewAccountDTO'
+              $ref: "#/components/schemas/NewAccountDTO"
         description: New customer details
       responses:
-        '201':
+        "201":
           description: Account Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountDTO'
-        '400':
+                $ref: "#/components/schemas/AccountDTO"
+        "400":
           description: Bad request. Invalid request body.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '5XX':
+        "5XX":
           description: Unexpected error.
   /accounts/{iban}:
     get:
@@ -376,14 +381,14 @@ paths:
       summary: Gets a account by Iban
       operationId: GetAccount
       description: |
-                    Gets a ccount by Iban
-                    
-                    Permissions:
-                    - Employees
-                    - Customers (only if it is their own information)
+        Gets a ccount by Iban
+
+        Permissions:
+        - Employees
+        - Customers (only if it is their own information)
       parameters:
         - in: path
-          name: Iban
+          name: iban
           required: true
           description: The Iban of the account
           schema:
@@ -392,19 +397,19 @@ paths:
             maxLength: 18
             example: NL01INHO0000000002
       responses:
-        '200':
+        "200":
           description: Result of the selected ccount
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountDTO'
-        '400':
+                $ref: "#/components/schemas/AccountDTO"
+        "400":
           description: Bad request. Iban is not in the right format.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '404':
+        "404":
           description: An account with the specified Iban was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
     put:
       tags:
@@ -412,16 +417,16 @@ paths:
       summary: Update account information
       operationId: Update Account
       description: |
-                    Update Account information. 
-                    However, it is only possible to change the type of the account,
-                    and the amount limit.
-                    
-                    Permissions:
-                    - Employees
-                    - Customers (only if it is their own information)
+        Update Account information. 
+        However, it is only possible to change the type of the account,
+        and the amount limit.
+
+        Permissions:
+        - Employees
+        - Customers (only if it is their own information)
       parameters:
         - in: path
-          name: Iban
+          name: iban
           required: true
           description: The Iban of the account
           schema:
@@ -433,46 +438,46 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateAccountDTO'
+              $ref: "#/components/schemas/UpdateAccountDTO"
         description: Fields that need to be updated
       responses:
-        '200':
+        "200":
           description: Result after updating account
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountDTO'
-        '400':
+                $ref: "#/components/schemas/AccountDTO"
+        "400":
           description: Bad request. Iban is not in the right format.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '404':
+        "404":
           description: An account with the specified Iban was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
   /transactions:
     post:
       tags:
         - Transactions
-      summary: Create a transaction 
+      summary: Create a transaction
       operationId: CreateTransaction
-      description: Create a transaction 
+      description: Create a transaction
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateTransactionDTO'
+              $ref: "#/components/schemas/CreateTransactionDTO"
         description: Transaction details
       responses:
-        '201':
+        "201":
           description: The created transaction object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TransactionDTO'
-        '400':
-          description: 'invalid input, object invalid' 
-        '403':
+                $ref: "#/components/schemas/TransactionDTO"
+        "400":
+          description: "invalid input, object invalid"
+        "403":
           description: Forbidden, you do not have access rights
   /transactions/{iban}:
     get:
@@ -480,7 +485,7 @@ paths:
         - Transactions
       summary: Get all transactions for a certain account by Iban
       parameters:
-        - name: Iban
+        - name: iban
           in: path
           required: true
           style: simple
@@ -506,28 +511,28 @@ paths:
             description: Date of birth
             example: "2021-07-20T09:12:28Z"
       responses:
-        '200':
+        "200":
           description: transactions received
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TransactionDTO'
-  /transactions/{iban}/Deposit:
+                  $ref: "#/components/schemas/TransactionDTO"
+  /transactions/{iban}/deposit:
     post:
       tags:
         - Transactions
-      summary: Deposit to selected account. 
+      summary: Deposit to selected account.
       operationId: Deposit
       description: |
-                    Deposit to selected account. This method will mostly be used by ATM machines. 
-                    
-                    Permissions:
-                    - Customers
+        Deposit to selected account. This method will mostly be used by ATM machines. 
+
+        Permissions:
+        - Customers
       parameters:
         - in: path
-          name: Iban
+          name: iban
           required: true
           description: The Iban for the account to deposit to
           schema:
@@ -539,37 +544,37 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DepositDTO'
+              $ref: "#/components/schemas/DepositDTO"
         description: Deposit details
       responses:
-        '201':
+        "201":
           description: The created transaction object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TransactionDepositDTO'
-        '400':
+                $ref: "#/components/schemas/TransactionDepositDTO"
+        "400":
           description: Bad request. Iban is not in the right format.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '404':
+        "404":
           description: The account with the specified Iban was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
-  /transactions/{iban}/Withdraw:
+  /transactions/{iban}/withdraw:
     post:
       tags:
         - Transactions
-      summary: Withdraw from selected account. 
+      summary: Withdraw from selected account.
       operationId: Withdraw
-      description:  |
-                    Withdraw from selected account. This method will mostly be used by ATM machines. 
-                    
-                    Permissions:
-                    - Customers
+      description: |
+        Withdraw from selected account. This method will mostly be used by ATM machines. 
+
+        Permissions:
+        - Customers
       parameters:
         - in: path
-          name: Iban
+          name: iban
           required: true
           description: The Iban for the account to withdraw from
           schema:
@@ -581,26 +586,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WithdrawDTO'
+              $ref: "#/components/schemas/WithdrawDTO"
         description: Withdraw details
       responses:
-        '201':
+        "201":
           description: The created transaction object
           content:
-            application/json: 
+            application/json:
               schema:
-                $ref: '#/components/schemas/TransactionWithdrawlDTO'
-        '400':
+                $ref: "#/components/schemas/TransactionWithdrawlDTO"
+        "400":
           description: Bad request. Iban is not in the right format.
-        '401':
+        "401":
           description: Unauthorized or authorization information is missing or invalid.
-        '404':
+        "404":
           description: The account with the specified Iban was not found.
-        '5XX':
+        "5XX":
           description: Unexpected error.
 components:
   securitySchemes:
-    bearerAuth:            # arbitrary name for the security scheme
+    bearerAuth: # arbitrary name for the security scheme
       type: http
       scheme: bearer
       bearerFormat: JWT
@@ -617,7 +622,7 @@ components:
         - City
         - Country
       properties:
-        FirstName: 
+        FirstName:
           type: string
           example: New
         LastName:
@@ -650,7 +655,7 @@ components:
           type: integer
           format: int32
           example: 1
-        FirstName: 
+        FirstName:
           type: string
           example: Existing
         LastName:
@@ -807,7 +812,7 @@ components:
         Accounts:
           type: array
           items:
-            $ref: '#/components/schemas/AccountDTO'
+            $ref: "#/components/schemas/AccountDTO"
     AccountDTO:
       properties:
         fkCustomerID:
@@ -832,8 +837,8 @@ components:
           example: 0
     UpdateAccountDTO:
       required:
-          - Type
-          - MinimumBalance
+        - Type
+        - MinimumBalance
       properties:
         Type:
           type: string
@@ -890,7 +895,7 @@ components:
           type: string
           minLength: 18
           maxLength: 18
-          example: NL01INHO0000000002       
+          example: NL01INHO0000000002
         Amount:
           type: number
           example: 11.23
@@ -919,7 +924,7 @@ components:
           type: string
           minLength: 18
           maxLength: 18
-          example: NL01INHO0000000002       
+          example: NL01INHO0000000002
         Amount:
           type: number
           format: double
@@ -953,12 +958,12 @@ components:
           type: string
           minLength: 18
           maxLength: 18
-          example: null       
+          example: null
         Amount:
           type: number
           format: double
           example: 11.23
-          description: The amount to transfer        
+          description: The amount to transfer
         PerformedByID:
           type: integer
           example: 1
@@ -982,7 +987,7 @@ components:
           type: string
           minLength: 18
           maxLength: 18
-          example: NL01INHO0000000002       
+          example: NL01INHO0000000002
         Amount:
           type: number
           format: double
@@ -1000,5 +1005,3 @@ components:
         password:
           type: string
           example: test..123
-
-        
