@@ -1,8 +1,7 @@
-package io.swagger.model;
+package io.swagger.model.dto;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
@@ -10,13 +9,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * NewCustomerDTO
+ * NewEmployeeDTO
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-12T21:54:51.581Z[GMT]")
 
 
-public class NewCustomerDTO   {
+public class NewEmployeeDTO   {
   @JsonProperty("FirstName")
   private String firstName = null;
 
@@ -41,19 +40,7 @@ public class NewCustomerDTO   {
   @JsonProperty("Country")
   private String country = null;
 
-  @JsonProperty("Email")
-  private String email = null;
-
-  @JsonProperty("Password")
-  private String password = null;
-
-  @JsonProperty("TransactionAmountLimit")
-  private Integer transactionAmountLimit = null;
-
-  @JsonProperty("DailyLimit")
-  private Integer dailyLimit = null;
-
-  public NewCustomerDTO firstName(String firstName) {
+  public NewEmployeeDTO firstName(String firstName) {
     this.firstName = firstName;
     return this;
   }
@@ -62,7 +49,7 @@ public class NewCustomerDTO   {
    * Get firstName
    * @return firstName
    **/
-  @Schema(example = "Bruno", required = true, description = "")
+  @Schema(example = "New", required = true, description = "")
       @NotNull
 
     public String getFirstName() {
@@ -73,7 +60,7 @@ public class NewCustomerDTO   {
     this.firstName = firstName;
   }
 
-  public NewCustomerDTO lastName(String lastName) {
+  public NewEmployeeDTO lastName(String lastName) {
     this.lastName = lastName;
     return this;
   }
@@ -82,7 +69,7 @@ public class NewCustomerDTO   {
    * Get lastName
    * @return lastName
    **/
-  @Schema(example = "Coimbra Marques", required = true, description = "")
+  @Schema(example = "Employee", required = true, description = "")
       @NotNull
 
     public String getLastName() {
@@ -93,16 +80,16 @@ public class NewCustomerDTO   {
     this.lastName = lastName;
   }
 
-  public NewCustomerDTO birthDate(LocalDate birthDate) {
+  public NewEmployeeDTO birthDate(LocalDate birthDate) {
     this.birthDate = birthDate;
     return this;
   }
 
   /**
-   * Date of birth
+   * Date of Birth
    * @return birthDate
    **/
-  @Schema(example = "Tue Oct 12 00:00:00 GMT 1999", required = true, description = "Date of birth")
+  @Schema(example = "Sat Jul 12 00:00:00 GMT 1997", required = true, description = "Date of Birth")
       @NotNull
 
     @Valid
@@ -114,7 +101,7 @@ public class NewCustomerDTO   {
     this.birthDate = birthDate;
   }
 
-  public NewCustomerDTO streetName(String streetName) {
+  public NewEmployeeDTO streetName(String streetName) {
     this.streetName = streetName;
     return this;
   }
@@ -123,7 +110,7 @@ public class NewCustomerDTO   {
    * Get streetName
    * @return streetName
    **/
-  @Schema(example = "Pietersbergweg", required = true, description = "")
+  @Schema(example = "Eenhoornstraat", required = true, description = "")
       @NotNull
 
     public String getStreetName() {
@@ -134,7 +121,7 @@ public class NewCustomerDTO   {
     this.streetName = streetName;
   }
 
-  public NewCustomerDTO houseNumber(Integer houseNumber) {
+  public NewEmployeeDTO houseNumber(Integer houseNumber) {
     this.houseNumber = houseNumber;
     return this;
   }
@@ -154,7 +141,7 @@ public class NewCustomerDTO   {
     this.houseNumber = houseNumber;
   }
 
-  public NewCustomerDTO zipCode(String zipCode) {
+  public NewEmployeeDTO zipCode(String zipCode) {
     this.zipCode = zipCode;
     return this;
   }
@@ -163,7 +150,7 @@ public class NewCustomerDTO   {
    * Get zipCode
    * @return zipCode
    **/
-  @Schema(example = "0987 MB", required = true, description = "")
+  @Schema(example = "1973 SH", required = true, description = "")
       @NotNull
 
     public String getZipCode() {
@@ -174,7 +161,7 @@ public class NewCustomerDTO   {
     this.zipCode = zipCode;
   }
 
-  public NewCustomerDTO city(String city) {
+  public NewEmployeeDTO city(String city) {
     this.city = city;
     return this;
   }
@@ -183,7 +170,7 @@ public class NewCustomerDTO   {
    * Get city
    * @return city
    **/
-  @Schema(example = "Amsterdam", required = true, description = "")
+  @Schema(example = "IJmuiden", required = true, description = "")
       @NotNull
 
     public String getCity() {
@@ -194,7 +181,7 @@ public class NewCustomerDTO   {
     this.city = city;
   }
 
-  public NewCustomerDTO country(String country) {
+  public NewEmployeeDTO country(String country) {
     this.country = country;
     return this;
   }
@@ -214,84 +201,6 @@ public class NewCustomerDTO   {
     this.country = country;
   }
 
-  public NewCustomerDTO email(String email) {
-    this.email = email;
-    return this;
-  }
-
-  /**
-   * Get email
-   * @return email
-   **/
-  @Schema(example = "brunocm@gmail.com", description = "")
-  
-    public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public NewCustomerDTO password(String password) {
-    this.password = password;
-    return this;
-  }
-
-  /**
-   * Get password
-   * @return password
-   **/
-  @Schema(example = "brunocm@gmail.com", description = "")
-  
-    public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public NewCustomerDTO transactionAmountLimit(Integer transactionAmountLimit) {
-    this.transactionAmountLimit = transactionAmountLimit;
-    return this;
-  }
-
-  /**
-   * Get transactionAmountLimit
-   * @return transactionAmountLimit
-   **/
-  @Schema(example = "2000", required = true, description = "")
-      @NotNull
-
-    public Integer getTransactionAmountLimit() {
-    return transactionAmountLimit;
-  }
-
-  public void setTransactionAmountLimit(Integer transactionAmountLimit) {
-    this.transactionAmountLimit = transactionAmountLimit;
-  }
-
-  public NewCustomerDTO dailyLimit(Integer dailyLimit) {
-    this.dailyLimit = dailyLimit;
-    return this;
-  }
-
-  /**
-   * Get dailyLimit
-   * @return dailyLimit
-   **/
-  @Schema(example = "500", required = true, description = "")
-      @NotNull
-
-    public Integer getDailyLimit() {
-    return dailyLimit;
-  }
-
-  public void setDailyLimit(Integer dailyLimit) {
-    this.dailyLimit = dailyLimit;
-  }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -301,30 +210,26 @@ public class NewCustomerDTO   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    NewCustomerDTO newCustomerDTO = (NewCustomerDTO) o;
-    return Objects.equals(this.firstName, newCustomerDTO.firstName) &&
-        Objects.equals(this.lastName, newCustomerDTO.lastName) &&
-        Objects.equals(this.birthDate, newCustomerDTO.birthDate) &&
-        Objects.equals(this.streetName, newCustomerDTO.streetName) &&
-        Objects.equals(this.houseNumber, newCustomerDTO.houseNumber) &&
-        Objects.equals(this.zipCode, newCustomerDTO.zipCode) &&
-        Objects.equals(this.city, newCustomerDTO.city) &&
-        Objects.equals(this.country, newCustomerDTO.country) &&
-        Objects.equals(this.email, newCustomerDTO.email) &&
-        Objects.equals(this.password, newCustomerDTO.password) &&
-        Objects.equals(this.transactionAmountLimit, newCustomerDTO.transactionAmountLimit) &&
-        Objects.equals(this.dailyLimit, newCustomerDTO.dailyLimit);
+    NewEmployeeDTO newEmployeeDTO = (NewEmployeeDTO) o;
+    return Objects.equals(this.firstName, newEmployeeDTO.firstName) &&
+        Objects.equals(this.lastName, newEmployeeDTO.lastName) &&
+        Objects.equals(this.birthDate, newEmployeeDTO.birthDate) &&
+        Objects.equals(this.streetName, newEmployeeDTO.streetName) &&
+        Objects.equals(this.houseNumber, newEmployeeDTO.houseNumber) &&
+        Objects.equals(this.zipCode, newEmployeeDTO.zipCode) &&
+        Objects.equals(this.city, newEmployeeDTO.city) &&
+        Objects.equals(this.country, newEmployeeDTO.country);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(firstName, lastName, birthDate, streetName, houseNumber, zipCode, city, country, email, password, transactionAmountLimit, dailyLimit);
+    return Objects.hash(firstName, lastName, birthDate, streetName, houseNumber, zipCode, city, country);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class NewCustomerDTO {\n");
+    sb.append("class NewEmployeeDTO {\n");
     
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
@@ -334,10 +239,6 @@ public class NewCustomerDTO   {
     sb.append("    zipCode: ").append(toIndentedString(zipCode)).append("\n");
     sb.append("    city: ").append(toIndentedString(city)).append("\n");
     sb.append("    country: ").append(toIndentedString(country)).append("\n");
-    sb.append("    email: ").append(toIndentedString(email)).append("\n");
-    sb.append("    password: ").append(toIndentedString(password)).append("\n");
-    sb.append("    transactionAmountLimit: ").append(toIndentedString(transactionAmountLimit)).append("\n");
-    sb.append("    dailyLimit: ").append(toIndentedString(dailyLimit)).append("\n");
     sb.append("}");
     return sb.toString();
   }

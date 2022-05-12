@@ -1,8 +1,7 @@
-package io.swagger.model;
+package io.swagger.model.dto;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import org.springframework.validation.annotation.Validated;
@@ -10,17 +9,17 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * WithdrawDTO
+ * DepositDTO
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-12T21:54:51.581Z[GMT]")
 
 
-public class WithdrawDTO   {
+public class DepositDTO   {
   @JsonProperty("Amount")
   private BigDecimal amount = null;
 
-  public WithdrawDTO amount(BigDecimal amount) {
+  public DepositDTO amount(BigDecimal amount) {
     this.amount = amount;
     return this;
   }
@@ -50,8 +49,8 @@ public class WithdrawDTO   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    WithdrawDTO withdrawDTO = (WithdrawDTO) o;
-    return Objects.equals(this.amount, withdrawDTO.amount);
+    DepositDTO depositDTO = (DepositDTO) o;
+    return Objects.equals(this.amount, depositDTO.amount);
   }
 
   @Override
@@ -62,7 +61,7 @@ public class WithdrawDTO   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class WithdrawDTO {\n");
+    sb.append("class DepositDTO {\n");
     
     sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
     sb.append("}");
