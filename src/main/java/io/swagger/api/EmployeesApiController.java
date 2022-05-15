@@ -40,29 +40,13 @@ public class EmployeesApiController implements EmployeesApi {
     }
 
     public ResponseEntity<EmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewEmployeeDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<EmployeeDTO>(objectMapper.readValue("{\n  \"StreetName\" : \"Eenhoornstraat\",\n  \"HouseNumber\" : 1234,\n  \"FirstName\" : \"Existing\",\n  \"ZipCode\" : \"1973 SH\",\n  \"Country\" : \"Netherlands\",\n  \"LastName\" : \"Employee\",\n  \"City\" : \"IJmuiden\",\n  \"EmployeeId\" : 1,\n  \"BirthDate\" : \"1997-07-12T00:00:00.000+00:00\"\n}", EmployeeDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<EmployeeDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        // TODO
 
         return new ResponseEntity<EmployeeDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<EmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") Integer employeeId) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<EmployeeDTO>(objectMapper.readValue("{\n  \"StreetName\" : \"Eenhoornstraat\",\n  \"HouseNumber\" : 1234,\n  \"FirstName\" : \"Existing\",\n  \"ZipCode\" : \"1973 SH\",\n  \"Country\" : \"Netherlands\",\n  \"LastName\" : \"Employee\",\n  \"City\" : \"IJmuiden\",\n  \"EmployeeId\" : 1,\n  \"BirthDate\" : \"1997-07-12T00:00:00.000+00:00\"\n}", EmployeeDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<EmployeeDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        // TODO
 
         return new ResponseEntity<EmployeeDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
@@ -70,29 +54,13 @@ public class EmployeesApiController implements EmployeesApi {
     public ResponseEntity<List<EmployeeDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<EmployeeDTO>>(objectMapper.readValue("[ {\n  \"StreetName\" : \"Eenhoornstraat\",\n  \"HouseNumber\" : 1234,\n  \"FirstName\" : \"Existing\",\n  \"ZipCode\" : \"1973 SH\",\n  \"Country\" : \"Netherlands\",\n  \"LastName\" : \"Employee\",\n  \"City\" : \"IJmuiden\",\n  \"EmployeeId\" : 1,\n  \"BirthDate\" : \"1997-07-12T00:00:00.000+00:00\"\n}, {\n  \"StreetName\" : \"Eenhoornstraat\",\n  \"HouseNumber\" : 1234,\n  \"FirstName\" : \"Existing\",\n  \"ZipCode\" : \"1973 SH\",\n  \"Country\" : \"Netherlands\",\n  \"LastName\" : \"Employee\",\n  \"City\" : \"IJmuiden\",\n  \"EmployeeId\" : 1,\n  \"BirthDate\" : \"1997-07-12T00:00:00.000+00:00\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<EmployeeDTO>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        // TODO
 
         return new ResponseEntity<List<EmployeeDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<EmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") Integer employeeId) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<EmployeeDTO>(objectMapper.readValue("{\n  \"StreetName\" : \"Eenhoornstraat\",\n  \"HouseNumber\" : 1234,\n  \"FirstName\" : \"Existing\",\n  \"ZipCode\" : \"1973 SH\",\n  \"Country\" : \"Netherlands\",\n  \"LastName\" : \"Employee\",\n  \"City\" : \"IJmuiden\",\n  \"EmployeeId\" : 1,\n  \"BirthDate\" : \"1997-07-12T00:00:00.000+00:00\"\n}", EmployeeDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<EmployeeDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        // TODO
 
         return new ResponseEntity<EmployeeDTO>(HttpStatus.NOT_IMPLEMENTED);
     }

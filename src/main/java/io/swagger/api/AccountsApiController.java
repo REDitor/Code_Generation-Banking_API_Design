@@ -39,44 +39,17 @@ public class AccountsApiController implements AccountsApi {
     }
 
     public ResponseEntity<AccountDTO> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewAccountDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0,\n  \"fkCustomerID\" : 1\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AccountDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
+        // TODO
         return new ResponseEntity<AccountDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<AccountDTO> getAccount(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required=true, schema=@Schema()) @PathVariable("iban") String iban) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0,\n  \"fkCustomerID\" : 1\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AccountDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
+        // TODO
         return new ResponseEntity<AccountDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<AccountDTO> updateAccount(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required=true, schema=@Schema()) @PathVariable("iban") String iban,@Parameter(in = ParameterIn.DEFAULT, description = "Fields that need to be updated", schema=@Schema()) @Valid @RequestBody UpdateAccountDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0,\n  \"fkCustomerID\" : 1\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AccountDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
+        // TODO
         return new ResponseEntity<AccountDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 

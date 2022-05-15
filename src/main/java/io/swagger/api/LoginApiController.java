@@ -35,15 +35,7 @@ public class LoginApiController implements LoginApi {
     }
 
     public ResponseEntity<List<CustomerWithAccountsDTO>> login(@Parameter(in = ParameterIn.PATH, description = "Email", required=true, schema=@Schema()) @PathVariable("email") String email,@Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<CustomerWithAccountsDTO>>(objectMapper.readValue("[ {\n  \"StreetName\" : \"Pietersbergweg\",\n  \"HouseNumber\" : 1234,\n  \"DailyLimit\" : 500,\n  \"FirstName\" : \"Bruno\",\n  \"ZipCode\" : \"0987 MB\",\n  \"Country\" : \"Netherlands\",\n  \"CustomerId\" : 1,\n  \"LastName\" : \"Coimbra Marques\",\n  \"City\" : \"Amsterdam\",\n  \"Accounts\" : [ {\n    \"Status\" : \"Open\",\n    \"Type\" : \"Current\",\n    \"IBAN\" : \"NL01INHO0000000002\",\n    \"MinimumBalance\" : 0,\n    \"Balance\" : 0,\n    \"fkCustomerID\" : 1\n  }, {\n    \"Status\" : \"Open\",\n    \"Type\" : \"Current\",\n    \"IBAN\" : \"NL01INHO0000000002\",\n    \"MinimumBalance\" : 0,\n    \"Balance\" : 0,\n    \"fkCustomerID\" : 1\n  } ],\n  \"BirthDate\" : \"1999-10-12T00:00:00.000+00:00\",\n  \"TransactionAmountLimit\" : 2000\n}, {\n  \"StreetName\" : \"Pietersbergweg\",\n  \"HouseNumber\" : 1234,\n  \"DailyLimit\" : 500,\n  \"FirstName\" : \"Bruno\",\n  \"ZipCode\" : \"0987 MB\",\n  \"Country\" : \"Netherlands\",\n  \"CustomerId\" : 1,\n  \"LastName\" : \"Coimbra Marques\",\n  \"City\" : \"Amsterdam\",\n  \"Accounts\" : [ {\n    \"Status\" : \"Open\",\n    \"Type\" : \"Current\",\n    \"IBAN\" : \"NL01INHO0000000002\",\n    \"MinimumBalance\" : 0,\n    \"Balance\" : 0,\n    \"fkCustomerID\" : 1\n  }, {\n    \"Status\" : \"Open\",\n    \"Type\" : \"Current\",\n    \"IBAN\" : \"NL01INHO0000000002\",\n    \"MinimumBalance\" : 0,\n    \"Balance\" : 0,\n    \"fkCustomerID\" : 1\n  } ],\n  \"BirthDate\" : \"1999-10-12T00:00:00.000+00:00\",\n  \"TransactionAmountLimit\" : 2000\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<CustomerWithAccountsDTO>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        // TODO
 
         return new ResponseEntity<List<CustomerWithAccountsDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
