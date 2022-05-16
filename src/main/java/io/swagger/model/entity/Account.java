@@ -13,16 +13,16 @@ public class Account {
     @GeneratedValue
     private String IBAN;
 
-    @OneToOne(mappedBy = "customer")
-    private Customer fkCustomerID;
+    @OneToOne(mappedBy = "user")
+    private User fkUserID;
     private String type;
     private Integer balance;
     private String status;
     private Integer minimumBalance;
 
-    public Account(String IBAN, Customer fkCustomerID, String type, Integer balance, String status, Integer minimumBalance) {
+    public Account(String IBAN, User fkUserID, String type, Integer balance, String status, Integer minimumBalance) {
         this.IBAN = IBAN;
-        this.fkCustomerID = fkCustomerID;
+        this.fkUserID = fkUserID;
         this.type = type;
         this.balance = balance;
         this.status = status;
@@ -41,12 +41,12 @@ public class Account {
         this.IBAN = IBAN;
     }
 
-    public Customer getFkCustomerID() {
-        return fkCustomerID;
+    public User getFkUserID() {
+        return fkUserID;
     }
 
-    public void setFkCustomerID(Customer fkCustomerID) {
-        this.fkCustomerID = fkCustomerID;
+    public void setFkUserID(User fkUserID) {
+        this.fkUserID = fkUserID;
     }
 
     public String getType() {

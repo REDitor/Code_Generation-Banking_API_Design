@@ -1,6 +1,5 @@
 package io.swagger.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.threeten.bp.LocalDate;
 
 import javax.persistence.Entity;
@@ -8,8 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Customer {
-
+public class User {
     @Id
     @GeneratedValue
     private Integer customerId;

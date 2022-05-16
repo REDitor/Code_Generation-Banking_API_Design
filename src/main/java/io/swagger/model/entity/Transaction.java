@@ -18,5 +18,5 @@ public class Transaction {
     private Account to;
     private Double amount;
     @ManyToOne
-    private Employee performedByID;
+    private User performedByID;
 }
