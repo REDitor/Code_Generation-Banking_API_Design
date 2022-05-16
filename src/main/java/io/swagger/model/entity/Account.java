@@ -2,10 +2,7 @@ package io.swagger.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class Account {
@@ -13,7 +10,7 @@ public class Account {
     @GeneratedValue
     private String IBAN;
 
-    @OneToOne(mappedBy = "user")
+    @ManyToOne
     private User fkUserID;
     private String type;
     private Integer balance;
