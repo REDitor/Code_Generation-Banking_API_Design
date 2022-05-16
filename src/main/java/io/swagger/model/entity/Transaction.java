@@ -19,4 +19,65 @@ public class Transaction {
     private Double amount;
     @ManyToOne
     private User performedByID;
+
+    public Transaction(UUID transactionId, String timestamp, Account from, Account to, Double amount, User performedByID) {
+        this.transactionId = transactionId;
+        this.timestamp = timestamp;
+        this.from = from;
+        this.to = to;
+        this.amount = amount;
+        this.performedByID = performedByID;
+    }
+
+    public Transaction() {
+
+    }
+
+    public UUID getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(UUID transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Account getFrom() {
+        return from;
+    }
+
+    public void setFrom(Account from) {
+        this.from = from;
+    }
+
+    public Account getTo() {
+        return to;
+    }
+
+    public void setTo(Account to) {
+        this.to = to;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public User getPerformedByID() {
+        return performedByID;
+    }
+
+    public void setPerformedByID(User performedByID) {
+        this.performedByID = performedByID;
+    }
 }
