@@ -3,6 +3,8 @@ package io.swagger.api;
 import io.swagger.model.NewUserDTO;
 import io.swagger.model.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.entity.User;
+import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -12,8 +14,10 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +47,8 @@ public class CustomersApiController implements CustomersApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    private UserService userService;
     @org.springframework.beans.factory.annotation.Autowired
     public CustomersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -50,17 +56,14 @@ public class CustomersApiController implements CustomersApi {
     }
 
     public ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UserDTO>(objectMapper.readValue("{\n  \"StreetName\" : \"Pietersbergweg\",\n  \"HouseNumber\" : 1234,\n  \"DailyLimit\" : 500,\n  \"FirstName\" : \"Bruno\",\n  \"ZipCode\" : \"0987 MB\",\n  \"Country\" : \"Netherlands\",\n  \"CustomerId\" : 1,\n  \"LastName\" : \"Coimbra Marques\",\n  \"City\" : \"Amsterdam\",\n  \"BirthDate\" : \"1999-10-12T00:00:00.000+00:00\",\n  \"TransactionAmountLimit\" : 2000\n}", UserDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UserDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        ModelMapper modelMapper = new ModelMapper();
 
-        return new ResponseEntity<UserDTO>(HttpStatus.NOT_IMPLEMENTED);
+        User newUser = modelMapper.map(body, User.class);
+
+        newUser = userService.add(newUser);
+
+        UserDTO response = modelMapper.map(newUser, UserDTO.class);
+        return new ResponseEntity<UserDTO>(response,  HttpStatus.CREATED);
     }
 
     public ResponseEntity<UserDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") Integer customerId,@Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo) {
