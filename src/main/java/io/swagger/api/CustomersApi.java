@@ -4,8 +4,8 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.NewUserDTO;
-import io.swagger.model.UserDTO;
+import io.swagger.model.NewUserCustomerDTO;
+import io.swagger.model.UserCustomerDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -32,14 +32,14 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-16T16:44:39.788Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-17T19:48:55.418Z[GMT]")
 @Validated
 public interface CustomersApi {
 
     @Operation(summary = "Creates a new customer", description = "Create new Customer.", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Customers" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Account Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "201", description = "Account Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserCustomerDTO.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad request. Invalid request body."),
         
@@ -52,13 +52,13 @@ public interface CustomersApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserDTO body);
+    ResponseEntity<UserCustomerDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserCustomerDTO body);
 
 
     @Operation(summary = "Gets a customer by ID", description = "Gets a customer by ID", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Customers" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Result of the selected customer", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "200", description = "Result of the selected customer", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserCustomerDTO.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad request. User ID must be an integer and larger than 0."),
         
@@ -70,13 +70,13 @@ public interface CustomersApi {
     @RequestMapping(value = "/customers/{customerId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<UserDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") Integer customerId, @Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo);
+    ResponseEntity<UserCustomerDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") Integer customerId, @Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo);
 
 
     @Operation(summary = "Gets all the customers available", description = "Gets customers in the system", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Customers" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "The accounts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))),
+        @ApiResponse(responseCode = "200", description = "The accounts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserCustomerDTO.class)))),
         
         @ApiResponse(responseCode = "400", description = "Bad request. User ID must be an integer and larger than 0."),
         
@@ -88,7 +88,7 @@ public interface CustomersApi {
     @RequestMapping(value = "/customers",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "include list of accounts of users" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo, @Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
+    ResponseEntity<List<UserCustomerDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "include list of accounts of users" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo, @Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit);
 
@@ -96,7 +96,7 @@ public interface CustomersApi {
     @Operation(summary = "Updates user selected ID", description = "Updates user selected ID", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Customers" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Result of the modified customer", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "200", description = "Result of the modified customer", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserCustomerDTO.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad request. Invalid request body."),
         
@@ -109,7 +109,7 @@ public interface CustomersApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<UserDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") Integer customerId, @Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserDTO body);
+    ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") Integer customerId, @Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserCustomerDTO body);
 
 }
 

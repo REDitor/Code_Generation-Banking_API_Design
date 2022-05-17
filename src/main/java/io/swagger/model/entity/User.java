@@ -21,9 +21,9 @@ public class User {
     private String country;
     private Integer transactionAmountLimit;
     private Integer dailyLimit;
+    private String role;
 
-
-    public User(Integer customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit) {
+    public User(Integer customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, String role) {
         this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,6 +35,7 @@ public class User {
         this.country = country;
         this.transactionAmountLimit = transactionAmountLimit;
         this.dailyLimit = dailyLimit;
+        this.role = role;
     }
 
     public User() {
@@ -127,5 +128,14 @@ public class User {
 
     public void setDailyLimit(Integer dailyLimit) {
         this.dailyLimit = dailyLimit;
+    }
+
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

@@ -4,8 +4,8 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.NewUserDTO;
-import io.swagger.model.UserDTO;
+import io.swagger.model.NewUserEmployeeDTO;
+import io.swagger.model.UserEmployeeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -32,14 +32,14 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-16T16:44:39.788Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-17T19:48:55.418Z[GMT]")
 @Validated
 public interface EmployeesApi {
 
     @Operation(summary = "Creates a new Employee", description = "Create new Employee", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employees" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Employee Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "201", description = "Employee Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEmployeeDTO.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad request. Invalid request body."),
         
@@ -52,13 +52,13 @@ public interface EmployeesApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<UserDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserDTO body);
+    ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body);
 
 
     @Operation(summary = "Get an employee by Id", description = "Gets a specific Employee by Id", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employees" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Result of the selected employee", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "200", description = "Result of the selected employee", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEmployeeDTO.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad request."),
         
@@ -70,13 +70,13 @@ public interface EmployeesApi {
     @RequestMapping(value = "/employees/{employeeId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<UserDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") Integer employeeId);
+    ResponseEntity<UserEmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") Integer employeeId);
 
 
     @Operation(summary = "Gets all employees available", description = "", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employees" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "All accounts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))),
+        @ApiResponse(responseCode = "200", description = "All accounts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserEmployeeDTO.class)))),
         
         @ApiResponse(responseCode = "400", description = "Bad request."),
         
@@ -88,7 +88,7 @@ public interface EmployeesApi {
     @RequestMapping(value = "/employees",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<UserDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
+    ResponseEntity<List<UserEmployeeDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit);
 
@@ -96,7 +96,7 @@ public interface EmployeesApi {
     @Operation(summary = "Updates employee by Id", description = "Updates employee by ID", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employees" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Result of the modified employee", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "200", description = "Result of the modified employee", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEmployeeDTO.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad request. Invalid request body."),
         
@@ -107,8 +107,9 @@ public interface EmployeesApi {
         @ApiResponse(responseCode = "5XX", description = "Unexpected error.") })
     @RequestMapping(value = "/employees/{employeeId}",
         produces = { "application/json" }, 
+        consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<UserDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") Integer employeeId);
+    ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") Integer employeeId, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body);
 
 }
 
