@@ -7,6 +7,8 @@ import io.swagger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserService {
     @Autowired
@@ -14,5 +16,9 @@ public class UserService {
 
     public User add(User user) {
         return userRepository.save(user);
+    }
+
+    public User getOne(UUID userID) {
+        return userRepository.getOne(userID);
     }
 }

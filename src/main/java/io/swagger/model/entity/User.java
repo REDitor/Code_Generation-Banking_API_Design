@@ -5,12 +5,13 @@ import org.threeten.bp.LocalDate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.UUID;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue
-    private Integer customerId;
+    private UUID customerId;
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
@@ -23,7 +24,7 @@ public class User {
     private Integer dailyLimit;
     private String role;
 
-    public User(Integer customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, String role) {
+    public User(UUID customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, String role) {
         this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -42,11 +43,11 @@ public class User {
 
     }
 
-    public Integer getCustomerId() {
+    public UUID getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(UUID customerId) {
         this.customerId = customerId;
     }
 
