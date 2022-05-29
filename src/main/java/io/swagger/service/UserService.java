@@ -25,8 +25,18 @@ public class UserService {
         return userRepository.getOne(userID);
     }
 
+    public User getOneEmployee(UUID userID) {
+        return userRepository.getOneEmployee(userID);
+    }
+
     public List<User> getAll(Pageable page) {
         Page<User> customerPage = userRepository.getAllCustomers(page);
+
+        return customerPage.getContent();
+    }
+
+    public List<User> getAllEmployees(Pageable page) {
+        Page<User> customerPage = userRepository.getAllEmployees(page);
 
         return customerPage.getContent();
     }

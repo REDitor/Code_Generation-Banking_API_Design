@@ -17,6 +17,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query(value = "SELECT * FROM User u WHERE u.role = 'Customer' ", nativeQuery = true)
     Page<User> getAllCustomers(Pageable page);
 
+    @Query(value = "SELECT * FROM User u WHERE u.role = 'Employee' ", nativeQuery = true)
+    Page<User> getAllEmployees(Pageable page);
+
     @Query(value = "SELECT * FROM User u WHERE u.role = 'Customer' and u.customer_ID= :userId ", nativeQuery = true)
     User getOne(@Param("userId") UUID userId);
+
+    @Query(value = "SELECT * FROM User u WHERE u.role = 'Employee' and u.customer_ID= :userId ", nativeQuery = true)
+    User getOneEmployee(@Param("userId") UUID userId);
 }

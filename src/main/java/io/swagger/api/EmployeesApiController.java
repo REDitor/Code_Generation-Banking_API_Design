@@ -1,8 +1,11 @@
 package io.swagger.api;
 
 import io.swagger.model.NewUserEmployeeDTO;
+import io.swagger.model.UserCustomerDTO;
 import io.swagger.model.UserEmployeeDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.entity.User;
+import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -12,8 +15,13 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-17T19:48:55.418Z[GMT]")
 @RestController
@@ -43,6 +52,9 @@ public class EmployeesApiController implements EmployeesApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    private UserService userService;
+
     @org.springframework.beans.factory.annotation.Autowired
     public EmployeesApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -50,61 +62,49 @@ public class EmployeesApiController implements EmployeesApi {
     }
 
     public ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UserEmployeeDTO>(objectMapper.readValue("{\n  \"StreetName\" : \"Pietersbergweg\",\n  \"Role\" : \"Employee\",\n  \"HouseNumber\" : 1234,\n  \"DailyLimit\" : 0,\n  \"FirstName\" : \"Bruno\",\n  \"ZipCode\" : \"0987 MB\",\n  \"Country\" : \"Netherlands\",\n  \"CustomerId\" : 1,\n  \"LastName\" : \"Coimbra Marques\",\n  \"City\" : \"Amsterdam\",\n  \"BirthDate\" : \"1999-10-12T00:00:00.000+00:00\",\n  \"TransactionAmountLimit\" : 0\n}", UserEmployeeDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UserEmployeeDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        ModelMapper modelMapper = new ModelMapper();
 
-        return new ResponseEntity<UserEmployeeDTO>(HttpStatus.NOT_IMPLEMENTED);
+        User newUser = modelMapper.map(body, User.class);
+        newUser.setRole("Employee");
+
+        newUser = userService.add(newUser);
+
+        UserEmployeeDTO response = modelMapper.map(newUser, UserEmployeeDTO.class);
+        return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.CREATED);
     }
 
-    public ResponseEntity<UserEmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") Integer employeeId) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UserEmployeeDTO>(objectMapper.readValue("{\n  \"StreetName\" : \"Pietersbergweg\",\n  \"Role\" : \"Employee\",\n  \"HouseNumber\" : 1234,\n  \"DailyLimit\" : 0,\n  \"FirstName\" : \"Bruno\",\n  \"ZipCode\" : \"0987 MB\",\n  \"Country\" : \"Netherlands\",\n  \"CustomerId\" : 1,\n  \"LastName\" : \"Coimbra Marques\",\n  \"City\" : \"Amsterdam\",\n  \"BirthDate\" : \"1999-10-12T00:00:00.000+00:00\",\n  \"TransactionAmountLimit\" : 0\n}", UserEmployeeDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UserEmployeeDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    public ResponseEntity<UserEmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId) {
+        ModelMapper modelMapper = new ModelMapper();
 
-        return new ResponseEntity<UserEmployeeDTO>(HttpStatus.NOT_IMPLEMENTED);
+        User receivedUser = userService.getOneEmployee(employeeId);
+
+        UserEmployeeDTO response = modelMapper.map(receivedUser, UserEmployeeDTO.class);
+        return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.OK);
     }
 
     public ResponseEntity<List<UserEmployeeDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<UserEmployeeDTO>>(objectMapper.readValue("[ {\n  \"StreetName\" : \"Pietersbergweg\",\n  \"Role\" : \"Employee\",\n  \"HouseNumber\" : 1234,\n  \"DailyLimit\" : 0,\n  \"FirstName\" : \"Bruno\",\n  \"ZipCode\" : \"0987 MB\",\n  \"Country\" : \"Netherlands\",\n  \"CustomerId\" : 1,\n  \"LastName\" : \"Coimbra Marques\",\n  \"City\" : \"Amsterdam\",\n  \"BirthDate\" : \"1999-10-12T00:00:00.000+00:00\",\n  \"TransactionAmountLimit\" : 0\n}, {\n  \"StreetName\" : \"Pietersbergweg\",\n  \"Role\" : \"Employee\",\n  \"HouseNumber\" : 1234,\n  \"DailyLimit\" : 0,\n  \"FirstName\" : \"Bruno\",\n  \"ZipCode\" : \"0987 MB\",\n  \"Country\" : \"Netherlands\",\n  \"CustomerId\" : 1,\n  \"LastName\" : \"Coimbra Marques\",\n  \"City\" : \"Amsterdam\",\n  \"BirthDate\" : \"1999-10-12T00:00:00.000+00:00\",\n  \"TransactionAmountLimit\" : 0\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<UserEmployeeDTO>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        ModelMapper modelMapper = new ModelMapper();
 
-        return new ResponseEntity<List<UserEmployeeDTO>>(HttpStatus.NOT_IMPLEMENTED);
+        Pageable page = PageRequest.of(offset, limit);
+
+        List<User> receivedUser = userService.getAllEmployees(page);
+        List<UserEmployeeDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserEmployeeDTO>>(){}.getType());
+        return new ResponseEntity<List<UserEmployeeDTO>>(entityToDto,  HttpStatus.OK);
     }
 
-    public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") Integer employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UserEmployeeDTO>(objectMapper.readValue("{\n  \"StreetName\" : \"Pietersbergweg\",\n  \"Role\" : \"Employee\",\n  \"HouseNumber\" : 1234,\n  \"DailyLimit\" : 0,\n  \"FirstName\" : \"Bruno\",\n  \"ZipCode\" : \"0987 MB\",\n  \"Country\" : \"Netherlands\",\n  \"CustomerId\" : 1,\n  \"LastName\" : \"Coimbra Marques\",\n  \"City\" : \"Amsterdam\",\n  \"BirthDate\" : \"1999-10-12T00:00:00.000+00:00\",\n  \"TransactionAmountLimit\" : 0\n}", UserEmployeeDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UserEmployeeDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
+        ModelMapper modelMapper = new ModelMapper();
 
-        return new ResponseEntity<UserEmployeeDTO>(HttpStatus.NOT_IMPLEMENTED);
+        User updatedUser = modelMapper.map(body, User.class);
+        updatedUser.setCustomerId(employeeId);
+        updatedUser.setRole("Employee");
+
+        updatedUser = userService.save(updatedUser);
+
+        UserEmployeeDTO response = modelMapper.map(updatedUser, UserEmployeeDTO.class);
+        return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.OK);
     }
 
 }

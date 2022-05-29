@@ -1,6 +1,8 @@
 package io.swagger.model;
 
 import java.util.Objects;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,7 +20,7 @@ import javax.validation.constraints.*;
 
 public class UserEmployeeDTO   {
   @JsonProperty("CustomerId")
-  private Integer customerId = null;
+  private UUID customerId = null;
 
   @JsonProperty("FirstName")
   private String firstName = null;
@@ -53,7 +55,7 @@ public class UserEmployeeDTO   {
   @JsonProperty("DailyLimit")
   private Integer dailyLimit = null;
 
-  public UserEmployeeDTO customerId(Integer customerId) {
+  public UserEmployeeDTO customerId(UUID customerId) {
     this.customerId = customerId;
     return this;
   }
@@ -64,11 +66,11 @@ public class UserEmployeeDTO   {
    **/
   @Schema(example = "1", description = "")
   
-    public Integer getCustomerId() {
+    public UUID getCustomerId() {
     return customerId;
   }
 
-  public void setCustomerId(Integer customerId) {
+  public void setCustomerId(UUID customerId) {
     this.customerId = customerId;
   }
 

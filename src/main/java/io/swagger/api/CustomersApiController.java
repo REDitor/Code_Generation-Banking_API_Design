@@ -104,6 +104,7 @@ public class CustomersApiController implements CustomersApi {
 
         User updatedUser = modelMapper.map(body, User.class);
         updatedUser.setCustomerId(customerId);
+        updatedUser.setRole("Customer");
 
         updatedUser = userService.save(updatedUser);
 
