@@ -26,9 +26,13 @@ public class UserService {
     }
 
     public List<User> getAll(Pageable page) {
-        Page<User> customerPage = userRepository.findAll(page);
+        Page<User> customerPage = userRepository.getAllCustomers(page);
 
         return customerPage.getContent();
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
 }

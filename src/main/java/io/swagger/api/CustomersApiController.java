@@ -77,14 +77,13 @@ public class CustomersApiController implements CustomersApi {
     }
 
     public ResponseEntity<UserCustomerDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") UUID customerId, @Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo) {
-        // TODO
 
         ModelMapper modelMapper = new ModelMapper();
 
         User receivedUser = userService.getOne(customerId);
 
         UserCustomerDTO response = modelMapper.map(receivedUser, UserCustomerDTO.class);
-        return new ResponseEntity<UserCustomerDTO>(response,  HttpStatus.FOUND);
+        return new ResponseEntity<UserCustomerDTO>(response,  HttpStatus.OK);
     }
 
     public ResponseEntity<List<UserCustomerDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "include list of accounts of users" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo,@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
@@ -97,14 +96,19 @@ public class CustomersApiController implements CustomersApi {
 
         List<User> receivedUser = userService.getAll(page);
         List<UserCustomerDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserCustomerDTO>>(){}.getType());
-
         return new ResponseEntity<List<UserCustomerDTO>>(entityToDto,  HttpStatus.OK);
     }
 
-    public ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") Integer customerId,@Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo,@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserCustomerDTO body) {
-        // TODO
+    public ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") UUID customerId,@Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo,@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserCustomerDTO body) {
+        ModelMapper modelMapper = new ModelMapper();
 
-        return new ResponseEntity<UserCustomerDTO>(HttpStatus.NOT_IMPLEMENTED);
+        User updatedUser = modelMapper.map(body, User.class);
+        updatedUser.setCustomerId(customerId);
+
+        updatedUser = userService.save(updatedUser);
+
+        UserCustomerDTO response = modelMapper.map(updatedUser, UserCustomerDTO.class);
+        return new ResponseEntity<UserCustomerDTO>(response,  HttpStatus.OK);
     }
 
 }
