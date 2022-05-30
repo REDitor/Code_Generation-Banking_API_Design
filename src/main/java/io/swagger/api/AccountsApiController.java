@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-17T19:48:55.418Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
 public class AccountsApiController implements AccountsApi {
 
@@ -54,7 +54,7 @@ public class AccountsApiController implements AccountsApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0,\n  \"fkCustomerID\" : 1\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"fkuserID\" : 1,\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<AccountDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,7 +68,7 @@ public class AccountsApiController implements AccountsApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0,\n  \"fkCustomerID\" : 1\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"fkuserID\" : 1,\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<AccountDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,7 +82,7 @@ public class AccountsApiController implements AccountsApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0,\n  \"fkCustomerID\" : 1\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"fkuserID\" : 1,\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<AccountDTO>(HttpStatus.INTERNAL_SERVER_ERROR);

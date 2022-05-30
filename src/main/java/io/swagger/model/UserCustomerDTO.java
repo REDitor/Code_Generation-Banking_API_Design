@@ -1,13 +1,10 @@
 package io.swagger.model;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.model.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.UUID;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
@@ -17,12 +14,12 @@ import javax.validation.constraints.*;
  * UserCustomerDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-17T19:48:55.418Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 
 
 public class UserCustomerDTO   {
-  @JsonProperty("CustomerId")
-  private UUID customerId = null;
+  @JsonProperty("UserId")
+  private UUID userId = null;
 
   @JsonProperty("FirstName")
   private String firstName = null;
@@ -40,7 +37,7 @@ public class UserCustomerDTO   {
   private Integer houseNumber = null;
 
   @JsonProperty("Role")
-  private List<Role> role = null;
+  private String role = null;
 
   @JsonProperty("ZipCode")
   private String zipCode = null;
@@ -51,29 +48,39 @@ public class UserCustomerDTO   {
   @JsonProperty("Country")
   private String country = null;
 
+  @JsonProperty("Email")
+  private String email = null;
+
+  @JsonProperty("Username")
+  private String username = null;
+
+  @JsonProperty("Password")
+  private String password = null;
+
   @JsonProperty("TransactionAmountLimit")
   private Integer transactionAmountLimit = null;
 
   @JsonProperty("DailyLimit")
   private Integer dailyLimit = null;
 
-  public UserCustomerDTO customerId(UUID customerId) {
-    this.customerId = customerId;
+  public UserCustomerDTO userId(UUID userId) {
+    this.userId = userId;
     return this;
   }
 
   /**
-   * Get customerId
-   * @return customerId
+   * Get userId
+   * @return userId
    **/
-  @Schema(example = "1", description = "")
+  @Schema(example = "123e4567-e89b-12d3-a456-426614174000", description = "")
   
-    public UUID getCustomerId() {
-    return customerId;
+    @Valid
+    public UUID getUserId() {
+    return userId;
   }
 
-  public void setCustomerId(UUID customerId) {
-    this.customerId = customerId;
+  public void setUserId(UUID userId) {
+    this.userId = userId;
   }
 
   public UserCustomerDTO firstName(String firstName) {
@@ -172,7 +179,7 @@ public class UserCustomerDTO   {
     this.houseNumber = houseNumber;
   }
 
-  public UserCustomerDTO role(List<Role> role) {
+  public UserCustomerDTO role(String role) {
     this.role = role;
     return this;
   }
@@ -183,11 +190,11 @@ public class UserCustomerDTO   {
    **/
   @Schema(example = "Customer", description = "")
   
-    public List<Role> getRole() {
+    public String getRole() {
     return role;
   }
 
-  public void setRole(List<Role> role) {
+  public void setRole(String role) {
     this.role = role;
   }
 
@@ -248,6 +255,63 @@ public class UserCustomerDTO   {
     this.country = country;
   }
 
+  public UserCustomerDTO email(String email) {
+    this.email = email;
+    return this;
+  }
+
+  /**
+   * Get email
+   * @return email
+   **/
+  @Schema(example = "brunocm@pm.me", description = "")
+  
+    public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public UserCustomerDTO username(String username) {
+    this.username = username;
+    return this;
+  }
+
+  /**
+   * Get username
+   * @return username
+   **/
+  @Schema(example = "brumarq", description = "")
+  
+    public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public UserCustomerDTO password(String password) {
+    this.password = password;
+    return this;
+  }
+
+  /**
+   * Get password
+   * @return password
+   **/
+  @Schema(example = "test..123", description = "")
+  
+    public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
   public UserCustomerDTO transactionAmountLimit(Integer transactionAmountLimit) {
     this.transactionAmountLimit = transactionAmountLimit;
     return this;
@@ -296,7 +360,7 @@ public class UserCustomerDTO   {
       return false;
     }
     UserCustomerDTO userCustomerDTO = (UserCustomerDTO) o;
-    return Objects.equals(this.customerId, userCustomerDTO.customerId) &&
+    return Objects.equals(this.userId, userCustomerDTO.userId) &&
         Objects.equals(this.firstName, userCustomerDTO.firstName) &&
         Objects.equals(this.lastName, userCustomerDTO.lastName) &&
         Objects.equals(this.birthDate, userCustomerDTO.birthDate) &&
@@ -306,13 +370,16 @@ public class UserCustomerDTO   {
         Objects.equals(this.zipCode, userCustomerDTO.zipCode) &&
         Objects.equals(this.city, userCustomerDTO.city) &&
         Objects.equals(this.country, userCustomerDTO.country) &&
+        Objects.equals(this.email, userCustomerDTO.email) &&
+        Objects.equals(this.username, userCustomerDTO.username) &&
+        Objects.equals(this.password, userCustomerDTO.password) &&
         Objects.equals(this.transactionAmountLimit, userCustomerDTO.transactionAmountLimit) &&
         Objects.equals(this.dailyLimit, userCustomerDTO.dailyLimit);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(customerId, firstName, lastName, birthDate, streetName, houseNumber, role, zipCode, city, country, transactionAmountLimit, dailyLimit);
+    return Objects.hash(userId, firstName, lastName, birthDate, streetName, houseNumber, role, zipCode, city, country, email, username, password, transactionAmountLimit, dailyLimit);
   }
 
   @Override
@@ -320,7 +387,7 @@ public class UserCustomerDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserCustomerDTO {\n");
     
-    sb.append("    customerId: ").append(toIndentedString(customerId)).append("\n");
+    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
     sb.append("    birthDate: ").append(toIndentedString(birthDate)).append("\n");
@@ -330,6 +397,9 @@ public class UserCustomerDTO   {
     sb.append("    zipCode: ").append(toIndentedString(zipCode)).append("\n");
     sb.append("    city: ").append(toIndentedString(city)).append("\n");
     sb.append("    country: ").append(toIndentedString(country)).append("\n");
+    sb.append("    email: ").append(toIndentedString(email)).append("\n");
+    sb.append("    username: ").append(toIndentedString(username)).append("\n");
+    sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("    transactionAmountLimit: ").append(toIndentedString(transactionAmountLimit)).append("\n");
     sb.append("    dailyLimit: ").append(toIndentedString(dailyLimit)).append("\n");
     sb.append("}");

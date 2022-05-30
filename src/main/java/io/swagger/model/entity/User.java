@@ -22,8 +22,11 @@ public class User {
     private Integer transactionAmountLimit;
     private Integer dailyLimit;
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<Role> role;
-    public User(UUID customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> role) {
+    private List<Role> roles;
+    private String username;
+    private String password;
+
+    public User(UUID customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
         this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,9 +38,10 @@ public class User {
         this.country = country;
         this.transactionAmountLimit = transactionAmountLimit;
         this.dailyLimit = dailyLimit;
-        this.role = role;
+        this.roles = roles;
+        this.username = username;
+        this.password = password;
     }
-
     public User() {
 
     }
@@ -131,13 +135,30 @@ public class User {
     }
 
 
-    public List<Role> getRole() {
-        return role;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(List<Role> role) {
-        this.role = role;
+    public void setRoles(List<Role> role) {
+        this.roles = role;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
 
 
 }
