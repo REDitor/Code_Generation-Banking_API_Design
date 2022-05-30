@@ -5,7 +5,7 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.UserCustomerDTO;
+import io.swagger.model.LoginDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -32,14 +32,14 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T14:26:03.164Z[GMT]")
 @Validated
 public interface LoginApi {
 
     @Operation(summary = "Login to account", description = "", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Authentication" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Account that user logged into", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserCustomerDTO.class)))),
+        @ApiResponse(responseCode = "200", description = "Account that user logged into", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = LoginDTO.class)))),
         
         @ApiResponse(responseCode = "400", description = "Bad request. Invalid request body."),
         
@@ -49,7 +49,7 @@ public interface LoginApi {
     @RequestMapping(value = "/login/email={email}&password={password}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<UserCustomerDTO>> login(@Parameter(in = ParameterIn.PATH, description = "Email", required=true, schema=@Schema()) @PathVariable("email") String email, @Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password);
+    ResponseEntity<List<LoginDTO>> login(@Parameter(in = ParameterIn.PATH, description = "Email", required=true, schema=@Schema()) @PathVariable("email") String email, @Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password);
 
 }
 

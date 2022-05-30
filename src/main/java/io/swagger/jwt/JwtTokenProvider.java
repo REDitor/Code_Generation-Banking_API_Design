@@ -1,4 +1,4 @@
-package murraco.security;
+package io.swagger.jwt;
 
 import java.util.Base64;
 import java.util.Date;
