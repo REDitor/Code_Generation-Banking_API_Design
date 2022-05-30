@@ -1,10 +1,12 @@
 package io.swagger.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.model.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +40,7 @@ public class UserEmployeeDTO   {
   private Integer houseNumber = null;
 
   @JsonProperty("Role")
-  private String role = null;
+  private List<Role> role = null;
 
   @JsonProperty("ZipCode")
   private String zipCode = null;
@@ -170,7 +172,7 @@ public class UserEmployeeDTO   {
     this.houseNumber = houseNumber;
   }
 
-  public UserEmployeeDTO role(String role) {
+  public UserEmployeeDTO role(List<Role> role) {
     this.role = role;
     return this;
   }
@@ -181,11 +183,11 @@ public class UserEmployeeDTO   {
    **/
   @Schema(example = "Employee", description = "")
   
-    public String getRole() {
+    public List<Role> getRole() {
     return role;
   }
 
-  public void setRole(String role) {
+  public void setRole(List<Role> role) {
     this.role = role;
   }
 

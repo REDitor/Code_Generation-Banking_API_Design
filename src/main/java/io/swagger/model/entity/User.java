@@ -2,9 +2,8 @@ package io.swagger.model.entity;
 
 import org.threeten.bp.LocalDate;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,9 +21,9 @@ public class User {
     private String country;
     private Integer transactionAmountLimit;
     private Integer dailyLimit;
-    private String role;
-
-    public User(UUID customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, String role) {
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Role> role;
+    public User(UUID customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> role) {
         this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -132,11 +131,13 @@ public class User {
     }
 
 
-    public String getRole() {
+    public List<Role> getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(List<Role> role) {
         this.role = role;
     }
+
+
 }

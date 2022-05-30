@@ -4,6 +4,7 @@ import io.swagger.model.NewUserEmployeeDTO;
 import io.swagger.model.UserCustomerDTO;
 import io.swagger.model.UserEmployeeDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +39,7 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -65,7 +67,7 @@ public class EmployeesApiController implements EmployeesApi {
         ModelMapper modelMapper = new ModelMapper();
 
         User newUser = modelMapper.map(body, User.class);
-        newUser.setRole("Employee");
+        newUser.setRole(Collections.singletonList(Role.ROLE_EMPLOYEE));
 
         newUser = userService.add(newUser);
 
@@ -99,7 +101,7 @@ public class EmployeesApiController implements EmployeesApi {
 
         User updatedUser = modelMapper.map(body, User.class);
         updatedUser.setCustomerId(employeeId);
-        updatedUser.setRole("Employee");
+        updatedUser.setRole(Collections.singletonList(Role.ROLE_EMPLOYEE));
 
         updatedUser = userService.save(updatedUser);
 

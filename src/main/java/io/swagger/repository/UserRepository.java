@@ -25,4 +25,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query(value = "SELECT * FROM User u WHERE u.role = 'Employee' and u.customer_ID= :userId ", nativeQuery = true)
     User getOneEmployee(@Param("userId") UUID userId);
+
+    User findByUsername(String email);
 }

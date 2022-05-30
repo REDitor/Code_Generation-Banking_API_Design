@@ -3,6 +3,7 @@ package io.swagger.api;
 import io.swagger.model.NewUserCustomerDTO;
 import io.swagger.model.UserCustomerDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +41,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -64,11 +67,12 @@ public class CustomersApiController implements CustomersApi {
         this.request = request;
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserCustomerDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserCustomerDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 
         User newUser = modelMapper.map(body, User.class);
-        newUser.setRole("Customer");
+        newUser.setRole(Collections.singletonList(Role.ROLE_CUSTOMER));
 
         newUser = userService.add(newUser);
 
@@ -76,6 +80,7 @@ public class CustomersApiController implements CustomersApi {
         return new ResponseEntity<UserCustomerDTO>(response,  HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<UserCustomerDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") UUID customerId, @Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo) {
 
         ModelMapper modelMapper = new ModelMapper();
@@ -86,6 +91,7 @@ public class CustomersApiController implements CustomersApi {
         return new ResponseEntity<UserCustomerDTO>(response,  HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserCustomerDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "include list of accounts of users" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo,@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "skip", required = false) Integer skip,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
@@ -99,12 +105,14 @@ public class CustomersApiController implements CustomersApi {
         return new ResponseEntity<List<UserCustomerDTO>>(entityToDto,  HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
+
     public ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The customerID of the customer", required=true, schema=@Schema()) @PathVariable("customerId") UUID customerId,@Parameter(in = ParameterIn.QUERY, description = "include list of accounts of selected user" ,schema=@Schema()) @Valid @RequestParam(value = "includeAccountInfo", required = false) Boolean includeAccountInfo,@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserCustomerDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 
         User updatedUser = modelMapper.map(body, User.class);
         updatedUser.setCustomerId(customerId);
-        updatedUser.setRole("Customer");
+        updatedUser.setRole(Collections.singletonList(Role.ROLE_CUSTOMER));
 
         updatedUser = userService.save(updatedUser);
 
