@@ -35,6 +35,7 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
             "/employees",
             "/accounts",
             "/customers",
+            "/customers/**",
     };
 
     @Override

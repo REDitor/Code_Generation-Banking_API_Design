@@ -269,7 +269,7 @@ paths:
           description: A user with the specified ID was not found.
         "5XX":
           description: Unexpected error.
-  /customers/{customerId}:
+  /customers/{userId}:
     get:
       tags:
         - Customers
@@ -283,9 +283,9 @@ paths:
           schema:
             type: boolean
         - in: path
-          name: customerId
+          name: userId
           required: true
-          description: The customerID of the customer
+          description: The userId of the customer
           schema:
             type: integer
             example: 1
@@ -317,9 +317,9 @@ paths:
           schema:
             type: boolean
         - in: path
-          name: customerId
+          name: userId
           required: true
-          description: The customerID of the customer
+          description: The userId of the customer
           schema:
             type: integer
             example: 1
@@ -736,7 +736,7 @@ components:
     CustomerDTO:
       type: object
       properties:
-        CustomerId:
+        userId:
           type: integer
           example: 1
         FirstName:
@@ -774,7 +774,7 @@ components:
     CustomerWithAccountsDTO:
       type: object
       properties:
-        CustomerId:
+        userId:
           type: integer
           example: 1
         FirstName:
@@ -815,7 +815,7 @@ components:
             $ref: "#/components/schemas/AccountDTO"
     AccountDTO:
       properties:
-        fkCustomerID:
+        fkuserId:
           type: integer
           example: 1
         IBAN:
@@ -851,7 +851,7 @@ components:
           example: Open
     NewAccountDTO:
       properties:
-        fkCustomerID:
+        fkuserId:
           type: integer
           example: 1
         Type:

@@ -17,8 +17,8 @@ import javax.validation.constraints.*;
 
 
 public class UserDTO   {
-  @JsonProperty("CustomerId")
-  private Integer customerId = null;
+  @JsonProperty("userId")
+  private Integer userId = null;
 
   @JsonProperty("FirstName")
   private String firstName = null;
@@ -50,23 +50,23 @@ public class UserDTO   {
   @JsonProperty("DailyLimit")
   private Integer dailyLimit = null;
 
-  public UserDTO customerId(Integer customerId) {
-    this.customerId = customerId;
+  public UserDTO userId(Integer userId) {
+    this.userId = userId;
     return this;
   }
 
   /**
-   * Get customerId
-   * @return customerId
+   * Get userId
+   * @return userId
    **/
   @Schema(example = "1", description = "")
   
-    public Integer getCustomerId() {
-    return customerId;
+    public Integer getuserId() {
+    return userId;
   }
 
-  public void setCustomerId(Integer customerId) {
-    this.customerId = customerId;
+  public void setuserId(Integer userId) {
+    this.userId = userId;
   }
 
   public UserDTO firstName(String firstName) {
@@ -270,7 +270,7 @@ public class UserDTO   {
       return false;
     }
     UserDTO userDTO = (UserDTO) o;
-    return Objects.equals(this.customerId, userDTO.customerId) &&
+    return Objects.equals(this.userId, userDTO.userId) &&
         Objects.equals(this.firstName, userDTO.firstName) &&
         Objects.equals(this.lastName, userDTO.lastName) &&
         Objects.equals(this.birthDate, userDTO.birthDate) &&
@@ -285,7 +285,7 @@ public class UserDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(customerId, firstName, lastName, birthDate, streetName, houseNumber, zipCode, city, country, transactionAmountLimit, dailyLimit);
+    return Objects.hash(userId, firstName, lastName, birthDate, streetName, houseNumber, zipCode, city, country, transactionAmountLimit, dailyLimit);
   }
 
   @Override
@@ -293,7 +293,7 @@ public class UserDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserDTO {\n");
     
-    sb.append("    customerId: ").append(toIndentedString(customerId)).append("\n");
+    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
     sb.append("    birthDate: ").append(toIndentedString(birthDate)).append("\n");

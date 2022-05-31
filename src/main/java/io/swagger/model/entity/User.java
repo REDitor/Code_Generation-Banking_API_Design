@@ -10,7 +10,7 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue
-    private UUID customerId;
+    private UUID userId;
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
@@ -26,8 +26,8 @@ public class User {
     private String username;
     private String password;
 
-    public User(UUID customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
-        this.customerId = customerId;
+    public User(UUID userId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
@@ -46,12 +46,12 @@ public class User {
 
     }
 
-    public UUID getCustomerId() {
-        return customerId;
+    public UUID getuserId() {
+        return userId;
     }
 
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
+    public void setuserId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {

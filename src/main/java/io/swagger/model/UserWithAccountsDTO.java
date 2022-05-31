@@ -20,8 +20,8 @@ import javax.validation.constraints.*;
 
 
 public class UserWithAccountsDTO   {
-  @JsonProperty("CustomerId")
-  private Integer customerId = null;
+  @JsonProperty("userId")
+  private Integer userId = null;
 
   @JsonProperty("FirstName")
   private String firstName = null;
@@ -57,23 +57,23 @@ public class UserWithAccountsDTO   {
   @Valid
   private List<AccountDTO> accounts = null;
 
-  public UserWithAccountsDTO customerId(Integer customerId) {
-    this.customerId = customerId;
+  public UserWithAccountsDTO userId(Integer userId) {
+    this.userId = userId;
     return this;
   }
 
   /**
-   * Get customerId
-   * @return customerId
+   * Get userId
+   * @return userId
    **/
   @Schema(example = "1", description = "")
   
-    public Integer getCustomerId() {
-    return customerId;
+    public Integer getuserId() {
+    return userId;
   }
 
-  public void setCustomerId(Integer customerId) {
-    this.customerId = customerId;
+  public void setuserId(Integer userId) {
+    this.userId = userId;
   }
 
   public UserWithAccountsDTO firstName(String firstName) {
@@ -304,7 +304,7 @@ public class UserWithAccountsDTO   {
       return false;
     }
     UserWithAccountsDTO userWithAccountsDTO = (UserWithAccountsDTO) o;
-    return Objects.equals(this.customerId, userWithAccountsDTO.customerId) &&
+    return Objects.equals(this.userId, userWithAccountsDTO.userId) &&
         Objects.equals(this.firstName, userWithAccountsDTO.firstName) &&
         Objects.equals(this.lastName, userWithAccountsDTO.lastName) &&
         Objects.equals(this.birthDate, userWithAccountsDTO.birthDate) &&
@@ -320,7 +320,7 @@ public class UserWithAccountsDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(customerId, firstName, lastName, birthDate, streetName, houseNumber, zipCode, city, country, transactionAmountLimit, dailyLimit, accounts);
+    return Objects.hash(userId, firstName, lastName, birthDate, streetName, houseNumber, zipCode, city, country, transactionAmountLimit, dailyLimit, accounts);
   }
 
   @Override
@@ -328,7 +328,7 @@ public class UserWithAccountsDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserWithAccountsDTO {\n");
     
-    sb.append("    customerId: ").append(toIndentedString(customerId)).append("\n");
+    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
     sb.append("    birthDate: ").append(toIndentedString(birthDate)).append("\n");

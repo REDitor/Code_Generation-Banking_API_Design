@@ -54,7 +54,7 @@ public class CustomersApiController implements CustomersApi {
         ModelMapper modelMapper = new ModelMapper();
 
         User newUser = modelMapper.map(body, User.class);
-        newUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
+        newUser.setRoles(Collections.singletonList(Role.CUSTOMER));
 
         newUser = userService.add(newUser);
 
@@ -79,6 +79,7 @@ public class CustomersApiController implements CustomersApi {
         Pageable page = PageRequest.of(skip, limit);
 
         List<User> receivedUser = userService.getAll(page);
+
         List<UserCustomerDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserCustomerDTO>>(){}.getType());
         return new ResponseEntity<List<UserCustomerDTO>>(entityToDto,  HttpStatus.OK);
     }
@@ -87,8 +88,7 @@ public class CustomersApiController implements CustomersApi {
         ModelMapper modelMapper = new ModelMapper();
 
         User updatedUser = modelMapper.map(body, User.class);
-        updatedUser.setCustomerId(userID);
-        updatedUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
+        updatedUser.setuserId(userID);
 
         updatedUser = userService.save(updatedUser);
 

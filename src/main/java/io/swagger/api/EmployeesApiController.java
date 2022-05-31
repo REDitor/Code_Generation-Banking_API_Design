@@ -54,7 +54,7 @@ public class EmployeesApiController implements EmployeesApi {
         ModelMapper modelMapper = new ModelMapper();
 
         User newUser = modelMapper.map(body, User.class);
-        newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
+        newUser.setRoles(Collections.singletonList(Role.EMPLOYEE));
 
         newUser = userService.add(newUser);
 
@@ -87,8 +87,8 @@ public class EmployeesApiController implements EmployeesApi {
         ModelMapper modelMapper = new ModelMapper();
 
         User updatedUser = modelMapper.map(body, User.class);
-        updatedUser.setCustomerId(employeeId);
-        updatedUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
+        updatedUser.setuserId(employeeId);
+        updatedUser.setRoles(Collections.singletonList(Role.EMPLOYEE));
 
         updatedUser = userService.save(updatedUser);
 
