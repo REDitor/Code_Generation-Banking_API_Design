@@ -1,5 +1,6 @@
 package io.swagger.service;
 
+import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.User;
 import io.swagger.repository.AccountRepository;
@@ -7,17 +8,36 @@ import io.swagger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public User add(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -43,6 +63,38 @@ public class UserService {
 
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        final User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User '" + username + "' not found");
+        }
+        return org.springframework.security.core.userdetails.User
+                .withUsername(username)
+                .password(user.getPassword())
+                .authorities(user.getRoles())
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
+                .build();
+    }
+    public String login(String username, String password) {
+        String token = "";
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
+            User user = userRepository.findByUsername(username);
+            token = jwtTokenProvider.createToken(username, user.getRoles());
+
+        } catch (AuthenticationException e) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Invalid username/password");
+        }
+
+        return token;
     }
 
 }

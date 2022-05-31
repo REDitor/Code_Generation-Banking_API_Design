@@ -1,20 +1,20 @@
 package io.swagger.api;
 
 import io.swagger.model.NewUserEmployeeDTO;
-import io.swagger.model.UserCustomerDTO;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.UUID;
+
+import io.swagger.model.UpdateUserEmployeeDTO;
 import io.swagger.model.UserEmployeeDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
 import io.swagger.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
@@ -25,24 +25,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-17T19:48:55.418Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
 public class EmployeesApiController implements EmployeesApi {
 
@@ -61,11 +53,12 @@ public class EmployeesApiController implements EmployeesApi {
         this.request = request;
     }
 
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 
         User newUser = modelMapper.map(body, User.class);
-        newUser.setRole("Employee");
+        newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
 
         newUser = userService.add(newUser);
 
@@ -73,6 +66,7 @@ public class EmployeesApiController implements EmployeesApi {
         return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.CREATED);
     }
 
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId) {
         ModelMapper modelMapper = new ModelMapper();
 
@@ -82,6 +76,7 @@ public class EmployeesApiController implements EmployeesApi {
         return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.OK);
     }
 
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserEmployeeDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
@@ -94,12 +89,29 @@ public class EmployeesApiController implements EmployeesApi {
         return new ResponseEntity<List<UserEmployeeDTO>>(entityToDto,  HttpStatus.OK);
     }
 
-    public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
+    //@PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserEmployeeDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 
         User updatedUser = modelMapper.map(body, User.class);
-        updatedUser.setCustomerId(employeeId);
-        updatedUser.setRole("Employee");
+
+        List<Role> givenRoles = new LinkedList<Role>();
+
+        for (String role : body.getRoles()) {
+            switch(role) {
+                case "Customer":
+                    givenRoles.add(Role.ROLE_CUSTOMER);
+                    break;
+                case "Employee":
+                    givenRoles.add(Role.ROLE_EMPLOYEE);
+                    break;
+                default:
+                    // throw error
+            }
+        }
+
+        updatedUser.setRoles(givenRoles);
+        updatedUser.setuserId(employeeId);
 
         updatedUser = userService.save(updatedUser);
 

@@ -12,12 +12,12 @@ import javax.validation.constraints.*;
  * AccountDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-17T19:48:55.418Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 
 
 public class AccountDTO   {
-  @JsonProperty("fkCustomerID")
-  private Integer fkCustomerID = null;
+  @JsonProperty("fkuserID")
+  private Integer fkuserID = null;
 
   @JsonProperty("IBAN")
   private String IBAN = null;
@@ -34,23 +34,23 @@ public class AccountDTO   {
   @JsonProperty("MinimumBalance")
   private Integer minimumBalance = null;
 
-  public AccountDTO fkCustomerID(Integer fkCustomerID) {
-    this.fkCustomerID = fkCustomerID;
+  public AccountDTO fkuserID(Integer fkuserID) {
+    this.fkuserID = fkuserID;
     return this;
   }
 
   /**
-   * Get fkCustomerID
-   * @return fkCustomerID
+   * Get fkuserID
+   * @return fkuserID
    **/
   @Schema(example = "1", description = "")
   
-    public Integer getFkCustomerID() {
-    return fkCustomerID;
+    public Integer getFkuserID() {
+    return fkuserID;
   }
 
-  public void setFkCustomerID(Integer fkCustomerID) {
-    this.fkCustomerID = fkCustomerID;
+  public void setFkuserID(Integer fkuserID) {
+    this.fkuserID = fkuserID;
   }
 
   public AccountDTO IBAN(String IBAN) {
@@ -158,7 +158,7 @@ public class AccountDTO   {
       return false;
     }
     AccountDTO accountDTO = (AccountDTO) o;
-    return Objects.equals(this.fkCustomerID, accountDTO.fkCustomerID) &&
+    return Objects.equals(this.fkuserID, accountDTO.fkuserID) &&
         Objects.equals(this.IBAN, accountDTO.IBAN) &&
         Objects.equals(this.type, accountDTO.type) &&
         Objects.equals(this.balance, accountDTO.balance) &&
@@ -168,7 +168,7 @@ public class AccountDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(fkCustomerID, IBAN, type, balance, status, minimumBalance);
+    return Objects.hash(fkuserID, IBAN, type, balance, status, minimumBalance);
   }
 
   @Override
@@ -176,7 +176,7 @@ public class AccountDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class AccountDTO {\n");
     
-    sb.append("    fkCustomerID: ").append(toIndentedString(fkCustomerID)).append("\n");
+    sb.append("    fkuserID: ").append(toIndentedString(fkuserID)).append("\n");
     sb.append("    IBAN: ").append(toIndentedString(IBAN)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    balance: ").append(toIndentedString(balance)).append("\n");

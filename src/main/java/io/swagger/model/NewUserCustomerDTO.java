@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
  * NewUserCustomerDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-17T19:48:55.418Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-31T12:15:45.146Z[GMT]")
 
 
 public class NewUserCustomerDTO   {
@@ -43,6 +43,9 @@ public class NewUserCustomerDTO   {
 
   @JsonProperty("Email")
   private String email = null;
+
+  @JsonProperty("Username")
+  private String username = null;
 
   @JsonProperty("Password")
   private String password = null;
@@ -233,6 +236,25 @@ public class NewUserCustomerDTO   {
     this.email = email;
   }
 
+  public NewUserCustomerDTO username(String username) {
+    this.username = username;
+    return this;
+  }
+
+  /**
+   * Get username
+   * @return username
+   **/
+  @Schema(example = "brumarq", description = "")
+  
+    public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
   public NewUserCustomerDTO password(String password) {
     this.password = password;
     return this;
@@ -311,6 +333,7 @@ public class NewUserCustomerDTO   {
         Objects.equals(this.city, newUserCustomerDTO.city) &&
         Objects.equals(this.country, newUserCustomerDTO.country) &&
         Objects.equals(this.email, newUserCustomerDTO.email) &&
+        Objects.equals(this.username, newUserCustomerDTO.username) &&
         Objects.equals(this.password, newUserCustomerDTO.password) &&
         Objects.equals(this.transactionAmountLimit, newUserCustomerDTO.transactionAmountLimit) &&
         Objects.equals(this.dailyLimit, newUserCustomerDTO.dailyLimit);
@@ -318,7 +341,7 @@ public class NewUserCustomerDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(firstName, lastName, birthDate, streetName, houseNumber, zipCode, city, country, email, password, transactionAmountLimit, dailyLimit);
+    return Objects.hash(firstName, lastName, birthDate, streetName, houseNumber, zipCode, city, country, email, username, password, transactionAmountLimit, dailyLimit);
   }
 
   @Override
@@ -335,6 +358,7 @@ public class NewUserCustomerDTO   {
     sb.append("    city: ").append(toIndentedString(city)).append("\n");
     sb.append("    country: ").append(toIndentedString(country)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
+    sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("    transactionAmountLimit: ").append(toIndentedString(transactionAmountLimit)).append("\n");
     sb.append("    dailyLimit: ").append(toIndentedString(dailyLimit)).append("\n");

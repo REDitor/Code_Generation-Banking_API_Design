@@ -12,12 +12,12 @@ import javax.validation.constraints.*;
  * NewAccountDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-17T19:48:55.418Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 
 
 public class NewAccountDTO   {
-  @JsonProperty("fkCustomerID")
-  private Integer fkCustomerID = null;
+  @JsonProperty("fkuserID")
+  private Integer fkuserID = null;
 
   @JsonProperty("Type")
   private String type = null;
@@ -28,23 +28,23 @@ public class NewAccountDTO   {
   @JsonProperty("MinimumBalance")
   private Integer minimumBalance = null;
 
-  public NewAccountDTO fkCustomerID(Integer fkCustomerID) {
-    this.fkCustomerID = fkCustomerID;
+  public NewAccountDTO fkuserID(Integer fkuserID) {
+    this.fkuserID = fkuserID;
     return this;
   }
 
   /**
-   * Get fkCustomerID
-   * @return fkCustomerID
+   * Get fkuserID
+   * @return fkuserID
    **/
   @Schema(example = "1", description = "")
   
-    public Integer getFkCustomerID() {
-    return fkCustomerID;
+    public Integer getFkuserID() {
+    return fkuserID;
   }
 
-  public void setFkCustomerID(Integer fkCustomerID) {
-    this.fkCustomerID = fkCustomerID;
+  public void setFkuserID(Integer fkuserID) {
+    this.fkuserID = fkuserID;
   }
 
   public NewAccountDTO type(String type) {
@@ -114,7 +114,7 @@ public class NewAccountDTO   {
       return false;
     }
     NewAccountDTO newAccountDTO = (NewAccountDTO) o;
-    return Objects.equals(this.fkCustomerID, newAccountDTO.fkCustomerID) &&
+    return Objects.equals(this.fkuserID, newAccountDTO.fkuserID) &&
         Objects.equals(this.type, newAccountDTO.type) &&
         Objects.equals(this.status, newAccountDTO.status) &&
         Objects.equals(this.minimumBalance, newAccountDTO.minimumBalance);
@@ -122,7 +122,7 @@ public class NewAccountDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(fkCustomerID, type, status, minimumBalance);
+    return Objects.hash(fkuserID, type, status, minimumBalance);
   }
 
   @Override
@@ -130,7 +130,7 @@ public class NewAccountDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class NewAccountDTO {\n");
     
-    sb.append("    fkCustomerID: ").append(toIndentedString(fkCustomerID)).append("\n");
+    sb.append("    fkuserID: ").append(toIndentedString(fkuserID)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    minimumBalance: ").append(toIndentedString(minimumBalance)).append("\n");

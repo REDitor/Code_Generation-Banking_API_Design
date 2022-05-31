@@ -2,16 +2,15 @@ package io.swagger.model.entity;
 
 import org.threeten.bp.LocalDate;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue
-    private UUID customerId;
+    private UUID userId;
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
@@ -22,10 +21,13 @@ public class User {
     private String country;
     private Integer transactionAmountLimit;
     private Integer dailyLimit;
-    private String role;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Role> roles;
+    private String username;
+    private String password;
 
-    public User(UUID customerId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, String role) {
-        this.customerId = customerId;
+    public User(UUID userId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
@@ -36,19 +38,20 @@ public class User {
         this.country = country;
         this.transactionAmountLimit = transactionAmountLimit;
         this.dailyLimit = dailyLimit;
-        this.role = role;
+        this.roles = roles;
+        this.username = username;
+        this.password = password;
     }
-
     public User() {
 
     }
 
-    public UUID getCustomerId() {
-        return customerId;
+    public UUID getuserId() {
+        return userId;
     }
 
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
+    public void setuserId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {
@@ -132,11 +135,30 @@ public class User {
     }
 
 
-    public String getRole() {
-        return role;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(List<Role> role) {
+        this.roles = role;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+
 }
