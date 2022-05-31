@@ -80,4 +80,14 @@ public class Transaction {
     public void setPerformedByID(User performedByID) {
         this.performedByID = performedByID;
     }
+
+    @Override
+    public String toString() {
+        return "Id: " + transactionId +
+                "\n, Amount: " + amount +
+                "\n, Timestamp: " + timestamp +
+                "\n, From: " + from +
+                "\n, To: " + to +
+                "\n, PerformedByID: " + performedByID;
+    }
 }
