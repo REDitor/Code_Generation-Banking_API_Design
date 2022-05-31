@@ -26,12 +26,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query(value = "SELECT * FROM User u " +
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
-            "WHERE ur.roles = '1' and u.customer_ID= :userId ", nativeQuery = true)
+            "WHERE ur.roles = '1' and u.user_Id= :userId ", nativeQuery = true)
     User getOne(@Param("userId") UUID userId);
 
     @Query(value = "SELECT * FROM User u " +
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
-            "WHERE ur.roles = '0' and u.customer_ID= :userId ", nativeQuery = true)
+            "WHERE ur.roles = '0' and u.user_Id= :userId ", nativeQuery = true)
     User getOneEmployee(@Param("userId") UUID userId);
 
     User findByUsername(String username);

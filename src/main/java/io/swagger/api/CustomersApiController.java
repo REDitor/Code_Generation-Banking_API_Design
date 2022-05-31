@@ -3,7 +3,10 @@ package io.swagger.api;
 import io.swagger.model.NewUserCustomerDTO;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.UUID;
+
+import io.swagger.model.UpdateUserCustomerDTO;
 import io.swagger.model.UserCustomerDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.Role;
@@ -21,10 +24,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
@@ -54,14 +55,14 @@ public class CustomersApiController implements CustomersApi {
         ModelMapper modelMapper = new ModelMapper();
 
         User newUser = modelMapper.map(body, User.class);
-        newUser.setRoles(Collections.singletonList(Role.CUSTOMER));
+        newUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
 
         newUser = userService.add(newUser);
 
         UserCustomerDTO response = modelMapper.map(newUser, UserCustomerDTO.class);
         return new ResponseEntity<UserCustomerDTO>(response,  HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserCustomerDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required=true, schema=@Schema()) @PathVariable("userID") UUID userID) {
         ModelMapper modelMapper = new ModelMapper();
 
@@ -70,7 +71,7 @@ public class CustomersApiController implements CustomersApi {
         UserCustomerDTO response = modelMapper.map(receivedUser, UserCustomerDTO.class);
         return new ResponseEntity<UserCustomerDTO>(response,  HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserCustomerDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "skip", required = false) Integer skip,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
@@ -83,11 +84,28 @@ public class CustomersApiController implements CustomersApi {
         List<UserCustomerDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserCustomerDTO>>(){}.getType());
         return new ResponseEntity<List<UserCustomerDTO>>(entityToDto,  HttpStatus.OK);
     }
-
-    public ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required=true, schema=@Schema()) @PathVariable("userID") UUID userID,@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserCustomerDTO body) {
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required=true, schema=@Schema()) @PathVariable("userID") UUID userID,@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody UpdateUserCustomerDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 
         User updatedUser = modelMapper.map(body, User.class);
+        
+        List<Role> givenRoles = new LinkedList<Role>();
+
+        for (String role : body.getRoles()) {
+            switch(role) {
+                case "Customer":
+                    givenRoles.add(Role.ROLE_CUSTOMER);
+                    break;
+                case "Employee":
+                    givenRoles.add(Role.ROLE_EMPLOYEE);
+                    break;
+                default:
+                    // throw error
+            }
+        }
+
+        updatedUser.setRoles(givenRoles);
         updatedUser.setuserId(userID);
 
         updatedUser = userService.save(updatedUser);

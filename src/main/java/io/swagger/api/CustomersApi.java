@@ -7,6 +7,8 @@ package io.swagger.api;
 
 import io.swagger.model.NewUserCustomerDTO;
 import java.util.UUID;
+
+import io.swagger.model.UpdateUserCustomerDTO;
 import io.swagger.model.UserCustomerDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -111,7 +113,7 @@ public interface CustomersApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required=true, schema=@Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserCustomerDTO body);
+    ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required=true, schema=@Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody UpdateUserCustomerDTO body);
 
 }
 

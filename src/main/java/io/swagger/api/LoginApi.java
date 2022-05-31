@@ -46,10 +46,10 @@ public interface LoginApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized or authorization information is missing or invalid."),
         
         @ApiResponse(responseCode = "5XX", description = "Unexpected error.") })
-    @RequestMapping(value = "/login/email={email}&password={password}",
+    @RequestMapping(value = "/login/username={username}&password={password}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<LoginDTO>> login(@Parameter(in = ParameterIn.PATH, description = "Email", required=true, schema=@Schema()) @PathVariable("email") String email, @Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password);
+    ResponseEntity<LoginDTO> login(@Parameter(in = ParameterIn.PATH, description = "Username", required=true, schema=@Schema()) @PathVariable("username") String username, @Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password);
 
 }
 

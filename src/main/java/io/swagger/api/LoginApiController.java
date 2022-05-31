@@ -4,6 +4,7 @@ import io.swagger.jwt.JwtTokenFilter;
 import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.UserEmployeeDTO;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
 
 import javax.naming.AuthenticationException;
 import javax.validation.constraints.*;
@@ -58,12 +60,15 @@ public class LoginApiController implements LoginApi {
         this.request = request;
     }
 
-    public ResponseEntity<List<LoginDTO>> login(@Parameter(in = ParameterIn.PATH, description = "username", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password) {
+    public ResponseEntity<LoginDTO> login(@Parameter(in = ParameterIn.PATH, description = "username", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password) {
         String token = "";
 
         String result = userService.login(username, password);
 
-        return null;
+        LoginDTO loginInfo = new LoginDTO();
+        loginInfo.setJwtToken(result);
+
+        return new ResponseEntity<LoginDTO>(loginInfo,  HttpStatus.OK);
     }
 
 }

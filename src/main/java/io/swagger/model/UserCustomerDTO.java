@@ -1,20 +1,20 @@
 package io.swagger.model;
 
-import java.util.List;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.model.entity.Role;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * UserCustomerDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-31T12:15:45.146Z[GMT]")
 
 
 public class UserCustomerDTO   {
@@ -35,9 +35,6 @@ public class UserCustomerDTO   {
 
   @JsonProperty("HouseNumber")
   private Integer houseNumber = null;
-
-  @JsonProperty("Role")
-  private List<Role> roles = null;
 
   @JsonProperty("ZipCode")
   private String zipCode = null;
@@ -177,25 +174,6 @@ public class UserCustomerDTO   {
 
   public void setHouseNumber(Integer houseNumber) {
     this.houseNumber = houseNumber;
-  }
-
-  public UserCustomerDTO role(List<Role> role) {
-    this.roles = role;
-    return this;
-  }
-
-  /**
-   * Get role
-   * @return role
-   **/
-  @Schema(example = "Customer", description = "")
-  
-    public List<Role> getRoles() {
-    return roles;
-  }
-
-  public void setRoles(List<Role> roles) {
-    this.roles = roles;
   }
 
   public UserCustomerDTO zipCode(String zipCode) {
@@ -366,7 +344,6 @@ public class UserCustomerDTO   {
         Objects.equals(this.birthDate, userCustomerDTO.birthDate) &&
         Objects.equals(this.streetName, userCustomerDTO.streetName) &&
         Objects.equals(this.houseNumber, userCustomerDTO.houseNumber) &&
-        Objects.equals(this.roles, userCustomerDTO.roles) &&
         Objects.equals(this.zipCode, userCustomerDTO.zipCode) &&
         Objects.equals(this.city, userCustomerDTO.city) &&
         Objects.equals(this.country, userCustomerDTO.country) &&
@@ -379,7 +356,7 @@ public class UserCustomerDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, firstName, lastName, birthDate, streetName, houseNumber, roles, zipCode, city, country, email, username, password, transactionAmountLimit, dailyLimit);
+    return Objects.hash(userId, firstName, lastName, birthDate, streetName, houseNumber, zipCode, city, country, email, username, password, transactionAmountLimit, dailyLimit);
   }
 
   @Override
@@ -393,7 +370,6 @@ public class UserCustomerDTO   {
     sb.append("    birthDate: ").append(toIndentedString(birthDate)).append("\n");
     sb.append("    streetName: ").append(toIndentedString(streetName)).append("\n");
     sb.append("    houseNumber: ").append(toIndentedString(houseNumber)).append("\n");
-    sb.append("    role: ").append(toIndentedString(roles)).append("\n");
     sb.append("    zipCode: ").append(toIndentedString(zipCode)).append("\n");
     sb.append("    city: ").append(toIndentedString(city)).append("\n");
     sb.append("    country: ").append(toIndentedString(country)).append("\n");

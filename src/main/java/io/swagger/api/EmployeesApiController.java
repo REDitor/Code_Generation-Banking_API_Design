@@ -3,7 +3,10 @@ package io.swagger.api;
 import io.swagger.model.NewUserEmployeeDTO;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.UUID;
+
+import io.swagger.model.UpdateUserEmployeeDTO;
 import io.swagger.model.UserEmployeeDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.Role;
@@ -54,7 +57,7 @@ public class EmployeesApiController implements EmployeesApi {
         ModelMapper modelMapper = new ModelMapper();
 
         User newUser = modelMapper.map(body, User.class);
-        newUser.setRoles(Collections.singletonList(Role.EMPLOYEE));
+        newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
 
         newUser = userService.add(newUser);
 
@@ -83,12 +86,28 @@ public class EmployeesApiController implements EmployeesApi {
         return new ResponseEntity<List<UserEmployeeDTO>>(entityToDto,  HttpStatus.OK);
     }
 
-    public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
+    public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserEmployeeDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 
         User updatedUser = modelMapper.map(body, User.class);
+
+        List<Role> givenRoles = new LinkedList<Role>();
+
+        for (String role : body.getRoles()) {
+            switch(role) {
+                case "Customer":
+                    givenRoles.add(Role.ROLE_CUSTOMER);
+                    break;
+                case "Employee":
+                    givenRoles.add(Role.ROLE_EMPLOYEE);
+                    break;
+                default:
+                    // throw error
+            }
+        }
+
+        updatedUser.setRoles(givenRoles);
         updatedUser.setuserId(employeeId);
-        updatedUser.setRoles(Collections.singletonList(Role.EMPLOYEE));
 
         updatedUser = userService.save(updatedUser);
 
