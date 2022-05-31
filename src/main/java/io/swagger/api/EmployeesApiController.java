@@ -53,6 +53,7 @@ public class EmployeesApiController implements EmployeesApi {
         this.request = request;
     }
 
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 
@@ -65,6 +66,7 @@ public class EmployeesApiController implements EmployeesApi {
         return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.CREATED);
     }
 
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId) {
         ModelMapper modelMapper = new ModelMapper();
 
@@ -74,6 +76,7 @@ public class EmployeesApiController implements EmployeesApi {
         return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.OK);
     }
 
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserEmployeeDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
@@ -86,6 +89,7 @@ public class EmployeesApiController implements EmployeesApi {
         return new ResponseEntity<List<UserEmployeeDTO>>(entityToDto,  HttpStatus.OK);
     }
 
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserEmployeeDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 

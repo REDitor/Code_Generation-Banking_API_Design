@@ -51,6 +51,7 @@ public class CustomersApiController implements CustomersApi {
         this.request = request;
     }
 
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserCustomerDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewUserCustomerDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 
@@ -62,7 +63,7 @@ public class CustomersApiController implements CustomersApi {
         UserCustomerDTO response = modelMapper.map(newUser, UserCustomerDTO.class);
         return new ResponseEntity<UserCustomerDTO>(response,  HttpStatus.CREATED);
     }
-    @PreAuthorize("hasRole('EMPLOYEE')")
+    //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
     public ResponseEntity<UserCustomerDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required=true, schema=@Schema()) @PathVariable("userID") UUID userID) {
         ModelMapper modelMapper = new ModelMapper();
 
@@ -71,7 +72,7 @@ public class CustomersApiController implements CustomersApi {
         UserCustomerDTO response = modelMapper.map(receivedUser, UserCustomerDTO.class);
         return new ResponseEntity<UserCustomerDTO>(response,  HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('EMPLOYEE')")
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserCustomerDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "skip", required = false) Integer skip,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
@@ -84,7 +85,7 @@ public class CustomersApiController implements CustomersApi {
         List<UserCustomerDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserCustomerDTO>>(){}.getType());
         return new ResponseEntity<List<UserCustomerDTO>>(entityToDto,  HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('EMPLOYEE')")
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required=true, schema=@Schema()) @PathVariable("userID") UUID userID,@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody UpdateUserCustomerDTO body) {
         ModelMapper modelMapper = new ModelMapper();
 
