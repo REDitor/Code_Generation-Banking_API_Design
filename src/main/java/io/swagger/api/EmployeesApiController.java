@@ -1,5 +1,6 @@
 package io.swagger.api;
 
+import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.NewUserEmployeeDTO;
 
 import java.util.Collections;
@@ -55,11 +56,32 @@ public class EmployeesApiController implements EmployeesApi {
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
+
+        // Make sure all the fields got filled properly
+        if (!(body.getFirstName().length() > 1 &&
+                body.getLastName().length() > 1 &&
+                body.getStreetName().length() > 2 &&
+                body.getHouseNumber() > 0 &&
+                body.getZipCode().length() > 3 &&
+                body.getCity().length() > 3 &&
+                body.getCountry().length() > 3 &&
+                body.getTransactionAmountLimit() >= 0 &&
+                body.getDailyLimit() >= 0 &&
+                body.getUsername().length() > 4 &&
+                body.getPassword().length() > 5)
+        ) {
+            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
+        }
+
         ModelMapper modelMapper = new ModelMapper();
-
         User newUser = modelMapper.map(body, User.class);
-        newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
 
+        // Check if username is already in use
+        if (userService.getUserByUsername(newUser.getUsername()) != null) {
+            return new ResponseEntity(new ErrorMessageDTO("Username already exists."), HttpStatus.BAD_REQUEST);
+        }
+
+        newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
         newUser = userService.add(newUser);
 
         UserEmployeeDTO response = modelMapper.map(newUser, UserEmployeeDTO.class);
@@ -68,9 +90,17 @@ public class EmployeesApiController implements EmployeesApi {
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId) {
-        ModelMapper modelMapper = new ModelMapper();
 
+        if (employeeId.toString().length() < 8) {
+            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request parameters."), HttpStatus.BAD_REQUEST);
+        }
+
+        ModelMapper modelMapper = new ModelMapper();
         User receivedUser = userService.getOneEmployee(employeeId);
+
+        if (receivedUser == null) {
+            return new ResponseEntity(new ErrorMessageDTO("Employee not found."), HttpStatus.NOT_FOUND);
+        }
 
         UserEmployeeDTO response = modelMapper.map(receivedUser, UserEmployeeDTO.class);
         return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.OK);
@@ -80,10 +110,15 @@ public class EmployeesApiController implements EmployeesApi {
     public ResponseEntity<List<UserEmployeeDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
-        ModelMapper modelMapper = new ModelMapper();
+
+        // Check if pagination was set
+        if (offset < 0 || limit < 1) {
+            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request parameters."), HttpStatus.BAD_REQUEST);
+        }
 
         Pageable page = PageRequest.of(offset, limit);
 
+        ModelMapper modelMapper = new ModelMapper();
         List<User> receivedUser = userService.getAllEmployees(page);
         List<UserEmployeeDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserEmployeeDTO>>(){}.getType());
         return new ResponseEntity<List<UserEmployeeDTO>>(entityToDto,  HttpStatus.OK);
@@ -91,8 +126,25 @@ public class EmployeesApiController implements EmployeesApi {
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserEmployeeDTO body) {
-        ModelMapper modelMapper = new ModelMapper();
 
+        // Make sure all the fields got filled properly
+        if (!(body.getFirstName().length() > 1 &&
+                body.getLastName().length() > 1 &&
+                body.getStreetName().length() > 2 &&
+                body.getHouseNumber() > 0 &&
+                body.getZipCode().length() > 3 &&
+                body.getCity().length() > 3 &&
+                body.getCountry().length() > 3 &&
+                body.getTransactionAmountLimit() >= 0 &&
+                body.getDailyLimit() >= 0 &&
+                body.getUsername().length() > 4 &&
+                body.getPassword().length() > 5
+        )
+        ) {
+            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
+        }
+
+        ModelMapper modelMapper = new ModelMapper();
         User updatedUser = modelMapper.map(body, User.class);
 
         List<Role> givenRoles = new LinkedList<Role>();
@@ -106,7 +158,7 @@ public class EmployeesApiController implements EmployeesApi {
                     givenRoles.add(Role.ROLE_EMPLOYEE);
                     break;
                 default:
-                    // throw error
+                    return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
             }
         }
 
