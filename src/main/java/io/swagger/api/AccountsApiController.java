@@ -4,6 +4,11 @@ import io.swagger.model.AccountDTO;
 import io.swagger.model.NewAccountDTO;
 import io.swagger.model.UpdateAccountDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.UserEmployeeDTO;
+import io.swagger.model.entity.Account;
+import io.swagger.model.entity.User;
+import io.swagger.service.AccountService;
+import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -13,10 +18,13 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,52 +52,43 @@ public class AccountsApiController implements AccountsApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private UserService userService;
+
+    private final ModelMapper modelMapper;
+
     @org.springframework.beans.factory.annotation.Autowired
     public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.modelMapper = new ModelMapper();
     }
 
     public ResponseEntity<AccountDTO> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewAccountDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"fkuserID\" : 1,\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AccountDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        Account newAccount = modelMapper.map(body, Account.class);
+        User user = userService.getOne(body.getFkuserID());
 
-        return new ResponseEntity<AccountDTO>(HttpStatus.NOT_IMPLEMENTED);
+        newAccount.setFkUserID(user);
+
+        String newIban = accountService.generateIban();
+
+        newAccount.setIBAN(newIban);
+
+        Account result = accountService.add(newAccount);
+
+        AccountDTO response = modelMapper.map(newAccount, AccountDTO.class);
+        return new ResponseEntity<AccountDTO>(response,  HttpStatus.OK);
+
     }
 
     public ResponseEntity<AccountDTO> getAccount(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required=true, schema=@Schema()) @PathVariable("iban") String iban) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"fkuserID\" : 1,\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AccountDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<AccountDTO>(HttpStatus.NOT_IMPLEMENTED);
+        return null;
     }
 
     public ResponseEntity<AccountDTO> updateAccount(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required=true, schema=@Schema()) @PathVariable("iban") String iban,@Parameter(in = ParameterIn.DEFAULT, description = "Fields that need to be updated", schema=@Schema()) @Valid @RequestBody UpdateAccountDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<AccountDTO>(objectMapper.readValue("{\n  \"Status\" : \"Open\",\n  \"Type\" : \"Current\",\n  \"IBAN\" : \"NL01INHO0000000002\",\n  \"fkuserID\" : 1,\n  \"MinimumBalance\" : 0,\n  \"Balance\" : 0\n}", AccountDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AccountDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<AccountDTO>(HttpStatus.NOT_IMPLEMENTED);
+        return null;
     }
 
 }

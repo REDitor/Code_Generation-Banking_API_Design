@@ -10,7 +10,7 @@ public class Account {
     @GeneratedValue
     private String IBAN;
 
-    @ManyToOne
+    @OneToOne
     private User fkUserID;
     private String type;
     private Integer balance;

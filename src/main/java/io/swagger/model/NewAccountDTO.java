@@ -1,6 +1,8 @@
 package io.swagger.model;
 
 import java.util.Objects;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,7 +19,7 @@ import javax.validation.constraints.*;
 
 public class NewAccountDTO   {
   @JsonProperty("fkuserID")
-  private Integer fkuserID = null;
+  private UUID fkuserID = null;
 
   @JsonProperty("Type")
   private String type = null;
@@ -28,7 +30,7 @@ public class NewAccountDTO   {
   @JsonProperty("MinimumBalance")
   private Integer minimumBalance = null;
 
-  public NewAccountDTO fkuserID(Integer fkuserID) {
+  public NewAccountDTO fkuserID(UUID fkuserID) {
     this.fkuserID = fkuserID;
     return this;
   }
@@ -39,11 +41,11 @@ public class NewAccountDTO   {
    **/
   @Schema(example = "1", description = "")
   
-    public Integer getFkuserID() {
+    public UUID getFkuserID() {
     return fkuserID;
   }
 
-  public void setFkuserID(Integer fkuserID) {
+  public void setFkuserID(UUID fkuserID) {
     this.fkuserID = fkuserID;
   }
 
