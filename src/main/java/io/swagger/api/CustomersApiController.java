@@ -36,13 +36,15 @@ import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
-public class CustomersApiController implements CustomersApi {
+public class CustomersApiController extends UserApiController implements CustomersApi {
 
     private static final Logger log = LoggerFactory.getLogger(CustomersApiController.class);
 
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
+
+    private final ModelMapper modelMapper;
 
     private JwtTokenProvider jwtTokenProvider;
 
@@ -53,34 +55,18 @@ public class CustomersApiController implements CustomersApi {
     public CustomersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.modelMapper = new ModelMapper();
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserCustomerDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserCustomerDTO body) {
-
-        // Make sure all the fields got filled properly
-        if (!(body.getFirstName().length() > 1 &&
-                body.getLastName().length() > 1 &&
-                body.getStreetName().length() > 2 &&
-                body.getHouseNumber() > 0 &&
-                body.getZipCode().length() > 3 &&
-                body.getCity().length() > 3 &&
-                body.getCountry().length() > 3 &&
-                body.getTransactionAmountLimit() >= 0 &&
-                body.getDailyLimit() >= 0 &&
-                body.getUsername().length() > 4 &&
-                body.getPassword().length() > 5)
-        ) {
-            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
-        }
-
-        ModelMapper modelMapper = new ModelMapper();
         User newUser = modelMapper.map(body, User.class);
 
+        // Make sure all the fields got filled properly
+        checkUserBody(newUser);
+
         // Check if username is already in use
-        if (userService.getUserByUsername(newUser.getUsername()) != null) {
-            return new ResponseEntity(new ErrorMessageDTO("Username already exists."), HttpStatus.BAD_REQUEST);
-        }
+        checkUserName(newUser.getUsername());
 
         // Set proper role for user and add user to database
         newUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
@@ -92,12 +78,8 @@ public class CustomersApiController implements CustomersApi {
 
     //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
     public ResponseEntity<UserCustomerDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
-        ModelMapper modelMapper = new ModelMapper();
-
         // CHeck if provided userId is valid
-        if (userID.toString().length() < 8) {
-            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request parameters."), HttpStatus.BAD_REQUEST);
-        }
+        checkUserIDParameter(userID.toString());
 
         // Get JWT token and the information of the authenticated user
         String receivedToken = jwtTokenProvider.resolveToken(request);
@@ -126,44 +108,24 @@ public class CustomersApiController implements CustomersApi {
         // TODO: search name in list of customers
 
         // Check if pagination was set
-        if (skip < 0 || limit < 1) {
-            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request parameters."), HttpStatus.BAD_REQUEST);
-        }
+        checkPagination(skip, limit);
 
         Pageable page = PageRequest.of(skip, limit);
-        List<User> receivedUser = userService.getAll(page);
+        List<User> receivedUsers = userService.getAll(page);
 
-        ModelMapper modelMapper = new ModelMapper();
-        List<UserCustomerDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserCustomerDTO>>() {
+        List<UserCustomerDTO> entityToDto = modelMapper.map(receivedUsers, new TypeToken<List<UserCustomerDTO>>() {
         }.getType());
         return new ResponseEntity<List<UserCustomerDTO>>(entityToDto, HttpStatus.OK);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserCustomerDTO body) {
-
-        // Make sure all the fields got filled properly
-        if (!(body.getFirstName().length() > 1 &&
-                body.getLastName().length() > 1 &&
-                body.getStreetName().length() > 2 &&
-                body.getHouseNumber() > 0 &&
-                body.getZipCode().length() > 3 &&
-                body.getCity().length() > 3 &&
-                body.getCountry().length() > 3 &&
-                body.getTransactionAmountLimit() >= 0 &&
-                body.getDailyLimit() >= 0 &&
-                body.getUsername().length() > 4 &&
-                body.getPassword().length() > 5
-            )
-        ) {
-            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
-        }
-
-        ModelMapper modelMapper = new ModelMapper();
         User updatedUser = modelMapper.map(body, User.class);
 
-        List<Role> givenRoles = new LinkedList<Role>();
+        // Make sure all the fields got filled properly
+        checkUserBody(updatedUser);
 
+        List<Role> givenRoles = new LinkedList<Role>();
         for (String role : body.getRoles()) {
             switch (role) {
                 case "Customer":

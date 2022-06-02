@@ -37,13 +37,14 @@ import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
-public class EmployeesApiController implements EmployeesApi {
+public class EmployeesApiController extends UserApiController implements EmployeesApi {
 
     private static final Logger log = LoggerFactory.getLogger(EmployeesApiController.class);
 
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
+    private final ModelMapper modelMapper;
 
     @Autowired
     private UserService userService;
@@ -52,34 +53,18 @@ public class EmployeesApiController implements EmployeesApi {
     public EmployeesApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.modelMapper = new ModelMapper();
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
-
-        // Make sure all the fields got filled properly
-        if (!(body.getFirstName().length() > 1 &&
-                body.getLastName().length() > 1 &&
-                body.getStreetName().length() > 2 &&
-                body.getHouseNumber() > 0 &&
-                body.getZipCode().length() > 3 &&
-                body.getCity().length() > 3 &&
-                body.getCountry().length() > 3 &&
-                body.getTransactionAmountLimit() >= 0 &&
-                body.getDailyLimit() >= 0 &&
-                body.getUsername().length() > 4 &&
-                body.getPassword().length() > 5)
-        ) {
-            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
-        }
-
-        ModelMapper modelMapper = new ModelMapper();
         User newUser = modelMapper.map(body, User.class);
 
+        // Make sure all the fields got filled properly
+        checkUserBody(newUser);
+
         // Check if username is already in use
-        if (userService.getUserByUsername(newUser.getUsername()) != null) {
-            return new ResponseEntity(new ErrorMessageDTO("Username already exists."), HttpStatus.BAD_REQUEST);
-        }
+        checkUserName(newUser.getUsername());
 
         newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
         newUser = userService.add(newUser);
@@ -91,11 +76,8 @@ public class EmployeesApiController implements EmployeesApi {
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId) {
 
-        if (employeeId.toString().length() < 8) {
-            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request parameters."), HttpStatus.BAD_REQUEST);
-        }
+        checkUserIDParameter(employeeId.toString());
 
-        ModelMapper modelMapper = new ModelMapper();
         User receivedUser = userService.getOneEmployee(employeeId);
 
         if (receivedUser == null) {
@@ -112,13 +94,10 @@ public class EmployeesApiController implements EmployeesApi {
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
         // Check if pagination was set
-        if (offset < 0 || limit < 1) {
-            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request parameters."), HttpStatus.BAD_REQUEST);
-        }
+        checkPagination(offset, limit);
 
         Pageable page = PageRequest.of(offset, limit);
 
-        ModelMapper modelMapper = new ModelMapper();
         List<User> receivedUser = userService.getAllEmployees(page);
         List<UserEmployeeDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserEmployeeDTO>>(){}.getType());
         return new ResponseEntity<List<UserEmployeeDTO>>(entityToDto,  HttpStatus.OK);
@@ -126,29 +105,12 @@ public class EmployeesApiController implements EmployeesApi {
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserEmployeeDTO body) {
-
-        // Make sure all the fields got filled properly
-        if (!(body.getFirstName().length() > 1 &&
-                body.getLastName().length() > 1 &&
-                body.getStreetName().length() > 2 &&
-                body.getHouseNumber() > 0 &&
-                body.getZipCode().length() > 3 &&
-                body.getCity().length() > 3 &&
-                body.getCountry().length() > 3 &&
-                body.getTransactionAmountLimit() >= 0 &&
-                body.getDailyLimit() >= 0 &&
-                body.getUsername().length() > 4 &&
-                body.getPassword().length() > 5
-        )
-        ) {
-            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
-        }
-
-        ModelMapper modelMapper = new ModelMapper();
         User updatedUser = modelMapper.map(body, User.class);
 
-        List<Role> givenRoles = new LinkedList<Role>();
+        // Make sure all the fields got filled properly
+        checkUserBody(updatedUser);
 
+        List<Role> givenRoles = new LinkedList<Role>();
         for (String role : body.getRoles()) {
             switch(role) {
                 case "Customer":

@@ -42,6 +42,22 @@ public class User {
         this.username = username;
         this.password = password;
     }
+
+    public User(String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.streetName = streetName;
+        this.houseNumber = houseNumber;
+        this.zipCode = zipCode;
+        this.city = city;
+        this.country = country;
+        this.transactionAmountLimit = transactionAmountLimit;
+        this.dailyLimit = dailyLimit;
+        this.roles = roles;
+        this.username = username;
+        this.password = password;
+    }
     public User() {
 
     }
