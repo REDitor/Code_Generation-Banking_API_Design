@@ -62,7 +62,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User put(User user) {
-        userRepository.save(user);
+        user = userRepository.save(user);
         return user;
     }
 

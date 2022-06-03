@@ -39,10 +39,7 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
@@ -70,17 +67,14 @@ public class AccountsApiController implements AccountsApi {
 
     public ResponseEntity<AccountDTO> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewAccountDTO body) {
         Account newAccount = modelMapper.map(body, Account.class);
-        User user = userService.getOne(body.getFkuserID());
-
-        //newAccount.setFkUserID(user);
-
+        User user = userService.getOne(body.getUserID());
         String newIban = accountService.generateIban();
 
         newAccount.setIBAN(newIban);
 
         Account result = accountService.add(newAccount);
 
-        user.setAccount(Arrays.asList(newAccount));
+        user.setAccount(new ArrayList<>(Arrays.asList(result)));
         userService.put(user);
 
         AccountDTO response = modelMapper.map(newAccount, AccountDTO.class);

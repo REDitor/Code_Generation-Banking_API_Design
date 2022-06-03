@@ -815,7 +815,7 @@ components:
             $ref: "#/components/schemas/AccountDTO"
     AccountDTO:
       properties:
-        fkuserId:
+        UserID:
           type: integer
           example: 1
         IBAN:
@@ -851,7 +851,7 @@ components:
           example: Open
     NewAccountDTO:
       properties:
-        fkuserId:
+        UserID:
           type: integer
           example: 1
         Type:

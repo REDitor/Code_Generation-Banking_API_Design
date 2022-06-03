@@ -18,8 +18,8 @@ import javax.validation.constraints.*;
 
 
 public class NewAccountDTO   {
-  @JsonProperty("fkuserID")
-  private UUID fkuserID = null;
+  @JsonProperty("UserID")
+  private UUID UserID = null;
 
   @JsonProperty("Type")
   private String type = null;
@@ -30,23 +30,23 @@ public class NewAccountDTO   {
   @JsonProperty("MinimumBalance")
   private Integer minimumBalance = null;
 
-  public NewAccountDTO fkuserID(UUID fkuserID) {
-    this.fkuserID = fkuserID;
+  public NewAccountDTO UserID(UUID UserID) {
+    this.UserID = UserID;
     return this;
   }
 
   /**
-   * Get fkuserID
-   * @return fkuserID
+   * Get UserID
+   * @return UserID
    **/
   @Schema(example = "1", description = "")
   
-    public UUID getFkuserID() {
-    return fkuserID;
+    public UUID getUserID() {
+    return UserID;
   }
 
-  public void setFkuserID(UUID fkuserID) {
-    this.fkuserID = fkuserID;
+  public void setUserID(UUID UserID) {
+    this.UserID = UserID;
   }
 
   public NewAccountDTO type(String type) {
@@ -116,7 +116,7 @@ public class NewAccountDTO   {
       return false;
     }
     NewAccountDTO newAccountDTO = (NewAccountDTO) o;
-    return Objects.equals(this.fkuserID, newAccountDTO.fkuserID) &&
+    return Objects.equals(this.UserID, newAccountDTO.UserID) &&
         Objects.equals(this.type, newAccountDTO.type) &&
         Objects.equals(this.status, newAccountDTO.status) &&
         Objects.equals(this.minimumBalance, newAccountDTO.minimumBalance);
@@ -124,7 +124,7 @@ public class NewAccountDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(fkuserID, type, status, minimumBalance);
+    return Objects.hash(UserID, type, status, minimumBalance);
   }
 
   @Override
@@ -132,7 +132,7 @@ public class NewAccountDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class NewAccountDTO {\n");
     
-    sb.append("    fkuserID: ").append(toIndentedString(fkuserID)).append("\n");
+    sb.append("    UserID: ").append(toIndentedString(UserID)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    minimumBalance: ").append(toIndentedString(minimumBalance)).append("\n");
