@@ -61,6 +61,11 @@ public class UserService implements UserDetailsService {
         return customerPage.getContent();
     }
 
+    public User put(User user) {
+        userRepository.save(user);
+        return user;
+    }
+
     public User save(User user) {
         return userRepository.save(user);
     }

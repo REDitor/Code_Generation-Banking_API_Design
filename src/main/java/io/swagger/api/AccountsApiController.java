@@ -39,6 +39,8 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +79,9 @@ public class AccountsApiController implements AccountsApi {
         newAccount.setIBAN(newIban);
 
         Account result = accountService.add(newAccount);
+
+        user.setAccount(Arrays.asList(newAccount));
+        userService.put(user);
 
         AccountDTO response = modelMapper.map(newAccount, AccountDTO.class);
         return new ResponseEntity<AccountDTO>(response,  HttpStatus.OK);

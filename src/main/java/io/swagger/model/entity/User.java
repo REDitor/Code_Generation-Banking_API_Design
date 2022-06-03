@@ -50,6 +50,14 @@ public class User {
 
     }
 
+    public List<Account> getAccount() {
+        return account;
+    }
+
+    public void setAccount(List<Account> account) {
+        this.account = account;
+    }
+
     public UUID getuserId() {
         return userId;
     }
