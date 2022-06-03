@@ -1,16 +1,21 @@
 package io.swagger.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
 public class Account {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    @Column(name = "IBAN")
     private String IBAN;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "userId")
     private User fkUserID;
     private String type;
     private Integer balance;

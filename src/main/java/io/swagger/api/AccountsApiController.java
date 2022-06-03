@@ -70,7 +70,7 @@ public class AccountsApiController implements AccountsApi {
         Account newAccount = modelMapper.map(body, Account.class);
         User user = userService.getOne(body.getFkuserID());
 
-        newAccount.setFkUserID(user);
+        //newAccount.setFkUserID(user);
 
         String newIban = accountService.generateIban();
 
