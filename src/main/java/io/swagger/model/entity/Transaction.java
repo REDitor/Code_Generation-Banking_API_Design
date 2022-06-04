@@ -1,8 +1,9 @@
 package io.swagger.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.UUID;
 
 @Entity
@@ -78,5 +79,15 @@ public class Transaction {
 
     public void setPerformedByID(User performedByID) {
         this.performedByID = performedByID;
+    }
+
+    @Override
+    public String toString() {
+        return "\nID: " + transactionId +
+                "\nTimestamp: " + timestamp +
+                "\nFrom: " + from +
+                "\nTo: " + to +
+                "\nAmount: " + amount +
+                "\nPerformedBy: " + performedByID;
     }
 }

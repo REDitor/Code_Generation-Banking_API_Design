@@ -56,6 +56,12 @@ public class TransactionsApiController implements TransactionsApi {
 
     public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction details", schema=@Schema()) @Valid @RequestBody CreateTransactionDTO body) {
         Transaction newTransaction = modelMapper.map(body, Transaction.class);
+
+        //TODO: assign transaction props?
+
+        System.out.println("TransactionDTO: " + body);
+        System.out.println("Transaction: " + newTransaction);
+
         Transaction result = transactionService.add(newTransaction);
 
         TransactionDTO response = modelMapper.map(newTransaction, TransactionDTO.class);
