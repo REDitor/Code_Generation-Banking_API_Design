@@ -20,8 +20,7 @@ public class Transaction {
     @ManyToOne
     private User performedByID;
 
-    public Transaction(UUID transactionId, String timestamp, Account from, Account to, Double amount, User performedByID) {
-        this.transactionId = transactionId;
+    public Transaction(String timestamp, Account from, Account to, Double amount, User performedByID) {
         this.timestamp = timestamp;
         this.from = from;
         this.to = to;

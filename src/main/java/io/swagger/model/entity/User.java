@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue
@@ -31,8 +32,7 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "UserID")
     private List<Account> account = new ArrayList<>();
 
-    public User(UUID userId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
-        this.userId = userId;
+    public User(String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
@@ -47,6 +47,7 @@ public class User {
         this.username = username;
         this.password = password;
     }
+
     public User() {
 
     }
@@ -172,6 +173,20 @@ public class User {
         this.password = password;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "\nFirstname: " + this.firstName +
+                "\nLastname: " + this.lastName +
+                "\nBirthdate: " + this.birthDate +
+                "\nStreet: " + this.streetName +
+                "\nHouse number: " + this.houseNumber +
+                "\nZip code: " + this.zipCode +
+                "\nCity: " + this.city +
+                "\nCountry: " + this.country +
+                "\nTransaction limit: " + this.transactionAmountLimit +
+                "\nDaily limit: " + this.dailyLimit +
+                "\nRoles: " + this.roles +
+                "\nUsername: " + this.username +
+                "\nPassword: " + this.password;
+    }
 }
