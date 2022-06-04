@@ -22,7 +22,8 @@ public class Account {
     private String status;
     private Integer minimumBalance;
 
-    public Account(User UserID, String type, Integer balance, String status, Integer minimumBalance) {
+    public Account(String IBAN, User UserID, String type, Integer balance, String status, Integer minimumBalance) {
+        this.IBAN = IBAN;
         this.UserID = UserID;
         this.type = type;
         this.balance = balance;
@@ -84,7 +85,8 @@ public class Account {
 
     @Override
     public String toString() {
-        return "\nUser: " + this.UserID +
+        return "\nIBAN: " + this.IBAN +
+                "\nUser: " + this.UserID +
                 "\nType: " + this.type +
                 "\nBalance: " + this.balance +
                 "\nStatus: " + this.status +

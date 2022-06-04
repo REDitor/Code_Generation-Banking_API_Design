@@ -6,6 +6,8 @@ import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.repository.AccountRepository;
 import io.swagger.repository.UserRepository;
+import io.swagger.service.AccountService;
+import org.iban4j.Iban;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -22,10 +24,12 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private UserRepository userRepository;
     private AccountRepository accountRepository;
+    private AccountService accountService;
 
-    public CustomApplicationRunner(UserRepository userRepository, AccountRepository accountRepository) {
+    public CustomApplicationRunner(UserRepository userRepository, AccountRepository accountRepository, AccountService accountService) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
+        this.accountService = accountService;
     }
 
     @Override
@@ -48,10 +52,12 @@ public class CustomApplicationRunner implements ApplicationRunner {
         User bruno = userRepository.findByUsername("BrunoMarques123");
         User pablo = userRepository.findByUsername("PabloGuilias123");
 
+
+
         List<Account> accounts = Arrays.asList(
-                new Account(sander, "current", 500, "open", 0),
-                new Account(bruno, "current", 750, "open", 0),
-                new Account(pablo, "current", 1000, "open", 0)
+                new Account(accountService.generateIban(), sander, "current", 500, "open", 0),
+                new Account(accountService.generateIban(), bruno, "current", 750, "open", 0),
+                new Account(accountService.generateIban(), pablo, "current", 1000, "open", 0)
         );
 
         // store accounts in db

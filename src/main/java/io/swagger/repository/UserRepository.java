@@ -14,22 +14,22 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    @Query(value = "SELECT * FROM User u "+
-            "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
+    @Query(value = "SELECT * FROM Users u "+
+            "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.USER_ID " +
             "WHERE ur.roles = '1'", nativeQuery = true)
     Page<User> getAllCustomers(Pageable page);
 
-    @Query(value = "SELECT * FROM User u "+
+    @Query(value = "SELECT * FROM Users u "+
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
             "WHERE ur.roles = '0'", nativeQuery = true)
     Page<User> getAllEmployees(Pageable page);
 
-    @Query(value = "SELECT * FROM User u " +
+    @Query(value = "SELECT * FROM Users u " +
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
             "WHERE ur.roles = '1' and u.user_Id= :userId ", nativeQuery = true)
     User getOne(@Param("userId") UUID userId);
 
-    @Query(value = "SELECT * FROM User u " +
+    @Query(value = "SELECT * FROM Users u " +
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
             "WHERE ur.roles = '0' and u.user_Id= :userId ", nativeQuery = true)
     User getOneEmployee(@Param("userId") UUID userId);
