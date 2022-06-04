@@ -175,7 +175,8 @@ public class User {
 
     @Override
     public String toString() {
-        return "\nFirstname: " + this.firstName +
+        return "\nID: " + this.userId +
+                "\nFirstname: " + this.firstName +
                 "\nLastname: " + this.lastName +
                 "\nBirthdate: " + this.birthDate +
                 "\nStreet: " + this.streetName +
