@@ -18,7 +18,7 @@ import javax.validation.constraints.*;
 
 
 public class NewAccountDTO   {
-  @JsonProperty("UserID")
+  @JsonProperty("userID")
   private UUID UserID = null;
 
   @JsonProperty("Type")
@@ -29,11 +29,6 @@ public class NewAccountDTO   {
 
   @JsonProperty("MinimumBalance")
   private Integer minimumBalance = null;
-
-  public NewAccountDTO UserID(UUID UserID) {
-    this.UserID = UserID;
-    return this;
-  }
 
   /**
    * Get UserID
