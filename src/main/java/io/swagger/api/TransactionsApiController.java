@@ -45,12 +45,13 @@ public class TransactionsApiController implements TransactionsApi {
     @Autowired
     private TransactionService transactionService;
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.modelMapper = new ModelMapper();
     }
 
     public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction details", schema=@Schema()) @Valid @RequestBody CreateTransactionDTO body) {
