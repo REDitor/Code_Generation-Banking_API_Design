@@ -26,8 +26,6 @@ public class AccountService  {
     public String generateIban() {
         String latestIbanNumber = accountRepository.getLatestIban();
 
-        System.out.println("Latest IBAN: " + latestIbanNumber);
-
         if (latestIbanNumber == null) {
             latestIbanNumber = "NL01INHO0000000000";
         }
