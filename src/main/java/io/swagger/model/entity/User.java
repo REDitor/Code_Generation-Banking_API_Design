@@ -2,8 +2,14 @@ package io.swagger.model.entity;
 
 import org.threeten.bp.LocalDate;
 
-import javax.persistence.*;
-import java.lang.reflect.Array;
+import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -147,7 +153,6 @@ public class User {
     public void setDailyLimit(Integer dailyLimit) {
         this.dailyLimit = dailyLimit;
     }
-
 
     public List<Role> getRoles() {
         return roles;

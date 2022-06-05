@@ -1,6 +1,7 @@
 package io.swagger.configuration;
 
 import io.swagger.model.entity.Account;
+import io.swagger.model.entity.AccountType;
 import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
 import io.swagger.repository.AccountRepository;
@@ -50,9 +51,10 @@ public class CustomApplicationRunner implements ApplicationRunner {
         User pablo = userRepository.findByUsername("PabloGuilias123");
 
         // store new accounts in db
-        accountRepository.save(new Account(accountService.generateIban(), sander, "current", 500, "open", 0));
-        accountRepository.save(new Account(accountService.generateIban(), bruno, "current", 750, "open", 0));
-        accountRepository.save(new Account(accountService.generateIban(), pablo, "current", 1000, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_CURRENT, 500, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), bruno, AccountType.ACCOUNT_TYPE_CURRENT, 750, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), pablo, AccountType.ACCOUNT_TYPE_CURRENT, 1000, "open", 0));
 
 //        Account accountSander = accountRepository.findByUser();
 //

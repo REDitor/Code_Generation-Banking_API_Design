@@ -16,12 +16,12 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "UserId")
     private User UserID;
-    private String type;
-    private Integer balance;
+    private AccountType type;
+    private double balance;
     private String status;
     private Integer minimumBalance;
 
-    public Account(String IBAN, User UserID, String type, Integer balance, String status, Integer minimumBalance) {
+    public Account(String IBAN, User UserID, AccountType type, double balance, String status, Integer minimumBalance) {
         this.IBAN = IBAN;
         this.UserID = UserID;
         this.type = type;
@@ -50,19 +50,19 @@ public class Account {
         this.UserID = UserID;
     }
 
-    public String getType() {
+    public AccountType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(AccountType type) {
         this.type = type;
     }
 
-    public Integer getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(Integer balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 
