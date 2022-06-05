@@ -52,7 +52,7 @@ public class AccountsApiController implements AccountsApi {
 
     public ResponseEntity<AccountDTO> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema=@Schema()) @Valid @RequestBody NewAccountDTO body) {
         Account newAccount = modelMapper.map(body, Account.class);
-        User user = userService.getOne(body.getUserID());
+        User user = userService.getOneCustomer(body.getUserID());
         String newIban = accountService.generateIban();
 
         newAccount.setIBAN(newIban);

@@ -3,6 +3,8 @@ package io.swagger.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +22,7 @@ import javax.validation.constraints.*;
 
 public class UserDTO   {
   @JsonProperty("userId")
-  private Integer userId = null;
+  private UUID userId = null;
 
   @JsonProperty("FirstName")
   private String firstName = null;
@@ -56,7 +58,7 @@ public class UserDTO   {
   @Valid
   private List<AccountDTO> accounts = null;
 
-  public UserDTO userId(Integer userId) {
+  public UserDTO userId(UUID userId) {
     this.userId = userId;
     return this;
   }
@@ -67,11 +69,11 @@ public class UserDTO   {
    **/
   @Schema(example = "1", description = "")
   
-    public Integer getuserId() {
+    public UUID getuserId() {
     return userId;
   }
 
-  public void setuserId(Integer userId) {
+  public void setuserId(UUID userId) {
     this.userId = userId;
   }
 

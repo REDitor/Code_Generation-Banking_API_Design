@@ -21,13 +21,23 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query(value = "SELECT * FROM User u "+
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
+            "WHERE ur.roles = '1' AND (u.FIRST_NAME LIKE '%'||:firstName||'%' OR u.LAST_NAME LIKE '%'||:lastName||'%')", nativeQuery = true)
+    Page<User> getAllCustomersByName(Pageable page, @Param("firstName") String firstName, @Param("lastName") String lastName);
+
+    @Query(value = "SELECT * FROM User u "+
+            "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
+            "WHERE ur.roles = '0' AND (u.FIRST_NAME LIKE '%'||:firstName||'%' OR u.LAST_NAME LIKE '%'||:lastName||'%')", nativeQuery = true)
+    Page<User> getAllEmployeesByName(Pageable page, @Param("firstName") String firstName, @Param("lastName") String lastName);
+
+    @Query(value = "SELECT * FROM User u "+
+            "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
             "WHERE ur.roles = '0'", nativeQuery = true)
     Page<User> getAllEmployees(Pageable page);
 
     @Query(value = "SELECT * FROM User u " +
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
             "WHERE ur.roles = '1' and u.user_Id= :userId ", nativeQuery = true)
-    User getOne(@Param("userId") UUID userId);
+    User getOneCustomer(@Param("userId") UUID userId);
 
     @Query(value = "SELECT * FROM User u " +
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +

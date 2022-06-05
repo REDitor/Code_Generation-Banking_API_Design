@@ -42,7 +42,6 @@ public class EmployeesApiController extends UserApiController implements Employe
     private static final Logger log = LoggerFactory.getLogger(EmployeesApiController.class);
 
     private final ObjectMapper objectMapper;
-
     private final HttpServletRequest request;
     private final ModelMapper modelMapper;
 
@@ -69,8 +68,7 @@ public class EmployeesApiController extends UserApiController implements Employe
         newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
         newUser = userService.add(newUser);
 
-        UserDTO response = modelMapper.map(newUser, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response,  HttpStatus.CREATED);
+        return responseEntityUserOk(newUser);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
@@ -84,53 +82,30 @@ public class EmployeesApiController extends UserApiController implements Employe
             return new ResponseEntity(new ErrorMessageDTO("Employee not found."), HttpStatus.NOT_FOUND);
         }
 
-        UserDTO response = modelMapper.map(receivedUser, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response,  HttpStatus.OK);
+        return responseEntityUserOk(receivedUser);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<List<UserDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
+    public ResponseEntity<List<UserDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
         // Check if pagination was set
         checkPagination(offset, limit);
+        List<User> receivedUsers;
+        if (firstName != null || lastName != null) {
+            receivedUsers = userService.getAllEmployeesByName(PageRequest.of(offset, limit), firstName, lastName);
+        } else {
+            receivedUsers = userService.getAllEmployees(PageRequest.of(offset, limit));
+        }
 
-        Pageable page = PageRequest.of(offset, limit);
 
-        List<User> receivedUser = userService.getAllEmployees(page);
-        List<UserDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserDTO>>(){}.getType());
-        return new ResponseEntity<List<UserDTO>>(entityToDto,  HttpStatus.OK);
+        return responseEntityUserListOk(receivedUsers);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserDTO body) {
-        User updatedUser = modelMapper.map(body, User.class);
-
-        // Make sure all the fields got filled properly
-        checkUserBody(updatedUser);
-
-        List<Role> givenRoles = new LinkedList<Role>();
-        for (String role : body.getRoles()) {
-            switch(role) {
-                case "Customer":
-                    givenRoles.add(Role.ROLE_CUSTOMER);
-                    break;
-                case "Employee":
-                    givenRoles.add(Role.ROLE_EMPLOYEE);
-                    break;
-                default:
-                    return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        updatedUser.setRoles(givenRoles);
-        updatedUser.setuserId(employeeId);
-
-        updatedUser = userService.save(updatedUser);
-
-        UserDTO response = modelMapper.map(updatedUser, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response,  HttpStatus.OK);
+    public ResponseEntity<UserDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("userId") UUID userId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserDTO body) {
+        return updateUser(userId, body);
     }
 
 }

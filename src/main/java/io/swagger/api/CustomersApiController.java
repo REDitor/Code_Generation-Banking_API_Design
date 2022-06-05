@@ -4,7 +4,6 @@ import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.ErrorMessageDTO;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.UUID;
 
 import io.swagger.model.NewUserDTO;
@@ -69,8 +68,7 @@ public class CustomersApiController extends UserApiController implements Custome
         newUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
         newUser = userService.add(newUser);
 
-        UserDTO response = modelMapper.map(newUser, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
+        return responseEntityUserOk(newUser);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
@@ -90,59 +88,35 @@ public class CustomersApiController extends UserApiController implements Custome
         }
 
         // Get requested user information
-        User receivedUser = userService.getOne(userID);
+        User receivedUser = userService.getOneCustomer(userID);
 
         if (receivedUser == null) {
             return new ResponseEntity(new ErrorMessageDTO("Customer not found."), HttpStatus.NOT_FOUND);
         }
 
-        UserDTO response = modelMapper.map(receivedUser, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
+        return responseEntityUserOk(receivedUser);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
-        // TODO: search name in list of customers
+    public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
         // Check if pagination was set
         checkPagination(skip, limit);
 
-        Pageable page = PageRequest.of(skip, limit);
-        List<User> receivedUsers = userService.getAll(page);
+        List<User> receivedUsers;
 
-        List<UserDTO> entityToDto = modelMapper.map(receivedUsers, new TypeToken<List<UserDTO>>() {
-        }.getType());
-        return new ResponseEntity<List<UserDTO>>(entityToDto, HttpStatus.OK);
+        if (firstName != null || lastName != null) {
+             receivedUsers = userService.getAllByName(PageRequest.of(skip, limit), firstName, lastName);
+        } else {
+            receivedUsers = userService.getAll(PageRequest.of(skip, limit));
+        }
+
+        return responseEntityUserListOk(receivedUsers);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserDTO body) {
-        User updatedUser = modelMapper.map(body, User.class);
-
-        // Make sure all the fields got filled properly
-        checkUserBody(updatedUser);
-
-        List<Role> givenRoles = new LinkedList<Role>();
-        for (String role : body.getRoles()) {
-            switch (role) {
-                case "Customer":
-                    givenRoles.add(Role.ROLE_CUSTOMER);
-                    break;
-                case "Employee":
-                    givenRoles.add(Role.ROLE_EMPLOYEE);
-                    break;
-                default:
-                    return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        updatedUser.setRoles(givenRoles);
-        updatedUser.setuserId(userID);
-
-        updatedUser = userService.save(updatedUser);
-
-        UserDTO response = modelMapper.map(updatedUser, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
+        return updateUser(userID, body);
     }
 
 }
