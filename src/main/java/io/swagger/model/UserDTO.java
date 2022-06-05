@@ -1,5 +1,7 @@
 package io.swagger.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -49,6 +51,10 @@ public class UserDTO   {
 
   @JsonProperty("DailyLimit")
   private Integer dailyLimit = null;
+
+  @JsonProperty("Accounts")
+  @Valid
+  private List<AccountDTO> accounts = null;
 
   public UserDTO userId(Integer userId) {
     this.userId = userId;
@@ -258,6 +264,33 @@ public class UserDTO   {
 
   public void setDailyLimit(Integer dailyLimit) {
     this.dailyLimit = dailyLimit;
+  }
+
+  public UserDTO accounts(List<AccountDTO> accounts) {
+    this.accounts = accounts;
+    return this;
+  }
+
+  public UserDTO addAccountsItem(AccountDTO accountsItem) {
+    if (this.accounts == null) {
+      this.accounts = new ArrayList<AccountDTO>();
+    }
+    this.accounts.add(accountsItem);
+    return this;
+  }
+
+  /**
+   * Get accounts
+   * @return accounts
+   **/
+  @Schema(description = "")
+  @Valid
+  public List<AccountDTO> getAccounts() {
+    return accounts;
+  }
+
+  public void setAccounts(List<AccountDTO> accounts) {
+    this.accounts = accounts;
   }
 
 

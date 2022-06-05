@@ -1,12 +1,12 @@
 package io.swagger.api;
 
 import io.swagger.model.ErrorMessageDTO;
-import io.swagger.model.NewUserEmployeeDTO;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.UUID;
 
+import io.swagger.model.NewUserDTO;
 import io.swagger.model.UpdateUserEmployeeDTO;
 import io.swagger.model.UserEmployeeDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,7 +57,7 @@ public class EmployeesApiController extends UserApiController implements Employe
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body) {
+    public ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserDTO body) {
         User newUser = modelMapper.map(body, User.class);
 
         // Make sure all the fields got filled properly

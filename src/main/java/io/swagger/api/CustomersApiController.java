@@ -2,12 +2,12 @@ package io.swagger.api;
 
 import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.ErrorMessageDTO;
-import io.swagger.model.NewUserCustomerDTO;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.UUID;
 
+import io.swagger.model.NewUserDTO;
 import io.swagger.model.UpdateUserCustomerDTO;
 import io.swagger.model.UserCustomerDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.*;
@@ -59,13 +58,11 @@ public class CustomersApiController extends UserApiController implements Custome
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserCustomerDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserCustomerDTO body) {
+    public ResponseEntity<UserCustomerDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
         User newUser = modelMapper.map(body, User.class);
 
-        // Make sure all the fields got filled properly
+        // Make sure all the fields got filled properly and heck if username is already in use
         checkUserBody(newUser);
-
-        // Check if username is already in use
         checkUserName(newUser.getUsername());
 
         // Set proper role for user and add user to database
