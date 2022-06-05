@@ -7,8 +7,8 @@ import java.util.LinkedList;
 import java.util.UUID;
 
 import io.swagger.model.NewUserDTO;
-import io.swagger.model.UpdateUserEmployeeDTO;
-import io.swagger.model.UserEmployeeDTO;
+import io.swagger.model.UpdateUserDTO;
+import io.swagger.model.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
@@ -57,7 +57,7 @@ public class EmployeesApiController extends UserApiController implements Employe
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserDTO body) {
+    public ResponseEntity<UserDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserDTO body) {
         User newUser = modelMapper.map(body, User.class);
 
         // Make sure all the fields got filled properly
@@ -69,12 +69,12 @@ public class EmployeesApiController extends UserApiController implements Employe
         newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
         newUser = userService.add(newUser);
 
-        UserEmployeeDTO response = modelMapper.map(newUser, UserEmployeeDTO.class);
-        return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.CREATED);
+        UserDTO response = modelMapper.map(newUser, UserDTO.class);
+        return new ResponseEntity<UserDTO>(response,  HttpStatus.CREATED);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserEmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId) {
+    public ResponseEntity<UserDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId) {
 
         checkUserIDParameter(employeeId.toString());
 
@@ -84,12 +84,12 @@ public class EmployeesApiController extends UserApiController implements Employe
             return new ResponseEntity(new ErrorMessageDTO("Employee not found."), HttpStatus.NOT_FOUND);
         }
 
-        UserEmployeeDTO response = modelMapper.map(receivedUser, UserEmployeeDTO.class);
-        return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.OK);
+        UserDTO response = modelMapper.map(receivedUser, UserDTO.class);
+        return new ResponseEntity<UserDTO>(response,  HttpStatus.OK);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<List<UserEmployeeDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
+    public ResponseEntity<List<UserDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
@@ -99,12 +99,12 @@ public class EmployeesApiController extends UserApiController implements Employe
         Pageable page = PageRequest.of(offset, limit);
 
         List<User> receivedUser = userService.getAllEmployees(page);
-        List<UserEmployeeDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserEmployeeDTO>>(){}.getType());
-        return new ResponseEntity<List<UserEmployeeDTO>>(entityToDto,  HttpStatus.OK);
+        List<UserDTO> entityToDto = modelMapper.map(receivedUser, new TypeToken<List<UserDTO>>(){}.getType());
+        return new ResponseEntity<List<UserDTO>>(entityToDto,  HttpStatus.OK);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserEmployeeDTO body) {
+    public ResponseEntity<UserDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserDTO body) {
         User updatedUser = modelMapper.map(body, User.class);
 
         // Make sure all the fields got filled properly
@@ -129,8 +129,8 @@ public class EmployeesApiController extends UserApiController implements Employe
 
         updatedUser = userService.save(updatedUser);
 
-        UserEmployeeDTO response = modelMapper.map(updatedUser, UserEmployeeDTO.class);
-        return new ResponseEntity<UserEmployeeDTO>(response,  HttpStatus.OK);
+        UserDTO response = modelMapper.map(updatedUser, UserDTO.class);
+        return new ResponseEntity<UserDTO>(response,  HttpStatus.OK);
     }
 
 }

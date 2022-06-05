@@ -8,8 +8,8 @@ import java.util.LinkedList;
 import java.util.UUID;
 
 import io.swagger.model.NewUserDTO;
-import io.swagger.model.UpdateUserCustomerDTO;
-import io.swagger.model.UserCustomerDTO;
+import io.swagger.model.UpdateUserDTO;
+import io.swagger.model.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
@@ -58,7 +58,7 @@ public class CustomersApiController extends UserApiController implements Custome
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserCustomerDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
+    public ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
         User newUser = modelMapper.map(body, User.class);
 
         // Make sure all the fields got filled properly and heck if username is already in use
@@ -69,12 +69,12 @@ public class CustomersApiController extends UserApiController implements Custome
         newUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
         newUser = userService.add(newUser);
 
-        UserCustomerDTO response = modelMapper.map(newUser, UserCustomerDTO.class);
-        return new ResponseEntity<UserCustomerDTO>(response, HttpStatus.CREATED);
+        UserDTO response = modelMapper.map(newUser, UserDTO.class);
+        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
-    public ResponseEntity<UserCustomerDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
+    public ResponseEntity<UserDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
         // CHeck if provided userId is valid
         checkUserIDParameter(userID.toString());
 
@@ -96,12 +96,12 @@ public class CustomersApiController extends UserApiController implements Custome
             return new ResponseEntity(new ErrorMessageDTO("Customer not found."), HttpStatus.NOT_FOUND);
         }
 
-        UserCustomerDTO response = modelMapper.map(receivedUser, UserCustomerDTO.class);
-        return new ResponseEntity<UserCustomerDTO>(response, HttpStatus.OK);
+        UserDTO response = modelMapper.map(receivedUser, UserDTO.class);
+        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<List<UserCustomerDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
+    public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
         // TODO: search name in list of customers
 
         // Check if pagination was set
@@ -110,13 +110,13 @@ public class CustomersApiController extends UserApiController implements Custome
         Pageable page = PageRequest.of(skip, limit);
         List<User> receivedUsers = userService.getAll(page);
 
-        List<UserCustomerDTO> entityToDto = modelMapper.map(receivedUsers, new TypeToken<List<UserCustomerDTO>>() {
+        List<UserDTO> entityToDto = modelMapper.map(receivedUsers, new TypeToken<List<UserDTO>>() {
         }.getType());
-        return new ResponseEntity<List<UserCustomerDTO>>(entityToDto, HttpStatus.OK);
+        return new ResponseEntity<List<UserDTO>>(entityToDto, HttpStatus.OK);
     }
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserCustomerDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserCustomerDTO body) {
+    public ResponseEntity<UserDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserDTO body) {
         User updatedUser = modelMapper.map(body, User.class);
 
         // Make sure all the fields got filled properly
@@ -141,8 +141,8 @@ public class CustomersApiController extends UserApiController implements Custome
 
         updatedUser = userService.save(updatedUser);
 
-        UserCustomerDTO response = modelMapper.map(updatedUser, UserCustomerDTO.class);
-        return new ResponseEntity<UserCustomerDTO>(response, HttpStatus.OK);
+        UserDTO response = modelMapper.map(updatedUser, UserDTO.class);
+        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
     }
 
 }
