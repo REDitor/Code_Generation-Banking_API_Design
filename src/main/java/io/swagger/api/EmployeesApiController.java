@@ -59,11 +59,13 @@ public class EmployeesApiController extends UserApiController implements Employe
     public ResponseEntity<UserDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserDTO body) {
         User newUser = modelMapper.map(body, User.class);
 
-        // Make sure all the fields got filled properly
-        checkUserBody(newUser);
+        ResponseEntity validation;
+        // Make sure all the fields got filled properly and check if username is already in use
+        validation = checkUserBody(newUser);
+        validation = checkUserName(newUser.getUsername());
 
-        // Check if username is already in use
-        checkUserName(newUser.getUsername());
+        if (validation != null)
+            return validation;
 
         newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
         newUser = userService.add(newUser);
@@ -73,11 +75,14 @@ public class EmployeesApiController extends UserApiController implements Employe
 
     //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId) {
+        // CHeck if provided userId is valid
+        ResponseEntity validation = checkUserIDParameter(employeeId.toString());
 
-        checkUserIDParameter(employeeId.toString());
+        if (validation != null)
+            return validation;
 
+        // Get requested user information
         User receivedUser = userService.getOneEmployee(employeeId);
-
         if (receivedUser == null) {
             return new ResponseEntity(new ErrorMessageDTO("Employee not found."), HttpStatus.NOT_FOUND);
         }
@@ -91,7 +96,10 @@ public class EmployeesApiController extends UserApiController implements Employe
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
         // Check if pagination was set
-        checkPagination(offset, limit);
+        ResponseEntity validation = checkPagination(offset, limit);
+        if (validation != null)
+            return validation;
+
         List<User> receivedUsers;
         if (firstName != null || lastName != null) {
             receivedUsers = userService.getAllEmployeesByName(PageRequest.of(offset, limit), firstName, lastName);

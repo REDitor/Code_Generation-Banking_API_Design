@@ -60,9 +60,13 @@ public class CustomersApiController extends UserApiController implements Custome
     public ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
         User newUser = modelMapper.map(body, User.class);
 
+        ResponseEntity validation;
         // Make sure all the fields got filled properly and heck if username is already in use
-        checkUserBody(newUser);
-        checkUserName(newUser.getUsername());
+        validation = checkUserBody(newUser);
+        validation = checkUserName(newUser.getUsername());
+
+        if (validation != null)
+            return validation;
 
         // Set proper role for user and add user to database
         newUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
@@ -74,7 +78,10 @@ public class CustomersApiController extends UserApiController implements Custome
     //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
     public ResponseEntity<UserDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
         // CHeck if provided userId is valid
-        checkUserIDParameter(userID.toString());
+        ResponseEntity validation = checkUserIDParameter(userID.toString());
+
+        if (validation != null)
+            return validation;
 
         // Get JWT token and the information of the authenticated user
         String receivedToken = jwtTokenProvider.resolveToken(request);
@@ -89,7 +96,6 @@ public class CustomersApiController extends UserApiController implements Custome
 
         // Get requested user information
         User receivedUser = userService.getOneCustomer(userID);
-
         if (receivedUser == null) {
             return new ResponseEntity(new ErrorMessageDTO("Customer not found."), HttpStatus.NOT_FOUND);
         }
@@ -101,7 +107,9 @@ public class CustomersApiController extends UserApiController implements Custome
     public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
         // Check if pagination was set
-        checkPagination(skip, limit);
+        ResponseEntity validation = checkPagination(skip, limit);
+        if (validation != null)
+            return validation;
 
         List<User> receivedUsers;
 
