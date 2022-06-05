@@ -35,4 +35,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     User getOneEmployee(@Param("userId") UUID userId);
 
     User findByUsername(String username);
+
+
 }

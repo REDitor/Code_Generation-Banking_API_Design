@@ -1,25 +1,28 @@
 package io.swagger.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
 public class Account {
+
     @Id
-    @GeneratedValue
+    @Column(name = "IBAN")
     private String IBAN;
 
     @ManyToOne
-    private User fkUserID;
+    @JoinColumn(name = "UserId")
+    private User UserID;
     private String type;
     private Integer balance;
     private String status;
     private Integer minimumBalance;
 
-    public Account(String IBAN, User fkUserID, String type, Integer balance, String status, Integer minimumBalance) {
+    public Account(String IBAN, User UserID, String type, Integer balance, String status, Integer minimumBalance) {
         this.IBAN = IBAN;
-        this.fkUserID = fkUserID;
+        this.UserID = UserID;
         this.type = type;
         this.balance = balance;
         this.status = status;
@@ -38,12 +41,12 @@ public class Account {
         this.IBAN = IBAN;
     }
 
-    public User getFkUserID() {
-        return fkUserID;
+    public User getUserID() {
+        return UserID;
     }
 
-    public void setFkUserID(User fkUserID) {
-        this.fkUserID = fkUserID;
+    public void setUserID(User UserID) {
+        this.UserID = UserID;
     }
 
     public String getType() {

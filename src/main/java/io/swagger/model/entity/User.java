@@ -3,6 +3,8 @@ package io.swagger.model.entity;
 import org.threeten.bp.LocalDate;
 
 import javax.persistence.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +27,9 @@ public class User {
     private List<Role> roles;
     private String username;
     private String password;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "UserID")
+    private List<Account> account = new ArrayList<>();
 
     public User(UUID userId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
         this.userId = userId;
@@ -60,6 +65,14 @@ public class User {
     }
     public User() {
 
+    }
+
+    public List<Account> getAccount() {
+        return account;
+    }
+
+    public void setAccount(ArrayList<Account> account) {
+        this.account = account;
     }
 
     public UUID getuserId() {
