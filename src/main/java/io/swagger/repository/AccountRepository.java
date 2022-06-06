@@ -19,5 +19,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     @Query(value = "SELECT IBAN FROM Account ORDER BY IBAN DESC LIMIT 1", nativeQuery = true)
     String getLatestIban();
 
-    
+    Account getAccountByIBAN(String IBAN);
+
 }

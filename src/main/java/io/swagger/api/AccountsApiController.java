@@ -1,10 +1,7 @@
 package io.swagger.api;
 
-import io.swagger.model.AccountDTO;
-import io.swagger.model.NewAccountDTO;
-import io.swagger.model.UpdateAccountDTO;
+import io.swagger.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.model.UserEmployeeDTO;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.User;
 import io.swagger.service.AccountService;
@@ -83,11 +80,27 @@ public class AccountsApiController implements AccountsApi {
     }
 
     public ResponseEntity<AccountDTO> getAccount(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required=true, schema=@Schema()) @PathVariable("iban") String iban) {
-        return null;
+
+        Account receivedAccount = accountService.getAccountByIBAN(iban);
+
+        AccountDTO response = modelMapper.map(receivedAccount, AccountDTO.class);
+        return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
     }
 
     public ResponseEntity<AccountDTO> updateAccount(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required=true, schema=@Schema()) @PathVariable("iban") String iban,@Parameter(in = ParameterIn.DEFAULT, description = "Fields that need to be updated", schema=@Schema()) @Valid @RequestBody UpdateAccountDTO body) {
-        return null;
+
+        if(!(body.getMinimumBalance() >= 0 &&
+                body.getStatus().length() > 1 &&
+                body.getType().length() > 1)
+        ){
+            return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
+        }
+
+        Account updatedAccount = modelMapper.map(body, Account.class);
+        accountService.add(updatedAccount);
+        AccountDTO response = modelMapper.map(updatedAccount, AccountDTO.class);
+
+        return new ResponseEntity<AccountDTO>(response,HttpStatus.OK);
     }
 
 }
