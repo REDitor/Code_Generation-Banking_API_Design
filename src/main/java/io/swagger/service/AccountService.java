@@ -22,6 +22,9 @@ public class AccountService  {
         return accountRepository.findAll();
     }
 
+    public Account getAccountByIBAN(String IBAN){
+        return accountRepository.getAccountByIBAN(IBAN);
+    }
 
     public String generateIban() {
         String latestIbanNumber = accountRepository.getLatestIban();
