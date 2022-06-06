@@ -53,7 +53,7 @@ public class NewAccountDTO   {
    * Get type
    * @return type
    **/
-  @Schema(example = "Current", description = "")
+  @Schema(example = "ACCOUNT_TYPE_CURRENT", description = "")
   
     public String getType() {
     return type;

@@ -15,4 +15,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     String getLatestIban();
 
     Account findAccountByIBAN(String IBAN);
+
+    Account getAccountByIBAN(String IBAN);
 }
