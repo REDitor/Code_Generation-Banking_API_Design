@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.Size;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -67,7 +66,7 @@ public class TransactionsApiController implements TransactionsApi {
         Transaction newTransaction = modelMapper.map(body, Transaction.class);
 
         newTransaction.setTransactionId(UUID.randomUUID());
-        newTransaction.setTimestamp(LocalDateTime.now().toString());
+        newTransaction.setTimestamp(LocalDateTime.now());
         newTransaction.setFrom(accountRepository.findAccountByIBAN(body.getFrom()));
         newTransaction.setTo(accountRepository.findAccountByIBAN(body.getTo()));
 
@@ -90,59 +89,60 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     private boolean checkAccountOwnerAndType(Account fromAccount, Account toAccount) {
-
-        System.out.println(
-                "From: " + fromAccount.getUserID().getuserId() + "   Type: " + fromAccount.getType() +
-                "\nTo: " + toAccount.getUserID().getuserId() + "   Type: " + toAccount.getType()
-        );
-
         //check if owner is not the same AND if either one account is a savings account
-        if (fromAccount.getUserID().getuserId() != toAccount.getUserID().getuserId() && (fromAccount.getType() == AccountType.ACCOUNT_TYPE_SAVINGS) || toAccount.getType() == AccountType.ACCOUNT_TYPE_SAVINGS)
-            return false;
+        if (fromAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS && toAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS)
+            return true;
 
-        return true;
+        return fromAccount.getUserID().getuserId() == toAccount.getUserID().getuserId();
     }
 
     public ResponseEntity<TransactionDepositDTO> deposit(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to deposit to", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Deposit details", schema = @Schema()) @Valid @RequestBody DepositDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<TransactionDepositDTO>(objectMapper.readValue("{\n  \"PerformedByID\" : 1,\n  \"Amount\" : 11.23,\n  \"From\" : \"From\",\n  \"To\" : \"NL01INHO0000000002\",\n  \"transactionId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",\n  \"timestamp\" : \"2021-03-20T09:12:28Z\"\n}", TransactionDepositDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<TransactionDepositDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        Transaction newDeposit = modelMapper.map(body, Transaction.class);
 
-        return new ResponseEntity<TransactionDepositDTO>(HttpStatus.NOT_IMPLEMENTED);
+        newDeposit.setTimestamp(LocalDateTime.now());
+        newDeposit.setTo(accountRepository.findAccountByIBAN(iban));
+
+        System.out.println("Deposit transaction: " + newDeposit);
+        System.out.println("To Account: " + newDeposit.getTo());
+
+        // update balances
+        newDeposit.getTo().setBalance(newDeposit.getTo().getBalance() + newDeposit.getAmount());
+
+
+        //TODO: assign performedBy !?
+
+        Transaction result = transactionService.add(newDeposit);
+        TransactionDepositDTO response = modelMapper.map(newDeposit, TransactionDepositDTO.class);
+
+        return new ResponseEntity<TransactionDepositDTO>(response, HttpStatus.CREATED);
     }
 
     public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@DecimalMax("34") @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<TransactionDTO>>(objectMapper.readValue("[ {\n  \"PerformedByID\" : 1,\n  \"Amount\" : 11.23,\n  \"From\" : \"NL01INHO0000000001\",\n  \"To\" : \"NL01INHO0000000002\",\n  \"transactionId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",\n  \"timestamp\" : \"2021-03-20T09:12:28Z\"\n}, {\n  \"PerformedByID\" : 1,\n  \"Amount\" : 11.23,\n  \"From\" : \"NL01INHO0000000001\",\n  \"To\" : \"NL01INHO0000000002\",\n  \"transactionId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",\n  \"timestamp\" : \"2021-03-20T09:12:28Z\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<TransactionDTO>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+
+        if (dateTimeFrom == null && dateTimeTo == null)
+            transactionService.getAllByIBAN(iban);
+
+        // TODO: continue here (repository class contains methods)
 
         return new ResponseEntity<List<TransactionDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<TransactionWithdrawlDTO> withdraw(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to withdraw from", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Withdraw details", schema = @Schema()) @Valid @RequestBody WithdrawDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<TransactionWithdrawlDTO>(objectMapper.readValue("{\n  \"PerformedByID\" : 1,\n  \"Amount\" : 11.23,\n  \"From\" : \"NL01INHO0000000002\",\n  \"To\" : \"To\",\n  \"transactionId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",\n  \"timestamp\" : \"2021-03-20T09:12:28Z\"\n}", TransactionWithdrawlDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<TransactionWithdrawlDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        Transaction newWithdraw = modelMapper.map(body, Transaction.class);
 
-        return new ResponseEntity<TransactionWithdrawlDTO>(HttpStatus.NOT_IMPLEMENTED);
+        newWithdraw.setTimestamp(LocalDateTime.now());
+        newWithdraw.setFrom(accountRepository.findAccountByIBAN(iban));
+
+        // update balances
+        newWithdraw.getFrom().setBalance(newWithdraw.getFrom().getBalance() - newWithdraw.getAmount());
+
+
+        //TODO: assign performedBy !?
+
+        Transaction result = transactionService.add(newWithdraw);
+        TransactionWithdrawlDTO response = modelMapper.map(newWithdraw, TransactionWithdrawlDTO.class);
+
+        return new ResponseEntity<TransactionWithdrawlDTO>(response, HttpStatus.CREATED);
     }
 
 }
