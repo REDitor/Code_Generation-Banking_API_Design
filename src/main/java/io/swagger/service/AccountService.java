@@ -49,7 +49,4 @@ public class AccountService  {
         return newIban;
     }
 
-    public Account getAccountByIBAN(String IBAN){
-        return accountRepository.getAccountByIBAN(IBAN);
-    }
 }
