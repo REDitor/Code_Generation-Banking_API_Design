@@ -34,7 +34,6 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
             "/customers",
             "/employees",
             "/accounts",
-            "/customers",
             "/customers/**/**",
             "/accounts/**/**",
             "/transactions/**/**",
