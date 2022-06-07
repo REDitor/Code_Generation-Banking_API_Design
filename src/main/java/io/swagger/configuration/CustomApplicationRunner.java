@@ -60,32 +60,19 @@ public class CustomApplicationRunner implements ApplicationRunner {
         User pablo = userRepository.findByUsername("PabloGuilias123");
 
         // store new accounts in db
-//        Account accountSander = new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_CURRENT, 500, "open", 0);
-//        Account accountSanderSavings = new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0);
-//        Account accountBruno = new Account(accountService.generateIban(), bruno, AccountType.ACCOUNT_TYPE_CURRENT, 750, "open", 0);
-//        Account accountPablo = new Account(accountService.generateIban(), pablo, AccountType.ACCOUNT_TYPE_CURRENT, 1000, "open", 0);
-
-        List<Account> accounts = Arrays.asList(
-                new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_CURRENT, 500, "open", 0),
-                new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0),
-                new Account(accountService.generateIban(), bruno, AccountType.ACCOUNT_TYPE_CURRENT, 750, "open", 0),
-                new Account(accountService.generateIban(), pablo, AccountType.ACCOUNT_TYPE_CURRENT, 1000, "open", 0)
-        );
-
-        accountRepository.saveAll(accounts);
+        accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_CURRENT, 500, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), bruno, AccountType.ACCOUNT_TYPE_CURRENT, 750, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), pablo, AccountType.ACCOUNT_TYPE_CURRENT, 1000, "open", 0));
 
         Account accountSander = accountRepository.findAccountByIBAN("NL01INHO0000000001");
         Account accountSanderSavings = accountRepository.findAccountByIBAN("NL01INHO0000000002");
         Account accountBruno = accountRepository.findAccountByIBAN("NL01INHO0000000003");
         Account accountPablo = accountRepository.findAccountByIBAN("NL01INHO0000000004");
 
-        List<Transaction> transactions = Arrays.asList(
-                new Transaction(LocalDateTime.now(), accountSander, accountSanderSavings, 11.23, sander),
-                new Transaction(LocalDateTime.now(), accountSander, accountBruno, 11.23, sander),
-                new Transaction(LocalDateTime.now(), accountBruno, accountPablo, 11.23, bruno)
-        );
-
-        transactionRepository.saveAll(transactions);
+        transactionRepository.save(new Transaction(LocalDateTime.now(), accountSander, accountSanderSavings, 11.23, sander));
+        transactionRepository.save(new Transaction(LocalDateTime.now(), accountSander, accountBruno, 11.23, sander));
+        transactionRepository.save(new Transaction(LocalDateTime.now(), accountBruno, accountPablo, 11.23, bruno));
 
         // check if data was stored correctly
         System.out.println("\nUSERS:");

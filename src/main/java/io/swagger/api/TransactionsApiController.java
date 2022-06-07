@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -87,6 +86,7 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
     }
 
+    // TODO: put this method in service
     private boolean checkAccountOwnerAndType(Account fromAccount, Account toAccount) {
         //check if owner is not the same AND if either one account is a savings account
         if (fromAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS && toAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS)
@@ -116,10 +116,8 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<TransactionDepositDTO>(response, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
-
-        List<Transaction> transactions = transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.parse(dateTimeFrom), LocalDateTime.parse(dateTimeTo));
-        System.out.println(transactions);
+    public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban) {
+        List<Transaction> transactions = transactionService.getAllByIBAN(iban);
 
         return new ResponseEntity<List<TransactionDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
