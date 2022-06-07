@@ -44,6 +44,9 @@ public class NewUserDTO   {
   @JsonProperty("Email")
   private String email = null;
 
+  @JsonProperty("Username")
+  private String username = null;
+
   @JsonProperty("Password")
   private String password = null;
 
@@ -212,6 +215,26 @@ public class NewUserDTO   {
 
   public void setCountry(String country) {
     this.country = country;
+  }
+
+
+  public NewUserDTO username(String username) {
+    this.username = username;
+    return this;
+  }
+
+  /**
+   * Get username
+   * @return username
+   **/
+  @Schema(example = "brumarq", description = "")
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   public NewUserDTO email(String email) {

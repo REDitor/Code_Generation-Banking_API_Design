@@ -7,6 +7,7 @@ import io.swagger.model.entity.User;
 import io.swagger.repository.AccountRepository;
 import io.swagger.repository.UserRepository;
 import io.swagger.service.AccountService;
+import io.swagger.service.UserService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -22,12 +23,14 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private UserRepository userRepository;
     private AccountRepository accountRepository;
+    private UserService userService;
     private AccountService accountService;
 
-    public CustomApplicationRunner(UserRepository userRepository, AccountRepository accountRepository, AccountService accountService) {
+    public CustomApplicationRunner(UserRepository userRepository, AccountRepository accountRepository, AccountService accountService, UserService userService) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.accountService = accountService;
+        this.userService = userService;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
                 );
 
         // store users in db
-        userRepository.saveAll(users);
+        users.forEach(userService::add);
 
         // Get users for accounts
         User sander = userRepository.findByUsername("SanderHarks123");

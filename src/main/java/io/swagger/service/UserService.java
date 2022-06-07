@@ -1,9 +1,7 @@
 package io.swagger.service;
 
 import io.swagger.jwt.JwtTokenProvider;
-import io.swagger.model.entity.Account;
 import io.swagger.model.entity.User;
-import io.swagger.repository.AccountRepository;
 import io.swagger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,8 +39,8 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public User getOne(UUID userID) {
-        return userRepository.getOne(userID);
+    public User getOneCustomer(UUID userID) {
+        return userRepository.getOneCustomer(userID);
     }
 
     public User getOneEmployee(UUID userID) {
@@ -51,6 +49,18 @@ public class UserService implements UserDetailsService {
 
     public List<User> getAll(Pageable page) {
         Page<User> customerPage = userRepository.getAllCustomers(page);
+
+        return customerPage.getContent();
+    }
+
+    public List<User> getAllByName(Pageable page, String firstName, String lastName) {
+        Page<User> customerPage = userRepository.getAllCustomersByName(page, firstName, lastName);
+
+        return customerPage.getContent();
+    }
+
+    public List<User> getAllEmployeesByName(Pageable page, String firstName, String lastName) {
+        Page<User> customerPage = userRepository.getAllEmployeesByName(page, firstName, lastName);
 
         return customerPage.getContent();
     }

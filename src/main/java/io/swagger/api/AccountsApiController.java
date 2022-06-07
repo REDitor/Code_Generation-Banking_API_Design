@@ -2,6 +2,7 @@ package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.User;
 import io.swagger.service.AccountService;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,8 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
@@ -52,7 +53,7 @@ public class AccountsApiController implements AccountsApi {
 
     public ResponseEntity<AccountDTO> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewAccountDTO body) {
         Account newAccount = modelMapper.map(body, Account.class);
-        User user = userService.getOne(body.getUserID());
+        User user = userService.getOneCustomer(body.getUserID());
         String newIban = accountService.generateIban();
 
         newAccount.setIBAN(newIban);

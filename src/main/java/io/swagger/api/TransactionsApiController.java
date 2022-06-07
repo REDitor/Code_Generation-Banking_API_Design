@@ -119,10 +119,7 @@ public class TransactionsApiController implements TransactionsApi {
 
     public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@DecimalMax("34") @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
 
-        if (dateTimeFrom == null && dateTimeTo == null)
-            transactionService.getAllByIBAN(iban);
 
-        // TODO: continue here (repository class contains methods)
 
         return new ResponseEntity<List<TransactionDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
