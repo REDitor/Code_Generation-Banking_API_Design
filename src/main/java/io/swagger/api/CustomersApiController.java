@@ -65,10 +65,11 @@ public class CustomersApiController extends UserApiController implements Custome
         ResponseEntity validation;
         // Make sure all the fields got filled properly and heck if username is already in use
         validation = checkUserBody(newUser);
-        validation = checkUserName(newUser.getUsername());
+        if (validation != null) return validation;
 
-        if (validation != null)
-            return validation;
+        validation = checkUserName(newUser.getUsername());
+        if (validation != null) return validation;
+
 
         // Set proper role for user and add user to database
         newUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));

@@ -62,7 +62,10 @@ public class EmployeesApiController extends UserApiController implements Employe
         ResponseEntity validation;
         // Make sure all the fields got filled properly and check if username is already in use
         validation = checkUserBody(newUser);
+        if (validation != null) return validation;
+
         validation = checkUserName(newUser.getUsername());
+        if (validation != null) return validation;
 
         if (validation != null)
             return validation;
