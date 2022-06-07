@@ -38,6 +38,7 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
             "/customers/**/**",
             "/accounts/**/**",
             "/transactions/**/**",
+            "/login?**"
     };
 
     @Override

@@ -1,6 +1,7 @@
 package io.swagger.service;
 
 import io.swagger.jwt.JwtTokenProvider;
+import io.swagger.model.LoginDTO;
 import io.swagger.model.entity.User;
 import io.swagger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +102,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
-    public String login(String username, String password) {
+    public LoginDTO login(String username, String password) {
         String token = "";
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -109,12 +110,17 @@ public class UserService implements UserDetailsService {
             User user = userRepository.findByUsername(username);
             token = jwtTokenProvider.createToken(username, user.getRoles());
 
+            LoginDTO newLoginInformation = new LoginDTO();
+            newLoginInformation.setUser(user);
+            newLoginInformation.setJwtToken(token);
+
+            return newLoginInformation;
+
         } catch (AuthenticationException e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
                     "Invalid username/password");
         }
 
-        return token;
     }
 
 }
