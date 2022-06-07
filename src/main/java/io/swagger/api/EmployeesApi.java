@@ -104,7 +104,7 @@ public interface EmployeesApi {
         @ApiResponse(responseCode = "404", description = "A user with the specified ID was not found."),
         
         @ApiResponse(responseCode = "5XX", description = "Unexpected error.") })
-    @RequestMapping(value = "/employees/{employeeId}",
+    @RequestMapping(value = "/employees/{userId}",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)

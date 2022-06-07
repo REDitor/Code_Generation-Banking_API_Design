@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.model.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
@@ -54,9 +56,9 @@ public class UserDTO   {
   @JsonProperty("DailyLimit")
   private Integer dailyLimit = null;
 
-  @JsonProperty("Accounts")
-  @Valid
-  private List<AccountDTO> accounts = null;
+  @JsonProperty("Roles")
+  private List<Role> roles;
+
 
   public UserDTO userId(UUID userId) {
     this.userId = userId;
@@ -268,33 +270,25 @@ public class UserDTO   {
     this.dailyLimit = dailyLimit;
   }
 
-  public UserDTO accounts(List<AccountDTO> accounts) {
-    this.accounts = accounts;
-    return this;
-  }
 
-  public UserDTO addAccountsItem(AccountDTO accountsItem) {
-    if (this.accounts == null) {
-      this.accounts = new ArrayList<AccountDTO>();
-    }
-    this.accounts.add(accountsItem);
+  public UserDTO roles(List<Role> roles) {
+    this.roles = roles;
     return this;
   }
 
   /**
-   * Get accounts
-   * @return accounts
+   * Get roles
+   * @return roles
    **/
-  @Schema(description = "")
-  @Valid
-  public List<AccountDTO> getAccounts() {
-    return accounts;
+  @Schema(example = "Bruno", description = "")
+
+  public List<Role> getRoles() {
+    return roles;
   }
 
-  public void setAccounts(List<AccountDTO> accounts) {
-    this.accounts = accounts;
+  public void setRoles(List<Role> roles) {
+    this.roles = roles;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {

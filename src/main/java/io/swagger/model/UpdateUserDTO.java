@@ -1,5 +1,6 @@
 package io.swagger.model;
 
+import java.lang.reflect.Array;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -236,7 +237,7 @@ public class UpdateUserDTO {
    * Get roles
    * @return roles
    **/
-  @Schema(example = "[\"Customer\"]", required = true, description = "")
+  @Schema(example = "['Customer']", required = true, description = "")
       @NotNull
 
     public List<String> getRoles() {

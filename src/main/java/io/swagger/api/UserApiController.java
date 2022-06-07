@@ -68,7 +68,7 @@ abstract public class UserApiController {
         return null;
     }
 
-    public ResponseEntity updateUser(UUID employeeId, UpdateUserDTO body) {
+    public ResponseEntity   updateUser(UUID employeeId, UpdateUserDTO body) {
         User updatedUser = modelMapper.map(body, User.class);
 
         // Make sure all the fields got filled properly
@@ -99,6 +99,7 @@ abstract public class UserApiController {
 
     public ResponseEntity responseEntityUserOk(User user) {
         UserDTO response = modelMapper.map(user, UserDTO.class);
+
         return new ResponseEntity<UserDTO>(response,  HttpStatus.OK);
     }
 

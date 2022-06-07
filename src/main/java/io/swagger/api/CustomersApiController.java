@@ -4,6 +4,7 @@ import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.ErrorMessageDTO;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.UUID;
 
 import io.swagger.model.NewUserDTO;
@@ -44,6 +45,7 @@ public class CustomersApiController extends UserApiController implements Custome
 
     private final ModelMapper modelMapper;
 
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
@@ -90,7 +92,7 @@ public class CustomersApiController extends UserApiController implements Custome
         User userInformation = userService.getUserByUsername(authenticatedUserUsername);
 
         // Check if user is a Customer, if he is, make sure he is only able to access his own information
-        if (userInformation.getRoles().contains(Role.ROLE_CUSTOMER) && userInformation.getuserId() != userID) {
+        if (userInformation.getRoles().contains(Role.ROLE_CUSTOMER) && !userInformation.getuserId().equals(userID)) {
             return new ResponseEntity(new ErrorMessageDTO("Unauthorized or authorization information is missing or invalid."), HttpStatus.UNAUTHORIZED);
         }
 

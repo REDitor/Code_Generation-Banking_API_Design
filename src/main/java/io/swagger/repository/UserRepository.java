@@ -24,12 +24,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "WHERE ur.roles = '1' AND (u.FIRST_NAME LIKE '%'||:firstName||'%' OR u.LAST_NAME LIKE '%'||:lastName||'%')", nativeQuery = true)
     Page<User> getAllCustomersByName(Pageable page, @Param("firstName") String firstName, @Param("lastName") String lastName);
 
-    @Query(value = "SELECT * FROM User u "+
+    @Query(value = "SELECT * FROM Users u "+
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
             "WHERE ur.roles = '0' AND (u.FIRST_NAME LIKE '%'||:firstName||'%' OR u.LAST_NAME LIKE '%'||:lastName||'%')", nativeQuery = true)
     Page<User> getAllEmployeesByName(Pageable page, @Param("firstName") String firstName, @Param("lastName") String lastName);
 
-    @Query(value = "SELECT * FROM User u "+
+    @Query(value = "SELECT * FROM Users u "+
             "LEFT JOIN USER_ROLES ur ON ur.USER_USER_ID = u.user_Id " +
             "WHERE ur.roles = '0'", nativeQuery = true)
     Page<User> getAllEmployees(Pageable page);
