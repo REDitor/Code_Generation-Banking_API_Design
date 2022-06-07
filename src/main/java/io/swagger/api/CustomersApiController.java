@@ -65,10 +65,10 @@ public class CustomersApiController extends UserApiController implements Custome
         ResponseEntity validation;
         // Make sure all the fields got filled properly and heck if username is already in use
         validation = checkUserBody(newUser);
-        validation = checkUserName(newUser.getUsername());
+        if (validation != null) return validation;
 
-        if (validation != null)
-            return validation;
+        validation = checkUserName(newUser.getUsername());
+        if (validation != null) return validation;
 
         // Set proper role for user and add user to database
         newUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
@@ -86,7 +86,7 @@ public class CustomersApiController extends UserApiController implements Custome
             return validation;
 
         // Get JWT token and the information of the authenticated user
-        String receivedToken = jwtTokenProvider.resolveToken(request);
+        /*String receivedToken = jwtTokenProvider.resolveToken(request);
         jwtTokenProvider.validateToken(receivedToken);
         String authenticatedUserUsername = jwtTokenProvider.getUsername(receivedToken);
         User userInformation = userService.getUserByUsername(authenticatedUserUsername);
@@ -94,7 +94,7 @@ public class CustomersApiController extends UserApiController implements Custome
         // Check if user is a Customer, if he is, make sure he is only able to access his own information
         if (userInformation.getRoles().contains(Role.ROLE_CUSTOMER) && !userInformation.getuserId().equals(userID)) {
             return new ResponseEntity(new ErrorMessageDTO("Unauthorized or authorization information is missing or invalid."), HttpStatus.UNAUTHORIZED);
-        }
+        }*/
 
         // Get requested user information
         User receivedUser = userService.getOneCustomer(userID);

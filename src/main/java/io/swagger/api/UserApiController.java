@@ -99,7 +99,6 @@ abstract public class UserApiController {
 
     public ResponseEntity responseEntityUserOk(User user) {
         UserDTO response = modelMapper.map(user, UserDTO.class);
-
         return new ResponseEntity<UserDTO>(response,  HttpStatus.OK);
     }
 
