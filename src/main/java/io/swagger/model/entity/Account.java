@@ -1,10 +1,11 @@
 package io.swagger.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "account")
@@ -22,9 +23,9 @@ public class Account {
     private String status;
     private Integer minimumBalance;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "UserID")
-    @JsonIgnore
-    private List<Transaction> transactions = new ArrayList<>();
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "UserID")
+//    @JsonIgnore
+//    private List<Transaction> transactions = new ArrayList<>();
 
     public Account(String IBAN, User UserID, AccountType type, double balance, String status, Integer minimumBalance) {
         this.IBAN = IBAN;
