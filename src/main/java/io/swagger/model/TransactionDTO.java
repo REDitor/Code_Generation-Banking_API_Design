@@ -33,7 +33,7 @@ public class TransactionDTO   {
   private Double amount = null;
 
   @JsonProperty("PerformedByID")
-  private Integer performedByID = null;
+  private UUID performedByID = null;
 
   public TransactionDTO transactionId(UUID transactionId) {
     this.transactionId = transactionId;
@@ -134,7 +134,7 @@ public class TransactionDTO   {
     this.amount = amount;
   }
 
-  public TransactionDTO performedByID(Integer performedByID) {
+  public TransactionDTO performedByID(UUID performedByID) {
     this.performedByID = performedByID;
     return this;
   }
@@ -145,11 +145,11 @@ public class TransactionDTO   {
    **/
   @Schema(example = "1", description = "")
   
-    public Integer getPerformedByID() {
+    public UUID getPerformedByID() {
     return performedByID;
   }
 
-  public void setPerformedByID(Integer performedByID) {
+  public void setPerformedByID(UUID performedByID) {
     this.performedByID = performedByID;
   }
 

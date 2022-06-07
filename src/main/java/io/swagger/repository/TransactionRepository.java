@@ -13,9 +13,15 @@ import java.util.UUID;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
-    @Query("SELECT t FROM Transaction t WHERE t.from = ?1 OR t.to = ?1")
+    @Query("SELECT t FROM Transaction t WHERE t.from.IBAN = ?1 OR t.to.IBAN = ?1")
     List<Transaction> findAllByIBAN(String IBAN);
 
-    @Query("SELECT t FROM Transaction t WHERE (t.from = ?1 OR t.to = ?1) AND t.timestamp BETWEEN ?2 AND ?3")
+    @Query("SELECT t FROM Transaction t WHERE (t.from.IBAN = ?1 OR t.to.IBAN = ?1) AND t.timestamp BETWEEN ?2 AND ?3")
     List<Transaction> findAllByIBANBetweenTimestamps(String IBAN, LocalDateTime dateTimeFrom, LocalDateTime dateTimeTo);
+
+    @Query("SELECT t FROM Transaction t WHERE t.performedByID.userId = ?1")
+    List<Transaction> findAllByUserId(UUID userId);
+
+    @Query("SELECT t FROM Transaction t WHERE (t.performedByID.userId = ?1) AND t.timestamp BETWEEN ?2 AND ?3")
+    List<Transaction> findAllByUserIdBetweenTimeStamps(UUID userId, LocalDateTime from, LocalDateTime to);
 }

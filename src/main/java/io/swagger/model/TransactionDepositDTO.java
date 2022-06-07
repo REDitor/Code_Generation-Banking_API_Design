@@ -1,13 +1,13 @@
 package io.swagger.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.UUID;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Size;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * TransactionDepositDTO
@@ -33,7 +33,7 @@ public class TransactionDepositDTO   {
   private Double amount = null;
 
   @JsonProperty("PerformedByID")
-  private Integer performedByID = null;
+  private UUID performedByID = null;
 
   public TransactionDepositDTO transactionId(UUID transactionId) {
     this.transactionId = transactionId;
@@ -131,7 +131,7 @@ public class TransactionDepositDTO   {
     this.amount = amount;
   }
 
-  public TransactionDepositDTO performedByID(Integer performedByID) {
+  public TransactionDepositDTO performedByID(UUID performedByID) {
     this.performedByID = performedByID;
     return this;
   }
@@ -142,11 +142,11 @@ public class TransactionDepositDTO   {
    **/
   @Schema(example = "1", description = "")
   
-    public Integer getPerformedByID() {
+    public UUID getPerformedByID() {
     return performedByID;
   }
 
-  public void setPerformedByID(Integer performedByID) {
+  public void setPerformedByID(UUID performedByID) {
     this.performedByID = performedByID;
   }
 

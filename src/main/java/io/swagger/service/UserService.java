@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -123,4 +124,12 @@ public class UserService implements UserDetailsService {
 
     }
 
+    public User getLoggedUser(HttpServletRequest request) {
+        // Get JWT token and the information of the authenticated user
+        String receivedToken = jwtTokenProvider.resolveToken(request);
+        jwtTokenProvider.validateToken(receivedToken);
+        String authenticatedUserUsername = jwtTokenProvider.getUsername(receivedToken);
+
+        return getUserByUsername(authenticatedUserUsername);
+    }
 }
