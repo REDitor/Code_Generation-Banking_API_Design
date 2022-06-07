@@ -3,6 +3,7 @@ package io.swagger.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.model.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
@@ -15,9 +16,31 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T14:26:03.164Z[GMT]")
 
 
-public class LoginDTO   {
+public class LoginDTO {
+
+  @JsonProperty("user")
+  private User user = null;
   @JsonProperty("jwtToken")
   private String jwtToken = null;
+
+  public LoginDTO user(User user) {
+    this.user = user;
+    return this;
+  }
+
+  /**
+   * Get User
+   * @return User
+   **/
+  @Schema(example = "", description = "")
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
 
   public LoginDTO jwtToken(String jwtToken) {
     this.jwtToken = jwtToken;
@@ -60,7 +83,8 @@ public class LoginDTO   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class LoginDTO {\n");
-    
+
+    sb.append("    user: ").append(toIndentedString(user)).append("\n");
     sb.append("    jwtToken: ").append(toIndentedString(jwtToken)).append("\n");
     sb.append("}");
     return sb.toString();

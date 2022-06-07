@@ -2,6 +2,7 @@ package io.swagger.api;
 
 import io.swagger.model.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.entity.User;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import javax.servlet.http.HttpServletRequest;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T14:26:03.164Z[GMT]")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class LoginApiController implements LoginApi {
 
@@ -39,12 +42,9 @@ public class LoginApiController implements LoginApi {
     public ResponseEntity<LoginDTO> login(@Parameter(in = ParameterIn.PATH, description = "username", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password) {
         String token = "";
 
-        String result = userService.login(username, password);
+        LoginDTO result = userService.login(username, password);
 
-        LoginDTO loginInfo = new LoginDTO();
-        loginInfo.setJwtToken(result);
-
-        return new ResponseEntity<LoginDTO>(loginInfo,  HttpStatus.OK);
+        return new ResponseEntity<LoginDTO>(result,  HttpStatus.OK);
     }
 
 }
