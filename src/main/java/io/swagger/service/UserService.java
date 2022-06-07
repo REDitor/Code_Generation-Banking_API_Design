@@ -103,13 +103,13 @@ public class UserService implements UserDetailsService {
     }
 
     public LoginDTO login(String username, String password) {
-        String token = "";
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
             User user = userRepository.findByUsername(username);
-            token = jwtTokenProvider.createToken(username, user.getRoles());
+            String token = jwtTokenProvider.createToken(username, user.getRoles());
 
+            // Prepare user information and jwt token
             LoginDTO newLoginInformation = new LoginDTO();
             newLoginInformation.setUser(user);
             newLoginInformation.setJwtToken(token);
@@ -117,10 +117,7 @@ public class UserService implements UserDetailsService {
             return newLoginInformation;
 
         } catch (AuthenticationException e) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Invalid username/password");
+            return null;
         }
-
     }
-
 }

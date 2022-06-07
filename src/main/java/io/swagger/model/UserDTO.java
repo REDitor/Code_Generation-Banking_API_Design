@@ -50,6 +50,9 @@ public class UserDTO   {
   @JsonProperty("Country")
   private String country = null;
 
+  @JsonProperty("Email")
+  private String email = null;
+
   @JsonProperty("TransactionAmountLimit")
   private Integer transactionAmountLimit = null;
 
@@ -78,6 +81,26 @@ public class UserDTO   {
   public void setuserId(UUID userId) {
     this.userId = userId;
   }
+
+  public UserDTO email(String email) {
+    this.email = email;
+    return this;
+  }
+
+  /**
+   * Get email
+   * @return email
+   **/
+  @Schema(example = "Bruno", description = "")
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
 
   public UserDTO firstName(String firstName) {
     this.firstName = firstName;

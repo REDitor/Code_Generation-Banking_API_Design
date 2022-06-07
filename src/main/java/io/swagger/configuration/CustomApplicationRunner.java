@@ -38,11 +38,11 @@ public class CustomApplicationRunner implements ApplicationRunner {
         // Create hardcoded users
         List<User> users = Arrays.asList(
                 new User("Sander", "Harks", LocalDate.parse("1997-12-07"), "Somestreet", 247, "1234AB", "Haarlem",
-                        "The Netherlands", 500, 250, Arrays.asList(Role.ROLE_EMPLOYEE), "SanderHarks123", "secret123"),
+                        "The Netherlands", 500, 250, Arrays.asList(Role.ROLE_EMPLOYEE), "sander@gmail.com","SanderHarks123", "secret123"),
                 new User("Bruno", "Marques", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
-                        "The Netherlands", 500, 250, Arrays.asList(Role.ROLE_CUSTOMER, Role.ROLE_EMPLOYEE), "BrunoMarques123", "secret123"),
+                        "The Netherlands", 500, 250, Arrays.asList(Role.ROLE_CUSTOMER, Role.ROLE_EMPLOYEE), "bruno@gmail.com", "BrunoMarques123", "secret123"),
                 new User("Pablo", "Guilias", LocalDate.parse("1997-12-07"), "Someotherotherstreet", 321, "2314AB", "Haarlem",
-                        "The Netherlands", 500, 250, Arrays.asList(Role.ROLE_CUSTOMER), "PabloGuilias123", "secret123")
+                        "The Netherlands", 500, 250, Arrays.asList(Role.ROLE_CUSTOMER),"pablo@gmail.com", "PabloGuilias123", "secret123")
                 );
 
         // store users in db

@@ -1,5 +1,6 @@
 package io.swagger.api;
 
+import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.User;
@@ -43,6 +44,10 @@ public class LoginApiController implements LoginApi {
         String token = "";
 
         LoginDTO result = userService.login(username, password);
+
+        if (result == null){
+            return new ResponseEntity(new ErrorMessageDTO("Wrong login credentials."), HttpStatus.UNAUTHORIZED);
+        }
 
         return new ResponseEntity<LoginDTO>(result,  HttpStatus.OK);
     }

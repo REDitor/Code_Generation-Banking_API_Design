@@ -33,6 +33,8 @@ public class User {
     private Integer dailyLimit;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    private String email;
     private String username;
     private String password;
 
@@ -40,7 +42,7 @@ public class User {
     @JsonIgnore
     private List<Account> account = new ArrayList<>();
 
-    public User(String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
+    public User(String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String email,String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
@@ -52,12 +54,22 @@ public class User {
         this.transactionAmountLimit = transactionAmountLimit;
         this.dailyLimit = dailyLimit;
         this.roles = roles;
+        this.email = email;
         this.username = username;
         this.password = password;
     }
 
     public User() {
 
+    }
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public List<Account> getAccount() {
