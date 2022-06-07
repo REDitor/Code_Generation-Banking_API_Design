@@ -2,13 +2,7 @@ package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
-import io.swagger.model.CreateTransactionDTO;
-import io.swagger.model.DepositDTO;
-import io.swagger.model.ErrorMessageDTO;
-import io.swagger.model.TransactionDTO;
-import io.swagger.model.TransactionDepositDTO;
-import io.swagger.model.TransactionWithdrawlDTO;
-import io.swagger.model.WithdrawDTO;
+import io.swagger.model.*;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.AccountType;
 import io.swagger.model.entity.Transaction;
@@ -18,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -119,17 +116,38 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<TransactionDepositDTO>(response, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@DecimalMax("34") @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
-        List<Transaction> transactions = new ArrayList<>();
+    public ResponseEntity<List<TransactionDTO>> transactionsIbanGet( @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
+        List<Transaction> transactions;
 
         //this is just for testing without dates
-        if (dateTimeFrom == null && dateTimeTo == null)
+        if (dateTimeFrom == null && dateTimeTo == null) {
             transactions = transactionService.getAllByIBAN(iban);
+        } else{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
-        //FIXME: Here i need to cast it
-//        List<TransactionDTO> response = modelMapper.map(transactions, List<TransactionDTO>);
+            LocalDateTime from = LocalDateTime.parse(dateTimeFrom, formatter);
+            LocalDateTime to = LocalDateTime.parse(dateTimeTo, formatter);
 
-        return new ResponseEntity<List<TransactionDTO>>(HttpStatus.NOT_IMPLEMENTED);
+            transactions = transactionService.getAllByIbanBetweenTimestamps(iban, from, to);
+
+            List<TransactionDTO> entityToDto = new ArrayList<>();
+
+            for (Transaction transaction: transactions) {
+                TransactionDTO transaction1 = new TransactionDTO();
+
+                transaction1.setTransactionId(transaction.getTransactionId());
+                transaction1.setAmount(transaction.getAmount());
+                transaction1.setFrom(transaction.getFrom().getIBAN());
+                transaction1.setTo(transaction.getTo().getIBAN());
+                transaction1.setTimestamp(transaction.getTimestamp().toString());
+                transaction1.setPerformedByID(null);
+
+                entityToDto.add(transaction1);
+            }
+
+            return new ResponseEntity<List<TransactionDTO>>(entityToDto,  HttpStatus.OK);
+        }
+        return null;
     }
 
     public ResponseEntity<TransactionWithdrawlDTO> withdraw(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to withdraw from", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Withdraw details", schema = @Schema()) @Valid @RequestBody WithdrawDTO body) {
