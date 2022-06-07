@@ -1,5 +1,7 @@
 package io.swagger.service;
 
+import io.swagger.model.entity.Account;
+import io.swagger.model.entity.AccountType;
 import io.swagger.model.entity.Transaction;
 import io.swagger.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +35,13 @@ public class TransactionService {
 
     public List<Transaction> getAllByUserIdBetweenTimestamps(UUID userId, LocalDateTime from, LocalDateTime to) {
         return transactionRepository.findAllByUserIdBetweenTimeStamps(userId, from, to);
+    }
+
+    public boolean checkAccountOwnerAndType(Account fromAccount, Account toAccount) {
+        //check if owner is not the same AND if either one account is a savings account
+        if (fromAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS && toAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS)
+            return true;
+
+        return fromAccount.getUserID().getuserId() == toAccount.getUserID().getuserId();
     }
 }

@@ -2,6 +2,7 @@ package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
+import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.CreateTransactionDTO;
 import io.swagger.model.DepositDTO;
 import io.swagger.model.ErrorMessageDTO;
@@ -10,10 +11,10 @@ import io.swagger.model.TransactionDepositDTO;
 import io.swagger.model.TransactionWithdrawlDTO;
 import io.swagger.model.WithdrawDTO;
 import io.swagger.model.entity.Account;
-import io.swagger.model.entity.AccountType;
 import io.swagger.model.entity.Transaction;
 import io.swagger.repository.AccountRepository;
 import io.swagger.service.TransactionService;
+import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,10 +53,15 @@ public class TransactionsApiController implements TransactionsApi {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private UserService userService;
+
     private final ModelMapper modelMapper;
 
     @Autowired
     private AccountRepository accountRepository;
+
+    private JwtTokenProvider jwtTokenProvider;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -63,7 +70,7 @@ public class TransactionsApiController implements TransactionsApi {
         this.modelMapper = new ModelMapper();
     }
 
-    //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction details", schema = @Schema()) @Valid @RequestBody CreateTransactionDTO body) {
         Transaction newTransaction = modelMapper.map(body, Transaction.class);
 
@@ -75,14 +82,14 @@ public class TransactionsApiController implements TransactionsApi {
         Account fromAccount = newTransaction.getFrom();
         Account toAccount = newTransaction.getTo();
 
-        if (!checkAccountOwnerAndType(fromAccount, toAccount))
+        if (!transactionService.checkAccountOwnerAndType(fromAccount, toAccount))
             return new ResponseEntity(new ErrorMessageDTO("Permission denied. You do not own this savings account."), HttpStatus.FORBIDDEN);
 
         // update balances
         fromAccount.setBalance(fromAccount.getBalance() - newTransaction.getAmount());
         toAccount.setBalance(toAccount.getBalance() + newTransaction.getAmount());
 
-        //TODO: assign performedBy !?
+        newTransaction.setPerformedByID(userService.getLoggedUser(request));
 
         Transaction result = transactionService.add(newTransaction);
 
@@ -90,16 +97,7 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
     }
 
-    // TODO: put this method in service
-    private boolean checkAccountOwnerAndType(Account fromAccount, Account toAccount) {
-        //check if owner is not the same AND if either one account is a savings account
-        if (fromAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS && toAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS)
-            return true;
-
-        return fromAccount.getUserID().getuserId() == toAccount.getUserID().getuserId();
-    }
-
-    //@PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<TransactionDepositDTO> deposit(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to deposit to", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Deposit details", schema = @Schema()) @Valid @RequestBody DepositDTO body) {
         Transaction newDeposit = modelMapper.map(body, Transaction.class);
 
@@ -112,8 +110,7 @@ public class TransactionsApiController implements TransactionsApi {
         // update balances
         newDeposit.getTo().setBalance(newDeposit.getTo().getBalance() + newDeposit.getAmount());
 
-
-        //TODO: assign performedBy !?
+        newDeposit.setPerformedByID(userService.getLoggedUser(request));
 
         Transaction result = transactionService.add(newDeposit);
         TransactionDepositDTO response = modelMapper.map(newDeposit, TransactionDepositDTO.class);
@@ -121,7 +118,7 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<TransactionDepositDTO>(response, HttpStatus.CREATED);
     }
 
-    //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
         List<Transaction> transactions;
 
@@ -155,7 +152,7 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<List<TransactionDTO>>(transactionDTOs, HttpStatus.OK);
     }
 
-    @Override
+    @PreAuthorize("hasRole('CUSTOMER') || hasRole('EMPLOYEE')")
     public ResponseEntity<List<TransactionDTO>> transactionsGetByUserId(UUID userId, String dateTimeFrom, String dateTimeTo) {
         List<Transaction> transactions;
 
@@ -189,6 +186,7 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<List<TransactionDTO>>(transactionDTOs, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<TransactionWithdrawlDTO> withdraw(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to withdraw from", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Withdraw details", schema = @Schema()) @Valid @RequestBody WithdrawDTO body) {
         Transaction newWithdraw = modelMapper.map(body, Transaction.class);
 
@@ -198,13 +196,11 @@ public class TransactionsApiController implements TransactionsApi {
         // update balances
         newWithdraw.getFrom().setBalance(newWithdraw.getFrom().getBalance() - newWithdraw.getAmount());
 
-
-        //TODO: assign performedBy !?
+        newWithdraw.setPerformedByID(userService.getLoggedUser(request));
 
         Transaction result = transactionService.add(newWithdraw);
         TransactionWithdrawlDTO response = modelMapper.map(newWithdraw, TransactionWithdrawlDTO.class);
 
         return new ResponseEntity<TransactionWithdrawlDTO>(response, HttpStatus.CREATED);
     }
-
 }
