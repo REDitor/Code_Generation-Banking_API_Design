@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class TransactionService {
@@ -24,5 +25,13 @@ public class TransactionService {
 
     public List<Transaction> getAllByIbanBetweenTimestamps(String iban, LocalDateTime dateTimeFrom, LocalDateTime dateTimeTo) {
         return transactionRepository.findAllByIBANBetweenTimestamps(iban, dateTimeFrom, dateTimeTo);
+    }
+
+    public List<Transaction> getAllByUserId(UUID userId) {
+        return transactionRepository.findAllByUserId(userId);
+    }
+
+    public List<Transaction> getAllByUserIdBetweenTimestamps(UUID userId, LocalDateTime from, LocalDateTime to) {
+        return transactionRepository.findAllByUserIdBetweenTimeStamps(userId, from, to);
     }
 }

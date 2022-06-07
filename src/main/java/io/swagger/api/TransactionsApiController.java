@@ -2,7 +2,13 @@ package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
-import io.swagger.model.*;
+import io.swagger.model.CreateTransactionDTO;
+import io.swagger.model.DepositDTO;
+import io.swagger.model.ErrorMessageDTO;
+import io.swagger.model.TransactionDTO;
+import io.swagger.model.TransactionDepositDTO;
+import io.swagger.model.TransactionWithdrawlDTO;
+import io.swagger.model.WithdrawDTO;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.AccountType;
 import io.swagger.model.entity.Transaction;
@@ -12,7 +18,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -60,6 +63,7 @@ public class TransactionsApiController implements TransactionsApi {
         this.modelMapper = new ModelMapper();
     }
 
+    //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
     public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction details", schema = @Schema()) @Valid @RequestBody CreateTransactionDTO body) {
         Transaction newTransaction = modelMapper.map(body, Transaction.class);
 
@@ -95,6 +99,7 @@ public class TransactionsApiController implements TransactionsApi {
         return fromAccount.getUserID().getuserId() == toAccount.getUserID().getuserId();
     }
 
+    //@PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<TransactionDepositDTO> deposit(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to deposit to", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Deposit details", schema = @Schema()) @Valid @RequestBody DepositDTO body) {
         Transaction newDeposit = modelMapper.map(body, Transaction.class);
 
@@ -116,38 +121,72 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<TransactionDepositDTO>(response, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<List<TransactionDTO>> transactionsIbanGet( @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
+    //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
         List<Transaction> transactions;
 
-        //this is just for testing without dates
-        if (dateTimeFrom == null && dateTimeTo == null) {
+        //Check if from and to date are set
+        if (dateTimeFrom == null && dateTimeTo == null)
             transactions = transactionService.getAllByIBAN(iban);
-        } else{
+        else {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
             LocalDateTime from = LocalDateTime.parse(dateTimeFrom, formatter);
             LocalDateTime to = LocalDateTime.parse(dateTimeTo, formatter);
-
             transactions = transactionService.getAllByIbanBetweenTimestamps(iban, from, to);
-
-            List<TransactionDTO> entityToDto = new ArrayList<>();
-
-            for (Transaction transaction: transactions) {
-                TransactionDTO transaction1 = new TransactionDTO();
-
-                transaction1.setTransactionId(transaction.getTransactionId());
-                transaction1.setAmount(transaction.getAmount());
-                transaction1.setFrom(transaction.getFrom().getIBAN());
-                transaction1.setTo(transaction.getTo().getIBAN());
-                transaction1.setTimestamp(transaction.getTimestamp().toString());
-                transaction1.setPerformedByID(null);
-
-                entityToDto.add(transaction1);
-            }
-
-            return new ResponseEntity<List<TransactionDTO>>(entityToDto,  HttpStatus.OK);
         }
-        return null;
+
+        System.out.println("\nTransactions: " + transactions);
+
+        List<TransactionDTO> transactionDTOs = new ArrayList<>();
+
+        for (Transaction transaction : transactions) {
+            TransactionDTO transactionDTO = new TransactionDTO();
+
+            transactionDTO.setTransactionId(transaction.getTransactionId());
+            transactionDTO.setAmount(transaction.getAmount());
+            transactionDTO.setFrom(transaction.getFrom().getIBAN());
+            transactionDTO.setTo(transaction.getTo().getIBAN());
+            transactionDTO.setTimestamp(transaction.getTimestamp().toString());
+            transactionDTO.setPerformedByID(null);
+
+            transactionDTOs.add(transactionDTO);
+        }
+        return new ResponseEntity<List<TransactionDTO>>(transactionDTOs, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<TransactionDTO>> transactionsGetByUserId(UUID userId, String dateTimeFrom, String dateTimeTo) {
+        List<Transaction> transactions;
+
+        //Check if from and to date are set
+        if (dateTimeFrom == null && dateTimeTo == null)
+            transactions = transactionService.getAllByUserId(userId);
+        else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+            LocalDateTime from = LocalDateTime.parse(dateTimeFrom, formatter);
+            LocalDateTime to = LocalDateTime.parse(dateTimeTo, formatter);
+            transactions = transactionService.getAllByUserIdBetweenTimestamps(userId, from, to);
+        }
+
+        System.out.println("\nTransactions: " + transactions);
+
+        List<TransactionDTO> transactionDTOs = new ArrayList<>();
+
+        for (Transaction transaction : transactions) {
+            TransactionDTO transactionDTO = new TransactionDTO();
+
+            transactionDTO.setTransactionId(transaction.getTransactionId());
+            transactionDTO.setAmount(transaction.getAmount());
+            transactionDTO.setFrom(transaction.getFrom().getIBAN());
+            transactionDTO.setTo(transaction.getTo().getIBAN());
+            transactionDTO.setTimestamp(transaction.getTimestamp().toString());
+            transactionDTO.setPerformedByID(null);
+
+            transactionDTOs.add(transactionDTO);
+        }
+        return new ResponseEntity<List<TransactionDTO>>(transactionDTOs, HttpStatus.OK);
     }
 
     public ResponseEntity<TransactionWithdrawlDTO> withdraw(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to withdraw from", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Withdraw details", schema = @Schema()) @Valid @RequestBody WithdrawDTO body) {
