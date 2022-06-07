@@ -25,12 +25,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -116,8 +119,17 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<TransactionDepositDTO>(response, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(String iban, String dateTimeFrom, String  dateTimeTo) {
-        return null;
+    public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@DecimalMax("34") @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
+        List<Transaction> transactions = new ArrayList<>();
+
+        //this is just for testing without dates
+        if (dateTimeFrom == null && dateTimeTo == null)
+            transactions = transactionService.getAllByIBAN(iban);
+
+        //FIXME: Here i need to cast it
+//        List<TransactionDTO> response = modelMapper.map(transactions, List<TransactionDTO>);
+
+        return new ResponseEntity<List<TransactionDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<TransactionWithdrawlDTO> withdraw(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to withdraw from", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Withdraw details", schema = @Schema()) @Valid @RequestBody WithdrawDTO body) {
