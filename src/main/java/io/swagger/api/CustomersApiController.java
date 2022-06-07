@@ -26,6 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.*;
@@ -58,7 +59,7 @@ public class CustomersApiController extends UserApiController implements Custome
         this.modelMapper = new ModelMapper();
     }
 
-    //@PreAuthorize("hasRole('EMPLOYEE')")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
         User newUser = modelMapper.map(body, User.class);
 
@@ -77,7 +78,7 @@ public class CustomersApiController extends UserApiController implements Custome
         return responseEntityUserOk(newUser);
     }
 
-    //@PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
     public ResponseEntity<UserDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
         // CHeck if provided userId is valid
         ResponseEntity validation = checkUserIDParameter(userID.toString());
@@ -86,7 +87,7 @@ public class CustomersApiController extends UserApiController implements Custome
             return validation;
 
         // Get JWT token and the information of the authenticated user
-        /*String receivedToken = jwtTokenProvider.resolveToken(request);
+        String receivedToken = jwtTokenProvider.resolveToken(request);
         jwtTokenProvider.validateToken(receivedToken);
         String authenticatedUserUsername = jwtTokenProvider.getUsername(receivedToken);
         User userInformation = userService.getUserByUsername(authenticatedUserUsername);
@@ -94,7 +95,7 @@ public class CustomersApiController extends UserApiController implements Custome
         // Check if user is a Customer, if he is, make sure he is only able to access his own information
         if (userInformation.getRoles().contains(Role.ROLE_CUSTOMER) && !userInformation.getuserId().equals(userID)) {
             return new ResponseEntity(new ErrorMessageDTO("Unauthorized or authorization information is missing or invalid."), HttpStatus.UNAUTHORIZED);
-        }*/
+        }
 
         // Get requested user information
         User receivedUser = userService.getOneCustomer(userID);
@@ -105,7 +106,7 @@ public class CustomersApiController extends UserApiController implements Custome
         return responseEntityUserOk(receivedUser);
     }
 
-    //@PreAuthorize("hasRole('EMPLOYEE')")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
         // Check if pagination was set
@@ -124,7 +125,7 @@ public class CustomersApiController extends UserApiController implements Custome
         return responseEntityUserListOk(receivedUsers);
     }
 
-    //@PreAuthorize("hasRole('EMPLOYEE')")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserDTO body) {
         return updateUser(userID, body);
     }
