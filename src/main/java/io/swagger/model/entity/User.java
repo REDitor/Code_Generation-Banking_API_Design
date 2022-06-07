@@ -1,5 +1,6 @@
 package io.swagger.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.threeten.bp.LocalDate;
 
 import javax.persistence.CascadeType;
@@ -36,6 +37,7 @@ public class User {
     private String password;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "UserID")
+    @JsonIgnore
     private List<Account> account = new ArrayList<>();
 
     public User(String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {

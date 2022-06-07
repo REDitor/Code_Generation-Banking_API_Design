@@ -1,8 +1,11 @@
 package io.swagger.model;
 
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.model.entity.AccountType;
 import io.swagger.model.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
@@ -18,13 +21,14 @@ import javax.validation.constraints.*;
 
 public class AccountDTO   {
   @JsonProperty("UserID")
-  private User UserID = null;
+  @JsonIgnore
+  User UserID = null;
 
   @JsonProperty("IBAN")
   private String IBAN = null;
 
   @JsonProperty("Type")
-  private String type = null;
+  private AccountType type = null;
 
   @JsonProperty("Balance")
   private Integer balance = null;
@@ -73,7 +77,7 @@ public class AccountDTO   {
     this.IBAN = IBAN;
   }
 
-  public AccountDTO type(String type) {
+  public AccountDTO type(AccountType type) {
     this.type = type;
     return this;
   }
@@ -82,13 +86,13 @@ public class AccountDTO   {
    * Get type
    * @return type
    **/
-  @Schema(example = "Current", description = "")
+  @Schema(example = "ACCOUNT_TYPE_CURRENT", description = "")
   
-    public String getType() {
+    public AccountType getType() {
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(AccountType type) {
     this.type = type;
   }
 
@@ -176,7 +180,7 @@ public class AccountDTO   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AccountDTO {\n");
-    
+
     sb.append("    UserID: ").append(toIndentedString(UserID)).append("\n");
     sb.append("    IBAN: ").append(toIndentedString(IBAN)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");

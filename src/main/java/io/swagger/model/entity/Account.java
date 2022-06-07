@@ -1,12 +1,9 @@
 package io.swagger.model.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "account")
 public class Account {
 
     @Id
@@ -14,7 +11,7 @@ public class Account {
     private String IBAN;
 
     @ManyToOne
-    @JoinColumn(name = "UserId")
+    @JoinColumn(name = "UserID")
     private User UserID;
     private AccountType type;
     private double balance;
