@@ -5,10 +5,11 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.NewUserEmployeeDTO;
 import java.util.UUID;
-import io.swagger.model.UpdateUserEmployeeDTO;
-import io.swagger.model.UserEmployeeDTO;
+
+import io.swagger.model.NewUserDTO;
+import io.swagger.model.UpdateUserDTO;
+import io.swagger.model.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -22,18 +23,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
-import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-31T12:15:45.146Z[GMT]")
 @Validated
@@ -42,7 +38,7 @@ public interface EmployeesApi {
     @Operation(summary = "Creates a new Employee", description = "Create new Employee", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employees" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Employee Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEmployeeDTO.class))),
+        @ApiResponse(responseCode = "201", description = "Employee Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad request. Invalid request body."),
         
@@ -55,13 +51,13 @@ public interface EmployeesApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<UserEmployeeDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserEmployeeDTO body);
+    ResponseEntity<UserDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserDTO body);
 
 
     @Operation(summary = "Get an employee by Id", description = "Gets a specific Employee by Id", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employees" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Result of the selected employee", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEmployeeDTO.class))),
+        @ApiResponse(responseCode = "200", description = "Result of the selected employee", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad request."),
         
@@ -73,13 +69,13 @@ public interface EmployeesApi {
     @RequestMapping(value = "/employees/{employeeId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<UserEmployeeDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId);
+    ResponseEntity<UserDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId);
 
 
     @Operation(summary = "Gets all employees available", description = "", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employees" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "All accounts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserEmployeeDTO.class)))),
+        @ApiResponse(responseCode = "200", description = "All accounts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))),
         
         @ApiResponse(responseCode = "400", description = "Bad request."),
         
@@ -91,7 +87,7 @@ public interface EmployeesApi {
     @RequestMapping(value = "/employees",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<UserEmployeeDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
+    ResponseEntity<List<UserDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit);
 
@@ -99,7 +95,7 @@ public interface EmployeesApi {
     @Operation(summary = "Updates employee by Id", description = "Updates employee by ID", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employees" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Result of the modified employee", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEmployeeDTO.class))),
+        @ApiResponse(responseCode = "200", description = "Result of the modified employee", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
         
         @ApiResponse(responseCode = "400", description = "Bad request. Invalid request body."),
         
@@ -112,7 +108,7 @@ public interface EmployeesApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<UserEmployeeDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserEmployeeDTO body);
+    ResponseEntity<UserDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("userId") UUID userId, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserDTO body);
 
 }
 
