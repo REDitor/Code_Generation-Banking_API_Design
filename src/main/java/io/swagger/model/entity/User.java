@@ -2,13 +2,20 @@ package io.swagger.model.entity;
 
 import org.threeten.bp.LocalDate;
 
-import javax.persistence.*;
-import java.lang.reflect.Array;
+import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue
@@ -31,8 +38,7 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "UserID")
     private List<Account> account = new ArrayList<>();
 
-    public User(UUID userId, String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
-        this.userId = userId;
+    public User(String firstName, String lastName, LocalDate birthDate, String streetName, Integer houseNumber, String zipCode, String city, String country, Integer transactionAmountLimit, Integer dailyLimit, List<Role> roles, String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
@@ -63,6 +69,7 @@ public class User {
         this.username = username;
         this.password = password;
     }
+
     public User() {
 
     }
@@ -163,7 +170,6 @@ public class User {
         this.dailyLimit = dailyLimit;
     }
 
-
     public List<Role> getRoles() {
         return roles;
     }
@@ -188,6 +194,21 @@ public class User {
         this.password = password;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "\nID: " + this.userId +
+                "\nFirstname: " + this.firstName +
+                "\nLastname: " + this.lastName +
+                "\nBirthdate: " + this.birthDate +
+                "\nStreet: " + this.streetName +
+                "\nHouse number: " + this.houseNumber +
+                "\nZip code: " + this.zipCode +
+                "\nCity: " + this.city +
+                "\nCountry: " + this.country +
+                "\nTransaction limit: " + this.transactionAmountLimit +
+                "\nDaily limit: " + this.dailyLimit +
+                "\nRoles: " + this.roles +
+                "\nUsername: " + this.username +
+                "\nPassword: " + this.password;
+    }
 }

@@ -2,17 +2,10 @@ package io.swagger.service;
 
 import io.swagger.model.entity.Account;
 import io.swagger.repository.AccountRepository;
-import org.iban4j.CountryCode;
-import org.iban4j.Iban;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class AccountService  {

@@ -1,9 +1,10 @@
 package io.swagger.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Account {
@@ -15,12 +16,12 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "UserId")
     private User UserID;
-    private String type;
-    private Integer balance;
+    private AccountType type;
+    private double balance;
     private String status;
     private Integer minimumBalance;
 
-    public Account(String IBAN, User UserID, String type, Integer balance, String status, Integer minimumBalance) {
+    public Account(String IBAN, User UserID, AccountType type, double balance, String status, Integer minimumBalance) {
         this.IBAN = IBAN;
         this.UserID = UserID;
         this.type = type;
@@ -49,19 +50,19 @@ public class Account {
         this.UserID = UserID;
     }
 
-    public String getType() {
+    public AccountType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(AccountType type) {
         this.type = type;
     }
 
-    public Integer getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(Integer balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 
@@ -79,6 +80,16 @@ public class Account {
 
     public void setMinimumBalance(Integer minimumBalance) {
         this.minimumBalance = minimumBalance;
+    }
+
+    @Override
+    public String toString() {
+        return "\nIBAN: " + this.IBAN +
+                "\nUser: " + this.UserID +
+                "\nType: " + this.type +
+                "\nBalance: " + this.balance +
+                "\nStatus: " + this.status +
+                "\nMinimum Balance: " + this.minimumBalance;
     }
 }
 

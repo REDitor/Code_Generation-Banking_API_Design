@@ -1,8 +1,10 @@
 package io.swagger.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -11,7 +13,7 @@ public class Transaction {
     @Id
     @GeneratedValue
     private UUID transactionId;
-    private String timestamp;
+    private LocalDateTime timestamp;
     @ManyToOne
     private Account from;
     @ManyToOne
@@ -20,8 +22,7 @@ public class Transaction {
     @ManyToOne
     private User performedByID;
 
-    public Transaction(UUID transactionId, String timestamp, Account from, Account to, Double amount, User performedByID) {
-        this.transactionId = transactionId;
+    public Transaction(LocalDateTime timestamp, Account from, Account to, Double amount, User performedByID) {
         this.timestamp = timestamp;
         this.from = from;
         this.to = to;
@@ -41,11 +42,11 @@ public class Transaction {
         this.transactionId = transactionId;
     }
 
-    public String getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -79,5 +80,15 @@ public class Transaction {
 
     public void setPerformedByID(User performedByID) {
         this.performedByID = performedByID;
+    }
+
+    @Override
+    public String toString() {
+        return "\nID: " + transactionId +
+                "\nTimestamp: " + timestamp +
+                "\nFrom: " + from +
+                "\nTo: " + to +
+                "\nAmount: " + amount +
+                "\nPerformedBy: " + performedByID;
     }
 }
