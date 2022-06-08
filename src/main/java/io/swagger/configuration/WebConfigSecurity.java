@@ -49,12 +49,13 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and();
         http.csrf().disable(); // no CSRF protection needed
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // no sessions needed
-        http.authorizeRequests().anyRequest().permitAll();
-                //.antMatchers(AUTH_WHITELIST).permitAll()
-                //.anyRequest().authenticated(); // disallow any other URL for unauthenticated users
-        //http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class); // add the filter
+        http.authorizeRequests().anyRequest().permitAll()
+                .antMatchers(AUTH_WHITELIST).permitAll()
+                .anyRequest().authenticated(); // disallow any other URL for unauthenticated users
+        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class); // add the filter
     }
 
     @Bean
