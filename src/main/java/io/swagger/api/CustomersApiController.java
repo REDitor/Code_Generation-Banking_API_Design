@@ -60,7 +60,7 @@ public class CustomersApiController extends UserApiController implements Custome
         this.modelMapper = new ModelMapper();
     }
 
-    @PreAuthorize("hasRole('EMPLOYEE')")
+    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
         User newUser = modelMapper.map(body, User.class);
 
@@ -107,7 +107,7 @@ public class CustomersApiController extends UserApiController implements Custome
         return responseEntityUserOk(receivedUser);
     }
 
-    public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
+    public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit, @Parameter(in = ParameterIn.QUERY, description = "Get customers that have no accounts", schema = @Schema()) @Valid @RequestParam(value = "noAccounts", required = true) Boolean noAccounts) {
 
         // Check if pagination was set
         ResponseEntity validation = checkPagination(skip, limit);
@@ -118,6 +118,10 @@ public class CustomersApiController extends UserApiController implements Custome
 
         if (firstName != null || lastName != null) {
              receivedUsers = userService.getAllByName(PageRequest.of(skip, limit), firstName, lastName);
+        } else if((firstName != null || lastName != null) && noAccounts == true) {
+            receivedUsers = userService.getAllNoAccountsByName(PageRequest.of(skip, limit), firstName, lastName);
+        } else if(noAccounts == true){
+            receivedUsers = userService.getAllNoAccounts(PageRequest.of(skip, limit));
         } else {
             receivedUsers = userService.getAll(PageRequest.of(skip, limit));
         }

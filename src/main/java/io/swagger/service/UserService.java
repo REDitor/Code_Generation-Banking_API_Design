@@ -56,10 +56,24 @@ public class UserService implements UserDetailsService {
     }
 
     public List<User> getAllByName(Pageable page, String firstName, String lastName) {
-        Page<User> customerPage = userRepository.getAllCustomersByName(page, firstName, lastName);
+        Page<User> customerPage = userRepository.getAllByFirstNameOrLastName(page, firstName, lastName);
 
         return customerPage.getContent();
     }
+
+    public List<User> getAllNoAccountsByName(Pageable page, String firstName, String lastName) {
+        Page<User> customerPage = userRepository.getAllByFirstNameOrLastNameAndAccount_Empty(page, firstName, lastName);
+
+        return customerPage.getContent();
+    }
+
+    public List<User> getAllNoAccounts(Pageable page) {
+        Page<User> customerPage = userRepository.getAllByAccount_Empty(page);
+
+        return customerPage.getContent();
+    }
+
+
 
     public List<User> getAllEmployeesByName(Pageable page, String firstName, String lastName) {
         Page<User> customerPage = userRepository.getAllEmployeesByName(page, firstName, lastName);
