@@ -106,6 +106,9 @@ public class TransactionsApiController implements TransactionsApi {
         newDeposit.setTimestamp(LocalDateTime.now());
         newDeposit.setTo(accountRepository.findAccountByIBAN(iban));
 
+        ResponseEntity failureResponse = verifyDeposit(newDeposit);
+        if (failureResponse != null)
+            return failureResponse;
 
         // update balances
         newDeposit.getTo().setBalance(newDeposit.getTo().getBalance() + newDeposit.getAmount());
@@ -113,9 +116,9 @@ public class TransactionsApiController implements TransactionsApi {
         newDeposit.setPerformedByID(userService.getLoggedUser(request));
 
         Transaction result = transactionService.add(newDeposit);
-        TransactionDepositDTO response = modelMapper.map(newDeposit, TransactionDepositDTO.class);
+        TransactionDepositDTO successResponse = modelMapper.map(newDeposit, TransactionDepositDTO.class);
 
-        return new ResponseEntity<TransactionDepositDTO>(response, HttpStatus.CREATED);
+        return new ResponseEntity<TransactionDepositDTO>(successResponse, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
@@ -192,15 +195,19 @@ public class TransactionsApiController implements TransactionsApi {
         newWithdrawal.setFrom(accountRepository.findAccountByIBAN(iban));
 
 
+        ResponseEntity failureResponse = verifyWithdrawal(newWithdrawal);
+        if (failureResponse != null)
+            return failureResponse;
+
         // update balances
         newWithdrawal.getFrom().setBalance(newWithdrawal.getFrom().getBalance() - newWithdrawal.getAmount());
 
         newWithdrawal.setPerformedByID(userService.getLoggedUser(request));
 
         Transaction result = transactionService.add(newWithdrawal);
-        TransactionWithdrawlDTO response = modelMapper.map(newWithdrawal, TransactionWithdrawlDTO.class);
+        TransactionWithdrawlDTO successResponse = modelMapper.map(newWithdrawal, TransactionWithdrawlDTO.class);
 
-        return new ResponseEntity<TransactionWithdrawlDTO>(response, HttpStatus.CREATED);
+        return new ResponseEntity<TransactionWithdrawlDTO>(successResponse, HttpStatus.CREATED);
     }
 
     private ResponseEntity verifyTransaction(Transaction newTransaction, Account fromAccount, Account toAccount) {
