@@ -49,19 +49,18 @@ public class TransactionService {
     }
 
     // returns true if accounts are not both of type savings
-    public boolean isSavingsAccount(Account fromAccount, Account toAccount) {
-        return (fromAccount.getType() == AccountType.ACCOUNT_TYPE_SAVINGS
-                || toAccount.getType() == AccountType.ACCOUNT_TYPE_SAVINGS);
+    public boolean isSavingsAccount(Account account) {
+        return account.getType() == AccountType.ACCOUNT_TYPE_SAVINGS;
     }
 
     // returns true if account owner is same for both accounts
     public boolean hasSameOwner(Account fromAccount, Account toAccount) {
-        return fromAccount.getUserID().getuserId() == toAccount.getUserID().getuserId();
+        return fromAccount.getUser().getuserId() == toAccount.getUser().getuserId();
     }
 
     // returns true if logged user is owner of the account passed in the parameter
     public boolean accountOwnerIsLoggedUser(Account account, HttpServletRequest request) {
-        return account.getUserID() == userService.getLoggedUser(request);
+        return account.getUser() == userService.getLoggedUser(request);
     }
 
     // returns true if amount is bigger than transaction limit for one transaction

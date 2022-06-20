@@ -82,29 +82,9 @@ public class TransactionsApiController implements TransactionsApi {
         Account fromAccount = newTransaction.getFrom();
         Account toAccount = newTransaction.getTo();
 
-        // check if amount is negative or 0
-        if (transactionService.isNegativeOrZero(newTransaction.getAmount()))
-            return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
-
-        // check if the account money is transferred from belongs to the logged user
-        if (!transactionService.accountOwnerIsLoggedUser(fromAccount, request))
-            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
-
-        // check if a savings account is involved AND if so if both accounts are owned by the same user
-        if (transactionService.isSavingsAccount(fromAccount, toAccount) && !transactionService.hasSameOwner(fromAccount, toAccount))
-            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this savings account"), HttpStatus.FORBIDDEN);
-
-        // check if transaction amount exceeds account balance
-        if (transactionService.exceedsBalance(fromAccount, newTransaction.getAmount(), request))
-            return new ResponseEntity(new ErrorMessageDTO("Your balance is too low"), HttpStatus.NOT_ACCEPTABLE);
-
-        // check if transaction exceeds transaction limit
-        if (transactionService.exceedsTransactionLimit(newTransaction.getAmount(), request))
-            return new ResponseEntity(new ErrorMessageDTO("Transaction amount exceeds the transaction limit. Please try a lower amount"), HttpStatus.NOT_ACCEPTABLE);
-
-        // check if transaction exceeds the daily limit
-        if (transactionService.exceedsDailyLimit(newTransaction.getAmount(), request))
-            return new ResponseEntity(new ErrorMessageDTO("Daily limit reached. Please try again tomorrow."), HttpStatus.NOT_ACCEPTABLE);
+        ResponseEntity failureResponse = verifyTransaction(newTransaction, fromAccount, toAccount);
+        if (failureResponse != null)
+            return failureResponse;
 
         // update balances
         fromAccount.setBalance(fromAccount.getBalance() - newTransaction.getAmount());
@@ -115,8 +95,8 @@ public class TransactionsApiController implements TransactionsApi {
         // save transaction
         Transaction result = transactionService.add(newTransaction);
 
-        TransactionDTO response = modelMapper.map(newTransaction, TransactionDTO.class);
-        return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
+        TransactionDTO successResponse = modelMapper.map(newTransaction, TransactionDTO.class);
+        return new ResponseEntity<TransactionDTO>(successResponse, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
@@ -126,8 +106,6 @@ public class TransactionsApiController implements TransactionsApi {
         newDeposit.setTimestamp(LocalDateTime.now());
         newDeposit.setTo(accountRepository.findAccountByIBAN(iban));
 
-        System.out.println("Deposit transaction: " + newDeposit);
-        System.out.println("To Account: " + newDeposit.getTo());
 
         // update balances
         newDeposit.getTo().setBalance(newDeposit.getTo().getBalance() + newDeposit.getAmount());
@@ -189,8 +167,6 @@ public class TransactionsApiController implements TransactionsApi {
             transactions = transactionService.getAllByUserIdBetweenTimestamps(userId, from, to);
         }
 
-        System.out.println("\nTransactions: " + transactions);
-
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
         for (Transaction transaction : transactions) {
@@ -210,19 +186,90 @@ public class TransactionsApiController implements TransactionsApi {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<TransactionWithdrawlDTO> withdraw(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to withdraw from", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Withdraw details", schema = @Schema()) @Valid @RequestBody WithdrawDTO body) {
-        Transaction newWithdraw = modelMapper.map(body, Transaction.class);
+        Transaction newWithdrawal = modelMapper.map(body, Transaction.class);
 
-        newWithdraw.setTimestamp(LocalDateTime.now());
-        newWithdraw.setFrom(accountRepository.findAccountByIBAN(iban));
+        newWithdrawal.setTimestamp(LocalDateTime.now());
+        newWithdrawal.setFrom(accountRepository.findAccountByIBAN(iban));
+
 
         // update balances
-        newWithdraw.getFrom().setBalance(newWithdraw.getFrom().getBalance() - newWithdraw.getAmount());
+        newWithdrawal.getFrom().setBalance(newWithdrawal.getFrom().getBalance() - newWithdrawal.getAmount());
 
-        newWithdraw.setPerformedByID(userService.getLoggedUser(request));
+        newWithdrawal.setPerformedByID(userService.getLoggedUser(request));
 
-        Transaction result = transactionService.add(newWithdraw);
-        TransactionWithdrawlDTO response = modelMapper.map(newWithdraw, TransactionWithdrawlDTO.class);
+        Transaction result = transactionService.add(newWithdrawal);
+        TransactionWithdrawlDTO response = modelMapper.map(newWithdrawal, TransactionWithdrawlDTO.class);
 
         return new ResponseEntity<TransactionWithdrawlDTO>(response, HttpStatus.CREATED);
+    }
+
+    private ResponseEntity verifyTransaction(Transaction newTransaction, Account fromAccount, Account toAccount) {
+        // check if amount is negative or 0
+        if (transactionService.isNegativeOrZero(newTransaction.getAmount()))
+            return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if the account money is transferred from belongs to the logged user
+        if (!transactionService.accountOwnerIsLoggedUser(fromAccount, request))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
+
+        // check if a savings account is involved AND if so if both accounts are owned by the same user
+        if ((transactionService.isSavingsAccount(fromAccount) || transactionService.isSavingsAccount(toAccount)) && !transactionService.hasSameOwner(fromAccount, toAccount))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this savings account"), HttpStatus.FORBIDDEN);
+
+        // check if transaction amount exceeds account balance
+        if (transactionService.exceedsBalance(fromAccount, newTransaction.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Your balance is too low"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if transaction exceeds transaction limit
+        if (transactionService.exceedsTransactionLimit(newTransaction.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Transaction amount exceeds the transaction limit. Please try a lower amount"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if transaction exceeds the daily limit
+        if (transactionService.exceedsDailyLimit(newTransaction.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Daily limit reached. Please try again tomorrow."), HttpStatus.NOT_ACCEPTABLE);
+
+        return null;
+    }
+
+    private ResponseEntity verifyWithdrawal(Transaction newWithdrawal) {
+        if (transactionService.isNegativeOrZero(newWithdrawal.getAmount()))
+            return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if the account money is transferred from belongs to the logged user
+        if (!transactionService.accountOwnerIsLoggedUser(newWithdrawal.getFrom(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
+
+        // check if a savings account is involved AND if so if both accounts are owned by the same user
+        if (transactionService.isSavingsAccount(newWithdrawal.getFrom()))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: Cannot withdraw from savings account"), HttpStatus.FORBIDDEN);
+
+        // check if transaction amount exceeds account balance
+        if (transactionService.exceedsBalance(newWithdrawal.getFrom(), newWithdrawal.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Your balance is too low"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if transaction exceeds transaction limit
+        if (transactionService.exceedsTransactionLimit(newWithdrawal.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Transaction amount exceeds the transaction limit. Please try a lower amount"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if transaction exceeds the daily limit
+        if (transactionService.exceedsDailyLimit(newWithdrawal.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Daily limit reached. Please try again tomorrow."), HttpStatus.NOT_ACCEPTABLE);
+
+        return null;
+    }
+
+    private ResponseEntity verifyDeposit(Transaction newDeposit) {
+        if (transactionService.isNegativeOrZero(newDeposit.getAmount()))
+            return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if the account money is transferred from belongs to the logged user
+        if (!transactionService.accountOwnerIsLoggedUser(newDeposit.getTo(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
+
+        // check if a savings account is involved AND if so if both accounts are owned by the same user
+        if (transactionService.isSavingsAccount(newDeposit.getTo()))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: Cannot deposit to savings account."), HttpStatus.FORBIDDEN);
+
+        return null;
     }
 }
