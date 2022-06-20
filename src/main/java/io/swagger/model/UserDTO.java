@@ -6,8 +6,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.threeten.bp.LocalDate;
@@ -62,6 +64,10 @@ public class UserDTO   {
   @JsonProperty("Roles")
   private List<Role> roles;
 
+  @JsonProperty("Account")
+  @JsonIgnoreProperties({"user"})
+  private List<Account> account;
+
 
   public UserDTO userId(UUID userId) {
     this.userId = userId;
@@ -105,6 +111,24 @@ public class UserDTO   {
   public UserDTO firstName(String firstName) {
     this.firstName = firstName;
     return this;
+  }
+
+  public UserDTO account(List<Account> account) {
+    this.account = account;
+    return this;
+  }
+
+  /**
+   * Get account
+   * @return account
+   **/
+
+  public List<Account> getAccount() {
+    return account;
+  }
+
+  public void setAccount(List<Account> account) {
+    this.account = account;
   }
 
   /**
