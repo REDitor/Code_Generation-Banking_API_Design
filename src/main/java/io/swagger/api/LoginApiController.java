@@ -3,6 +3,7 @@ package io.swagger.api;
 import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.LoginInputDTO;
 import io.swagger.model.entity.User;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T14:26:03.164Z[GMT]")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -40,10 +43,10 @@ public class LoginApiController implements LoginApi {
         this.request = request;
     }
 
-    public ResponseEntity<LoginDTO> login(@Parameter(in = ParameterIn.PATH, description = "username", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password) {
+    public ResponseEntity<LoginDTO> login(@Parameter(in = ParameterIn.DEFAULT, description = "Login Information", schema=@Schema()) @Valid @RequestBody LoginInputDTO body) {
         String token = "";
 
-        LoginDTO result = userService.login(username, password);
+        LoginDTO result = userService.login(body.getUsername(), body.getPassword());
 
         if (result == null){
             return new ResponseEntity(new ErrorMessageDTO("Wrong login credentials."), HttpStatus.UNAUTHORIZED);

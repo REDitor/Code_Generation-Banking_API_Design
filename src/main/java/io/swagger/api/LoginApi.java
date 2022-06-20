@@ -6,6 +6,8 @@
 package io.swagger.api;
 
 import io.swagger.model.LoginDTO;
+import io.swagger.model.LoginInputDTO;
+import io.swagger.model.NewUserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -40,10 +42,10 @@ public interface LoginApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized or authorization information is missing or invalid."),
         
         @ApiResponse(responseCode = "5XX", description = "Unexpected error.") })
-    @RequestMapping(value = "/login/username={username}&password={password}",
+    @RequestMapping(value = "/login",
         produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<LoginDTO> login(@Parameter(in = ParameterIn.PATH, description = "Username", required=true, schema=@Schema()) @PathVariable("username") String username, @Parameter(in = ParameterIn.PATH, description = "Password", required=true, schema=@Schema()) @PathVariable("password") String password);
+        method = RequestMethod.POST)
+    ResponseEntity<LoginDTO> login(@Parameter(in = ParameterIn.DEFAULT, description = "Login Information", schema=@Schema()) @Valid @RequestBody LoginInputDTO body);
 
 }
 
