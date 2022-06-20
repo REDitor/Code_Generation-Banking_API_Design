@@ -42,6 +42,6 @@ public class TransactionService {
         if (fromAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS && toAccount.getType() != AccountType.ACCOUNT_TYPE_SAVINGS)
             return true;
 
-        return fromAccount.getUserID().getuserId() == toAccount.getUserID().getuserId();
+        return fromAccount.getUser().getuserId() == toAccount.getUser().getuserId();
     }
 }

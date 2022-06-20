@@ -3,6 +3,7 @@ package io.swagger.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.model.entity.AccountType;
@@ -20,10 +21,6 @@ import javax.validation.constraints.*;
 
 
 public class AccountDTO   {
-  @JsonProperty("UserID")
-  @JsonIgnore
-  User UserID = null;
-
   @JsonProperty("IBAN")
   private String IBAN = null;
 
@@ -38,25 +35,6 @@ public class AccountDTO   {
 
   @JsonProperty("MinimumBalance")
   private Integer minimumBalance = null;
-
-  public AccountDTO UserID(User UserID) {
-    this.UserID = UserID;
-    return this;
-  }
-
-  /**
-   * Get UserID
-   * @return UserID
-   **/
-  @Schema(example = "1", description = "")
-  
-    public User getUserID() {
-    return UserID;
-  }
-
-  public void setUserID(User UserID) {
-    this.UserID = UserID;
-  }
 
   public AccountDTO IBAN(String IBAN) {
     this.IBAN = IBAN;
@@ -163,8 +141,7 @@ public class AccountDTO   {
       return false;
     }
     AccountDTO accountDTO = (AccountDTO) o;
-    return Objects.equals(this.UserID, accountDTO.UserID) &&
-        Objects.equals(this.IBAN, accountDTO.IBAN) &&
+    return Objects.equals(this.IBAN, accountDTO.IBAN) &&
         Objects.equals(this.type, accountDTO.type) &&
         Objects.equals(this.balance, accountDTO.balance) &&
         Objects.equals(this.status, accountDTO.status) &&
@@ -173,7 +150,7 @@ public class AccountDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(UserID, IBAN, type, balance, status, minimumBalance);
+    return Objects.hash(IBAN, type, balance, status, minimumBalance);
   }
 
   @Override
@@ -181,7 +158,6 @@ public class AccountDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class AccountDTO {\n");
 
-    sb.append("    UserID: ").append(toIndentedString(UserID)).append("\n");
     sb.append("    IBAN: ").append(toIndentedString(IBAN)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    balance: ").append(toIndentedString(balance)).append("\n");

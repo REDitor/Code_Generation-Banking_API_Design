@@ -16,8 +16,8 @@ public class Account {
     private String IBAN;
 
     @ManyToOne
-    @JoinColumn(name = "UserID")
-    private User UserID;
+    @JoinColumn(name = "UserId")
+    private User user;
     private AccountType type;
     private double balance;
     private String status;
@@ -27,9 +27,9 @@ public class Account {
 //    @JsonIgnore
 //    private List<Transaction> transactions = new ArrayList<>();
 
-    public Account(String IBAN, User UserID, AccountType type, double balance, String status, Integer minimumBalance) {
+    public Account(String IBAN, User user, AccountType type, double balance, String status, Integer minimumBalance) {
         this.IBAN = IBAN;
-        this.UserID = UserID;
+        this.user = user;
         this.type = type;
         this.balance = balance;
         this.status = status;
@@ -48,12 +48,12 @@ public class Account {
         this.IBAN = IBAN;
     }
 
-    public User getUserID() {
-        return UserID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserID(User UserID) {
-        this.UserID = UserID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public AccountType getType() {
@@ -91,7 +91,7 @@ public class Account {
     @Override
     public String toString() {
         return "\nIBAN: " + this.IBAN +
-                "\nUser: " + this.UserID +
+                "\nUser: " + this.user +
                 "\nType: " + this.type +
                 "\nBalance: " + this.balance +
                 "\nStatus: " + this.status +

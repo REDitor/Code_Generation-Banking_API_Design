@@ -2,7 +2,6 @@ package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.User;
 import io.swagger.service.AccountService;
@@ -11,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -85,7 +83,7 @@ public class AccountsApiController implements AccountsApi {
         Account oldAccountDetails = accountService.getAccountByIBAN(iban);
         Account updatedAccount = modelMapper.map(body, Account.class);
         updatedAccount.setIBAN(iban);
-        updatedAccount.setUserID(oldAccountDetails.getUserID());
+        updatedAccount.setUser(oldAccountDetails.getUser());
 
         accountService.add(updatedAccount);
         AccountDTO response = modelMapper.map(updatedAccount, AccountDTO.class);

@@ -1,6 +1,8 @@
 package io.swagger.model;
 
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.model.entity.User;
@@ -19,6 +21,7 @@ import javax.validation.constraints.*;
 public class LoginDTO {
 
   @JsonProperty("user")
+  @JsonIgnoreProperties({"account"})
   private User user = null;
   @JsonProperty("jwtToken")
   private String jwtToken = null;
