@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AccountService  {
@@ -24,6 +25,10 @@ public class AccountService  {
 
     public Account getAccountByIBAN(String IBAN){
         return accountRepository.getAccountByIBAN(IBAN);
+    }
+
+    public List<Account> getAccountByUserId(UUID UserId){
+        return accountRepository.findAllByUser(UserId);
     }
 
     public String generateIban() {
