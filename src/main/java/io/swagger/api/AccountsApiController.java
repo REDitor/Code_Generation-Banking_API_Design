@@ -2,11 +2,9 @@ package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
-import io.swagger.model.AccountDTO;
-import io.swagger.model.ErrorMessageDTO;
-import io.swagger.model.NewAccountDTO;
-import io.swagger.model.UpdateAccountDTO;
+import io.swagger.model.*;
 import io.swagger.model.entity.Account;
+import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
 import io.swagger.service.AccountService;
 import io.swagger.service.UserService;
@@ -29,6 +27,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
@@ -116,5 +115,23 @@ public class AccountsApiController implements AccountsApi {
 
         return new ResponseEntity<AccountDTO>(response,HttpStatus.OK);
     }
+    @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+
+    public ResponseEntity<AccountsAmountDTO> getTotalBalanceByUserID(@Parameter(in = ParameterIn.PATH, description = "UserId of user", required=true, schema=@Schema()) @PathVariable("userId") UUID userId) {
+        User user = userService.getUserById(userId);
+        Double totalAmount = accountService.totalAmountFromAccounts(user);
+
+        User loggedUser = userService.getLoggedUser(request);
+
+        if(!loggedUser.getRoles().contains(Role.ROLE_EMPLOYEE) && !loggedUser.getuserId().equals(userId)){
+            return new ResponseEntity(new ErrorMessageDTO("Not authorized to access total amount of other users."), HttpStatus.UNAUTHORIZED);
+        }
+
+        AccountsAmountDTO response = new AccountsAmountDTO();
+        response.settotalBalance(totalAmount);
+
+        return new ResponseEntity<AccountsAmountDTO>(response,HttpStatus.OK);
+    }
+
 
 }
