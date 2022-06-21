@@ -12,6 +12,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -24,6 +25,8 @@ abstract public class UserApiController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     private final ModelMapper modelMapper =  new ModelMapper();
 
@@ -143,6 +146,30 @@ abstract public class UserApiController {
         }
 
         return givenRoles;
+    }
+
+    public User updateChecks(User updatedUser, User userToUpdate) throws Exception {
+        // Make sure all the fields got filled properly
+        checkUserBody(updatedUser, true);
+
+        // Get requested user information
+        if (userToUpdate == null) {
+            throw new Exception("User not found.");
+        }
+
+        // Check if the username is trying to be changed and if it already exists
+        if(!userToUpdate.getUsername().equals(updatedUser.getUsername())){
+            checkUserName(updatedUser.getUsername());
+        }
+
+        // If password has been updated, then encode it
+        if (!updatedUser.getPassword().equals("")){
+            updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }else{
+            updatedUser.setPassword(userToUpdate.getPassword());
+        }
+
+        return updatedUser;
     }
 
 

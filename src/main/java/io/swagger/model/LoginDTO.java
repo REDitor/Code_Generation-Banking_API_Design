@@ -21,7 +21,7 @@ import javax.validation.constraints.*;
 public class LoginDTO {
 
   @JsonProperty("user")
-  @JsonIgnoreProperties({"account"})
+  @JsonIgnoreProperties({"account", "password"})
   private User user = null;
   @JsonProperty("jwtToken")
   private String jwtToken = null;

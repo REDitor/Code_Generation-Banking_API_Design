@@ -24,4 +24,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
     @Query("SELECT t FROM Transaction t WHERE (t.performedByID.userId = ?1) AND t.timestamp BETWEEN ?2 AND ?3")
     List<Transaction> findAllByUserIdBetweenTimeStamps(UUID userId, LocalDateTime from, LocalDateTime to);
+
 }
