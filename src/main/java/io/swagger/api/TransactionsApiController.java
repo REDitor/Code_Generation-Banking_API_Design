@@ -44,6 +44,9 @@ import java.util.UUID;
 @Api(tags = "Transactions")
 public class TransactionsApiController implements TransactionsApi {
 
+    //TODO: map iban instead of whole account
+    //TODO: add checks for datetime params
+
     private static final Logger log = LoggerFactory.getLogger(TransactionsApiController.class);
 
     private final ObjectMapper objectMapper;
@@ -70,7 +73,7 @@ public class TransactionsApiController implements TransactionsApi {
         this.modelMapper = new ModelMapper();
     }
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER') || hasRole('EMPLOYEE')")
     public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction details", schema = @Schema()) @Valid @RequestBody CreateTransactionDTO body) {
         Transaction newTransaction = modelMapper.map(body, Transaction.class);
 
@@ -82,8 +85,9 @@ public class TransactionsApiController implements TransactionsApi {
         Account fromAccount = newTransaction.getFrom();
         Account toAccount = newTransaction.getTo();
 
-        if (!transactionService.checkAccountOwnerAndType(fromAccount, toAccount))
-            return new ResponseEntity(new ErrorMessageDTO("Permission denied. You do not own this savings account."), HttpStatus.FORBIDDEN);
+        ResponseEntity failureResponse = verifyTransaction(newTransaction, fromAccount, toAccount);
+        if (failureResponse != null)
+            return failureResponse;
 
         // update balances
         fromAccount.setBalance(fromAccount.getBalance() - newTransaction.getAmount());
@@ -91,52 +95,22 @@ public class TransactionsApiController implements TransactionsApi {
 
         newTransaction.setPerformedByID(userService.getLoggedUser(request));
 
+        // save transaction
         Transaction result = transactionService.add(newTransaction);
 
-        TransactionDTO response = modelMapper.map(newTransaction, TransactionDTO.class);
-        return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<TransactionDepositDTO> deposit(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to deposit to", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Deposit details", schema = @Schema()) @Valid @RequestBody DepositDTO body) {
-        Transaction newDeposit = modelMapper.map(body, Transaction.class);
-
-        newDeposit.setTimestamp(LocalDateTime.now());
-        newDeposit.setTo(accountRepository.findAccountByIBAN(iban));
-
-        System.out.println("Deposit transaction: " + newDeposit);
-        System.out.println("To Account: " + newDeposit.getTo());
-
-        // update balances
-        newDeposit.getTo().setBalance(newDeposit.getTo().getBalance() + newDeposit.getAmount());
-
-        newDeposit.setPerformedByID(userService.getLoggedUser(request));
-
-        Transaction result = transactionService.add(newDeposit);
-        TransactionDepositDTO response = modelMapper.map(newDeposit, TransactionDepositDTO.class);
-
-        return new ResponseEntity<TransactionDepositDTO>(response, HttpStatus.CREATED);
+        TransactionDTO successResponse = modelMapper.map(newTransaction, TransactionDTO.class);
+        successResponse.setFrom(newTransaction.getFrom().getIBAN());
+        successResponse.setTo(newTransaction.getTo().getIBAN());
+        return new ResponseEntity<TransactionDTO>(successResponse, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
-        List<Transaction> transactions;
 
-        //Check if from and to date are set
-        if (dateTimeFrom == null && dateTimeTo == null)
-            transactions = transactionService.getAllByIBAN(iban);
-        else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-
-            LocalDateTime from = LocalDateTime.parse(dateTimeFrom, formatter);
-            LocalDateTime to = LocalDateTime.parse(dateTimeTo, formatter);
-            transactions = transactionService.getAllByIbanBetweenTimestamps(iban, from, to);
-        }
-
-        System.out.println("\nTransactions: " + transactions);
-
+        List<Transaction> transactions = this.getTransactionsByIban(iban, dateTimeFrom, dateTimeTo);
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
+        // fill dto with returned data
         for (Transaction transaction : transactions) {
             TransactionDTO transactionDTO = new TransactionDTO();
 
@@ -154,30 +128,18 @@ public class TransactionsApiController implements TransactionsApi {
 
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('EMPLOYEE')")
     public ResponseEntity<List<TransactionDTO>> transactionsGetByUserId(UUID userId, String dateTimeFrom, String dateTimeTo) {
-        List<Transaction> transactions;
 
-        //Check if from and to date are set
-        if (dateTimeFrom == null && dateTimeTo == null)
-            transactions = transactionService.getAllByUserId(userId);
-        else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-
-            LocalDateTime from = LocalDateTime.parse(dateTimeFrom, formatter);
-            LocalDateTime to = LocalDateTime.parse(dateTimeTo, formatter);
-            transactions = transactionService.getAllByUserIdBetweenTimestamps(userId, from, to);
-        }
-
-        System.out.println("\nTransactions: " + transactions);
-
+        List<Transaction> transactions = this.getTransactionsByUserId(userId, dateTimeFrom, dateTimeTo);
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
+        // fill dto with returned data
         for (Transaction transaction : transactions) {
             TransactionDTO transactionDTO = new TransactionDTO();
 
             transactionDTO.setTransactionId(transaction.getTransactionId());
             transactionDTO.setAmount(transaction.getAmount());
-            transactionDTO.setFrom(transaction.getFrom().getIBAN());
-            transactionDTO.setTo(transaction.getTo().getIBAN());
+            transactionDTO.setFrom(transaction.getFrom() == null ? null : transaction.getFrom().getIBAN());
+            transactionDTO.setTo(transaction.getTo() == null ? null : transaction.getTo().getIBAN());
             transactionDTO.setTimestamp(transaction.getTimestamp().toString());
             transactionDTO.setPerformedByID(null);
 
@@ -187,20 +149,149 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<TransactionWithdrawlDTO> withdraw(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to withdraw from", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Withdraw details", schema = @Schema()) @Valid @RequestBody WithdrawDTO body) {
-        Transaction newWithdraw = modelMapper.map(body, Transaction.class);
+    public ResponseEntity<TransactionDepositDTO> deposit(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to deposit to", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Deposit details", schema = @Schema()) @Valid @RequestBody DepositDTO body) {
+        Transaction newDeposit = modelMapper.map(body, Transaction.class);
 
-        newWithdraw.setTimestamp(LocalDateTime.now());
-        newWithdraw.setFrom(accountRepository.findAccountByIBAN(iban));
+        newDeposit.setTimestamp(LocalDateTime.now());
+        newDeposit.setTo(accountRepository.findAccountByIBAN(iban));
+
+        ResponseEntity failureResponse = verifyDeposit(newDeposit);
+        if (failureResponse != null)
+            return failureResponse;
 
         // update balances
-        newWithdraw.getFrom().setBalance(newWithdraw.getFrom().getBalance() - newWithdraw.getAmount());
+        newDeposit.getTo().setBalance(newDeposit.getTo().getBalance() + newDeposit.getAmount());
 
-        newWithdraw.setPerformedByID(userService.getLoggedUser(request));
+        newDeposit.setPerformedByID(userService.getLoggedUser(request));
 
-        Transaction result = transactionService.add(newWithdraw);
-        TransactionWithdrawlDTO response = modelMapper.map(newWithdraw, TransactionWithdrawlDTO.class);
+        Transaction result = transactionService.add(newDeposit);
+        TransactionDepositDTO successResponse = modelMapper.map(newDeposit, TransactionDepositDTO.class);
+        successResponse.setTo(newDeposit.getTo().getIBAN());
 
-        return new ResponseEntity<TransactionWithdrawlDTO>(response, HttpStatus.CREATED);
+        return new ResponseEntity<TransactionDepositDTO>(successResponse, HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<TransactionWithdrawlDTO> withdraw(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to withdraw from", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Withdraw details", schema = @Schema()) @Valid @RequestBody WithdrawDTO body) {
+        Transaction newWithdrawal = modelMapper.map(body, Transaction.class);
+
+        newWithdrawal.setTimestamp(LocalDateTime.now());
+        newWithdrawal.setFrom(accountRepository.findAccountByIBAN(iban));
+
+
+        ResponseEntity failureResponse = verifyWithdrawal(newWithdrawal);
+        if (failureResponse != null)
+            return failureResponse;
+
+        // update balances
+        newWithdrawal.getFrom().setBalance(newWithdrawal.getFrom().getBalance() - newWithdrawal.getAmount());
+
+        newWithdrawal.setPerformedByID(userService.getLoggedUser(request));
+
+        Transaction result = transactionService.add(newWithdrawal);
+        TransactionWithdrawlDTO successResponse = modelMapper.map(newWithdrawal, TransactionWithdrawlDTO.class);
+        successResponse.setFrom(newWithdrawal.getFrom().getIBAN());
+
+        return new ResponseEntity<TransactionWithdrawlDTO>(successResponse, HttpStatus.CREATED);
+    }
+
+    private ResponseEntity verifyTransaction(Transaction newTransaction, Account fromAccount, Account toAccount) {
+        // check if amount is negative or 0
+        if (transactionService.isNegativeOrZero(newTransaction.getAmount()))
+            return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if the account money is transferred from belongs to the logged user
+        if (!userService.accountOwnerIsLoggedUser(fromAccount, request) && !userService.isEmployee(request))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account or do not have employee permissions."), HttpStatus.FORBIDDEN);
+
+        // check if a savings account is involved AND if so if both accounts are owned by the same user
+        if ((transactionService.isSavingsAccount(fromAccount) || transactionService.isSavingsAccount(toAccount)) && !transactionService.hasSameOwner(fromAccount, toAccount))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this savings account"), HttpStatus.FORBIDDEN);
+
+        // check if transaction amount exceeds account balance
+        if (transactionService.exceedsBalance(fromAccount, newTransaction.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Your balance is too low"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if transaction exceeds transaction limit
+        if (transactionService.exceedsTransactionLimit(newTransaction.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Transaction amount exceeds the transaction limit. Please try a lower amount"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if transaction exceeds the daily limit
+        if (transactionService.exceedsDailyLimit(newTransaction.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Daily limit reached. Please try again tomorrow."), HttpStatus.NOT_ACCEPTABLE);
+
+        return null;
+    }
+
+    private ResponseEntity verifyWithdrawal(Transaction newWithdrawal) {
+        if (transactionService.isNegativeOrZero(newWithdrawal.getAmount()))
+            return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if the account money is transferred from belongs to the logged user
+        if (!userService.accountOwnerIsLoggedUser(newWithdrawal.getFrom(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
+
+        // check if a savings account is involved AND if so if both accounts are owned by the same user
+        if (transactionService.isSavingsAccount(newWithdrawal.getFrom()))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: Cannot withdraw from savings account"), HttpStatus.FORBIDDEN);
+
+        // check if transaction amount exceeds account balance
+        if (transactionService.exceedsBalance(newWithdrawal.getFrom(), newWithdrawal.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Your balance is too low"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if transaction exceeds transaction limit
+        if (transactionService.exceedsTransactionLimit(newWithdrawal.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Transaction amount exceeds the transaction limit. Please try a lower amount"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if transaction exceeds the daily limit
+        if (transactionService.exceedsDailyLimit(newWithdrawal.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Daily limit reached. Please try again tomorrow."), HttpStatus.NOT_ACCEPTABLE);
+
+        return null;
+    }
+
+    private ResponseEntity verifyDeposit(Transaction newDeposit) {
+        if (transactionService.isNegativeOrZero(newDeposit.getAmount()))
+            return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
+
+        // check if the account money is transferred from belongs to the logged user
+        if (!userService.accountOwnerIsLoggedUser(newDeposit.getTo(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
+
+        // check if a savings account is involved AND if so if both accounts are owned by the same user
+        if (transactionService.isSavingsAccount(newDeposit.getTo()))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: Cannot deposit to savings account."), HttpStatus.FORBIDDEN);
+
+        return null;
+    }
+
+    private List<Transaction> getTransactionsByIban(String iban, String dateTimeFrom, String dateTimeTo) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        //Check if from and to date are set
+        if (dateTimeFrom == null && dateTimeTo == null)
+            return transactionService.getAllByIBAN(iban);
+        else if (dateTimeFrom == null) {
+            return transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.now(), LocalDateTime.parse(dateTimeTo, formatter));
+        }
+        else if (dateTimeTo == null)
+            return transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.now());
+        else {
+            return transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeTo, formatter));
+        }
+    }
+
+    private List<Transaction> getTransactionsByUserId(UUID userId, String dateTimeFrom, String dateTimeTo) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        //Check if from and to date are set
+        if (dateTimeFrom == null && dateTimeTo == null)
+            return transactionService.getAllByUserId(userId);
+        else if (dateTimeFrom == null)
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.now(), LocalDateTime.parse(dateTimeTo, formatter));
+        else if (dateTimeFrom == null)
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.now());
+        else
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeTo, formatter));
     }
 }

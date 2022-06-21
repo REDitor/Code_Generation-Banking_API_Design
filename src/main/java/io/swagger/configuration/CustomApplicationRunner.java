@@ -43,36 +43,36 @@ public class CustomApplicationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         // Create hardcoded users
         List<User> users = Arrays.asList(
-                new User("Sander", "Harks", LocalDate.parse("1997-12-07"), "Somestreet", 247, "1234AB", "Haarlem",
-                        "The Netherlands", 500, 250, Arrays.asList(Role.ROLE_EMPLOYEE), "sander@gmail.com","SanderHarks123", "secret123"),
+                new User("InHolland", "Bank", LocalDate.parse("1997-12-07"), "Somestreet", 247, "1234AB", "Haarlem",
+                        "The Netherlands", 5000, 10000, Arrays.asList(Role.ROLE_EMPLOYEE, Role.ROLE_CUSTOMER), "sander@gmail.com", "InHollandBank123", "secret123"),
+                new User("Sander", "Harks", LocalDate.parse("1997-12-07"), "Someotherotherstreet", 321, "2314AB", "Haarlem",
+                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_EMPLOYEE), "sander@gmail.com", "SanderHarks123", "secret123"),
                 new User("Bruno", "Marques", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
-                        "The Netherlands", 500, 250, Arrays.asList(Role.ROLE_CUSTOMER, Role.ROLE_EMPLOYEE), "bruno@gmail.com", "BrunoMarques123", "secret123"),
-                new User("Pablo", "Guilias", LocalDate.parse("1997-12-07"), "Someotherotherstreet", 321, "2314AB", "Haarlem",
-                        "The Netherlands", 500, 250, Arrays.asList(Role.ROLE_CUSTOMER),"pablo@gmail.com", "PabloGuilias123", "secret123")
-                );
+                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "bruno@gmail.com", "BrunoMarques123", "secret123")
+        );
 
         // store users in db
         users.forEach(userService::add);
 
         // Get users for accounts
+        User bank = userRepository.findByUsername("InHollandBank123");
         User sander = userRepository.findByUsername("SanderHarks123");
         User bruno = userRepository.findByUsername("BrunoMarques123");
-        User pablo = userRepository.findByUsername("PabloGuilias123");
 
         // store new accounts in db
+        accountRepository.save(new Account(accountService.generateIban(), bank, AccountType.ACCOUNT_TYPE_CURRENT, 100000000, "open", 0));
         accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_CURRENT, 500, "open", 0));
         accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0));
         accountRepository.save(new Account(accountService.generateIban(), bruno, AccountType.ACCOUNT_TYPE_CURRENT, 750, "open", 0));
-        //accountRepository.save(new Account(accountService.generateIban(), pablo, AccountType.ACCOUNT_TYPE_CURRENT, 1000, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_CURRENT, 750, "open", 0));
 
-        Account accountSander = accountRepository.findAccountByIBAN("NL01INHO0000000001");
-        Account accountSanderSavings = accountRepository.findAccountByIBAN("NL01INHO0000000002");
-        Account accountBruno = accountRepository.findAccountByIBAN("NL01INHO0000000003");
-        //Account accountPablo = accountRepository.findAccountByIBAN("NL01INHO0000000004");
+        Account accountBank = accountRepository.findAccountByIBAN("NL01INHO0000000001");
+        Account accountSander = accountRepository.findAccountByIBAN("NL01INHO0000000002");
+        Account accountSanderSavings = accountRepository.findAccountByIBAN("NL01INHO0000000003");
+        Account accountBruno = accountRepository.findAccountByIBAN("NL01INHO0000000004");
 
         transactionRepository.save(new Transaction(LocalDateTime.now(), accountSander, accountSanderSavings, 11.23, sander));
         transactionRepository.save(new Transaction(LocalDateTime.now(), accountSander, accountBruno, 11.23, sander));
-        //transactionRepository.save(new Transaction(LocalDateTime.now(), accountBruno, accountPablo, 11.23, bruno));
 
         // check if data was stored correctly
         System.out.println("\nUSERS:");
