@@ -67,7 +67,7 @@ public class TransactionService {
 
     // returns true if transaction amount + total of current day's transactions (between 00:00 and 23:59) is lower
     public boolean exceedsDailyLimit(Double amount, HttpServletRequest request) {
-        User user = userService.getLoggedUser(request);
+        User user = userService.getByUserId(userService.getLoggedUser(request).getuserId());
         List<Transaction> transactions = transactionRepository.findAllByUserIdBetweenTimeStamps(user.getuserId(), LocalDate.now().atTime(0, 0), LocalDate.now().atTime(23, 59));
 
         Double amountToday = transactions.stream().mapToDouble(Transaction::getAmount).sum();
