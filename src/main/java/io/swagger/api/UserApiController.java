@@ -148,23 +148,22 @@ abstract public class UserApiController {
         return givenRoles;
     }
 
-    public User updateChecks(User updatedUser, UUID userId) throws Exception {
+    public User updateChecks(User updatedUser, User userToUpdate) throws Exception {
         // Make sure all the fields got filled properly
         checkUserBody(updatedUser, true);
 
         // Get requested user information
-        User userToUpdate = userService.getOneCustomer(userId);
         if (userToUpdate == null) {
             throw new Exception("User not found.");
         }
 
         // Check if the username is trying to be changed and if it already exists
-        if(userToUpdate.getUsername() != updatedUser.getUsername()){
+        if(!userToUpdate.getUsername().equals(updatedUser.getUsername())){
             checkUserName(updatedUser.getUsername());
         }
 
         // If password has been updated, then encode it
-        if (updatedUser.getPassword() != ""){
+        if (!updatedUser.getPassword().equals("")){
             updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }else{
             updatedUser.setPassword(userToUpdate.getPassword());

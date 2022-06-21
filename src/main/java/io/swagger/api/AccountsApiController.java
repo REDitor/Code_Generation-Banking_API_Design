@@ -90,13 +90,13 @@ public class AccountsApiController implements AccountsApi {
         return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
     }
 
-    @Override
+    /*@Override
     public ResponseEntity<AccountDTO> getAccountByName(String name) {
 
         Account receivedAccount = accountService.getAccountByName(name);
 
-
-    }
+        return null;
+    }*/
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<AccountDTO> updateAccount(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Fields that need to be updated", schema = @Schema()) @Valid @RequestBody UpdateAccountDTO body) {

@@ -64,7 +64,7 @@ public interface AccountsApi {
         method = RequestMethod.GET)
     ResponseEntity<AccountDTO> getAccount(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required=true, schema=@Schema()) @PathVariable("iban") String iban);
 
-    @Operation(summary = "Gets a account by name", description = "Gets a ccount by name  Permissions: Customers (only if it is their own information) ", security = {
+    /*@Operation(summary = "Gets a account by name", description = "Gets a ccount by name  Permissions: Customers (only if it is their own information) ", security = {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Result of the selected ccount", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
@@ -80,7 +80,7 @@ public interface AccountsApi {
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<AccountDTO> getAccountByName(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The name of the owner of the account", required=true, schema=@Schema()) @PathVariable("name") String name);
-
+*/
 
     @Operation(summary = "Update account information", description = "Update Account information.  However, it is only possible to change the type of the account, and the amount limit.  Permissions: - Employees - Customers (only if it is their own information) ", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
