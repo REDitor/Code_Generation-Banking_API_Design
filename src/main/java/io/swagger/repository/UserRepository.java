@@ -44,7 +44,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Page<User> getAllByFirstNameOrLastNameAndAccount_Empty(Pageable page, String firstName, String lastName);
 
     User findByUsername(String username);
-
+    User findUserByUserId(UUID id);
     Page<User> getAllByAccount_Empty(Pageable page);
 
     User findUserByRolesAndUserId(Role role, UUID UserId);
