@@ -4,11 +4,13 @@ import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.LoginDTO;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Role;
+import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
 import io.swagger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -17,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -93,6 +96,10 @@ public class UserService implements UserDetailsService {
     }
 
     public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    public User saveEmployee(User user) {
         return userRepository.save(user);
     }
 

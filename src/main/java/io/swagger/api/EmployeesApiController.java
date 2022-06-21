@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +50,9 @@ public class EmployeesApiController extends UserApiController implements Employe
     @Autowired
     private UserService userService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @org.springframework.beans.factory.annotation.Autowired
     public EmployeesApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -58,66 +62,81 @@ public class EmployeesApiController extends UserApiController implements Employe
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> createEmployee(@Parameter(in = ParameterIn.DEFAULT, description = "New Employee details", schema=@Schema()) @Valid @RequestBody NewUserDTO body) {
-        User newUser = modelMapper.map(body, User.class);
+        return createUser(body, Role.ROLE_EMPLOYEE);
+    }
 
-        ResponseEntity validation;
-        // Make sure all the fields got filled properly and check if username is already in use
-        validation = checkUserBody(newUser);
-        if (validation != null) return validation;
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<UserDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("userId") UUID userId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserDTO body) {
+        try {
+            User updatedUser = modelMapper.map(body, User.class);
 
-        validation = checkUserName(newUser.getUsername());
-        if (validation != null) return validation;
+            // Make sure all the fields got filled properly
+            checkUserBody(updatedUser, true);
 
-        if (validation != null)
-            return validation;
+            // Get requested user information
+            User userToUpdate = userService.getOneCustomer(userId);
+            if (userToUpdate == null) {
+                return new ResponseEntity(new ErrorMessageDTO("Employee not found."), HttpStatus.NOT_FOUND);
+            }
 
-        newUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
-        newUser = userService.add(newUser);
+            // If password has been updated, then encode it
+            if (updatedUser.getPassword() != ""){
+                updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            }else{
+                updatedUser.setPassword(userToUpdate.getPassword());
+            }
 
-        return responseEntityUserOk(newUser);
+            // Check which roles have been selected, and assign enum to class
+            updatedUser.setRoles(convertStringRoleToObjectRoleList(body.getRoles()));
+            updatedUser.setuserId(userId);
+
+            updatedUser = userService.save(updatedUser);
+
+            return responseEntityUserOk(updatedUser);
+        }catch (Exception e) {
+            return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getEmployee(@Parameter(in = ParameterIn.PATH, description = "the employeeId of the desired employee", required=true, schema=@Schema()) @PathVariable("employeeId") UUID employeeId) {
-        // CHeck if provided userId is valid
-        ResponseEntity validation = checkUserIDParameter(employeeId.toString());
+        try {
+            // CHeck if provided userId is valid
+            checkUserIDParameter(employeeId.toString());
 
-        if (validation != null)
-            return validation;
+            // Get requested user information
+            User receivedUser = userService.getOneEmployee(employeeId);
+            if (receivedUser == null) {
+                return new ResponseEntity(new ErrorMessageDTO("Employee not found."), HttpStatus.NOT_FOUND);
+            }
 
-        // Get requested user information
-        User receivedUser = userService.getOneEmployee(employeeId);
-        if (receivedUser == null) {
-            return new ResponseEntity(new ErrorMessageDTO("Employee not found."), HttpStatus.NOT_FOUND);
+            return responseEntityUserOk(receivedUser);
+        } catch (Exception e){
+            return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
         }
-
-        return responseEntityUserOk(receivedUser);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserDTO>> getEmployees(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0)@Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "offset", required = false) Integer offset,@Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return" ,schema=@Schema(allowableValues={  }, maximum="50"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
+        try {
+            // Check if pagination was set
+            checkPagination(offset, limit);
 
-        // Check if pagination was set
-        ResponseEntity validation = checkPagination(offset, limit);
-        if (validation != null)
-            return validation;
+            List<User> receivedUsers;
 
-        List<User> receivedUsers;
-        if (firstName != null || lastName != null) {
-            receivedUsers = userService.getAllEmployeesByName(PageRequest.of(offset, limit), firstName, lastName);
-        } else {
-            receivedUsers = userService.getAllEmployees(PageRequest.of(offset, limit));
+            if (firstName != null || lastName != null) {
+                receivedUsers = userService.getAllEmployeesByName(PageRequest.of(offset, limit), firstName, lastName);
+            } else {
+                receivedUsers = userService.getAllEmployees(PageRequest.of(offset, limit));
+            }
+
+            return responseEntityUserListOk(receivedUsers);
+        } catch (Exception e){
+            return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
         }
-
-
-        return responseEntityUserListOk(receivedUsers);
     }
 
-    @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("userId") UUID userId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserDTO body) {
-        return updateUser(userId, body);
-    }
 
 }
