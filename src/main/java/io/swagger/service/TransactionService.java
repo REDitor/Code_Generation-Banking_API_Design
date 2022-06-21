@@ -58,10 +58,7 @@ public class TransactionService {
         return fromAccount.getUser().getuserId() == toAccount.getUser().getuserId();
     }
 
-    // returns true if logged user is owner of the account passed in the parameter
-    public boolean accountOwnerIsLoggedUser(Account account, HttpServletRequest request) {
-        return account.getUser() == userService.getLoggedUser(request);
-    }
+
 
     // returns true if amount is bigger than transaction limit for one transaction
     public boolean exceedsTransactionLimit(Double amount, HttpServletRequest request) {

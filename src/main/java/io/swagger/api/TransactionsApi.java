@@ -84,7 +84,7 @@ public interface TransactionsApi {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "Transactions" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "transactions received", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TransactionDTO.class)))) })
-    @RequestMapping(value = "/transactions/{userId}",
+    @RequestMapping(value = "/transactions/users/{userId}",
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<List<TransactionDTO>> transactionsGetByUserId(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("userId") UUID userId, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime" ,schema=@Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime" ,schema=@Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo);

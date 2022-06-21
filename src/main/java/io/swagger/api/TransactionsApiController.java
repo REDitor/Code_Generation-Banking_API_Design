@@ -44,6 +44,9 @@ import java.util.UUID;
 @Api(tags = "Transactions")
 public class TransactionsApiController implements TransactionsApi {
 
+    //TODO: map iban instead of whole account
+    //TODO: add checks for datetime params
+
     private static final Logger log = LoggerFactory.getLogger(TransactionsApiController.class);
 
     private final ObjectMapper objectMapper;
@@ -70,7 +73,7 @@ public class TransactionsApiController implements TransactionsApi {
         this.modelMapper = new ModelMapper();
     }
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER') || hasRole('EMPLOYEE')")
     public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction details", schema = @Schema()) @Valid @RequestBody CreateTransactionDTO body) {
         Transaction newTransaction = modelMapper.map(body, Transaction.class);
 
@@ -96,29 +99,9 @@ public class TransactionsApiController implements TransactionsApi {
         Transaction result = transactionService.add(newTransaction);
 
         TransactionDTO successResponse = modelMapper.map(newTransaction, TransactionDTO.class);
+        successResponse.setFrom(newTransaction.getFrom().getIBAN());
+        successResponse.setTo(newTransaction.getTo().getIBAN());
         return new ResponseEntity<TransactionDTO>(successResponse, HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<TransactionDepositDTO> deposit(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to deposit to", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Deposit details", schema = @Schema()) @Valid @RequestBody DepositDTO body) {
-        Transaction newDeposit = modelMapper.map(body, Transaction.class);
-
-        newDeposit.setTimestamp(LocalDateTime.now());
-        newDeposit.setTo(accountRepository.findAccountByIBAN(iban));
-
-        ResponseEntity failureResponse = verifyDeposit(newDeposit);
-        if (failureResponse != null)
-            return failureResponse;
-
-        // update balances
-        newDeposit.getTo().setBalance(newDeposit.getTo().getBalance() + newDeposit.getAmount());
-
-        newDeposit.setPerformedByID(userService.getLoggedUser(request));
-
-        Transaction result = transactionService.add(newDeposit);
-        TransactionDepositDTO successResponse = modelMapper.map(newDeposit, TransactionDepositDTO.class);
-
-        return new ResponseEntity<TransactionDepositDTO>(successResponse, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
@@ -135,8 +118,6 @@ public class TransactionsApiController implements TransactionsApi {
             LocalDateTime to = LocalDateTime.parse(dateTimeTo, formatter);
             transactions = transactionService.getAllByIbanBetweenTimestamps(iban, from, to);
         }
-
-        System.out.println("\nTransactions: " + transactions);
 
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
@@ -188,6 +169,28 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<TransactionDepositDTO> deposit(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to deposit to", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Deposit details", schema = @Schema()) @Valid @RequestBody DepositDTO body) {
+        Transaction newDeposit = modelMapper.map(body, Transaction.class);
+
+        newDeposit.setTimestamp(LocalDateTime.now());
+        newDeposit.setTo(accountRepository.findAccountByIBAN(iban));
+
+        ResponseEntity failureResponse = verifyDeposit(newDeposit);
+        if (failureResponse != null)
+            return failureResponse;
+
+        // update balances
+        newDeposit.getTo().setBalance(newDeposit.getTo().getBalance() + newDeposit.getAmount());
+
+        newDeposit.setPerformedByID(userService.getLoggedUser(request));
+
+        Transaction result = transactionService.add(newDeposit);
+        TransactionDepositDTO successResponse = modelMapper.map(newDeposit, TransactionDepositDTO.class);
+
+        return new ResponseEntity<TransactionDepositDTO>(successResponse, HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<TransactionWithdrawlDTO> withdraw(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban for the account to withdraw from", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Withdraw details", schema = @Schema()) @Valid @RequestBody WithdrawDTO body) {
         Transaction newWithdrawal = modelMapper.map(body, Transaction.class);
 
@@ -216,8 +219,8 @@ public class TransactionsApiController implements TransactionsApi {
             return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
 
         // check if the account money is transferred from belongs to the logged user
-        if (!transactionService.accountOwnerIsLoggedUser(fromAccount, request))
-            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
+        if (!userService.accountOwnerIsLoggedUser(fromAccount, request) && !userService.isEmployee(request))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account or do not have employee permissions."), HttpStatus.FORBIDDEN);
 
         // check if a savings account is involved AND if so if both accounts are owned by the same user
         if ((transactionService.isSavingsAccount(fromAccount) || transactionService.isSavingsAccount(toAccount)) && !transactionService.hasSameOwner(fromAccount, toAccount))
@@ -243,7 +246,7 @@ public class TransactionsApiController implements TransactionsApi {
             return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
 
         // check if the account money is transferred from belongs to the logged user
-        if (!transactionService.accountOwnerIsLoggedUser(newWithdrawal.getFrom(), request))
+        if (!userService.accountOwnerIsLoggedUser(newWithdrawal.getFrom(), request))
             return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
 
         // check if a savings account is involved AND if so if both accounts are owned by the same user
@@ -270,7 +273,7 @@ public class TransactionsApiController implements TransactionsApi {
             return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
 
         // check if the account money is transferred from belongs to the logged user
-        if (!transactionService.accountOwnerIsLoggedUser(newDeposit.getTo(), request))
+        if (!userService.accountOwnerIsLoggedUser(newDeposit.getTo(), request))
             return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
 
         // check if a savings account is involved AND if so if both accounts are owned by the same user
