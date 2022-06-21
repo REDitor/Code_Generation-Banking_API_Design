@@ -81,7 +81,7 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts/{iban}",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<AccountDTO> getAccountByName(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The name of the owner of the account", required=true, schema=@Schema()) @PathVariable("name") String name);
+    ResponseEntity<List<AccountIbanDTO>> getAccountByName(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The name of the owner of the account", required=true, schema=@Schema()) @PathVariable("name") String name);
 
 
     @Operation(summary = "Update account information", description = "Update Account information.  However, it is only possible to change the type of the account, and the amount limit.  Permissions: - Employees - Customers (only if it is their own information) ", security = {
