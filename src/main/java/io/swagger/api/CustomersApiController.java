@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,12 +75,16 @@ public class CustomersApiController extends UserApiController implements Custome
         try {
             // Map body and make sure all the fields got filled properly
             User updatedUser = modelMapper.map(body, User.class);
+            User userToUpdate = userService.getOneCustomer(userID);
 
-            updatedUser = updateChecks(updatedUser, userID);
+            updatedUser = updateChecks(updatedUser, userToUpdate);
 
             // If logged user is a customer, ensure its only possible to change his information
             User loggedUser = userService.getLoggedUser(request);
-            if(!loggedUser.getRoles().contains(Role.ROLE_EMPLOYEE) && loggedUser.getuserId() != userID){
+
+            Boolean result = loggedUser.getuserId().equals(userID);
+
+            if(!loggedUser.getRoles().contains(Role.ROLE_EMPLOYEE) && !loggedUser.getuserId().equals(userID)){
                 return new ResponseEntity(new ErrorMessageDTO("Not authorized to changed other user data."), HttpStatus.UNAUTHORIZED);
             }
 
@@ -88,6 +93,8 @@ public class CustomersApiController extends UserApiController implements Custome
                 updatedUser.setRoles(
                         convertStringRoleToObjectRoleList(body.getRoles())
                 );
+            }else {
+                updatedUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
             }
 
             updatedUser.setuserId(userID);
