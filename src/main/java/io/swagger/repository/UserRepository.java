@@ -46,6 +46,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     User findByUserId(UUID userId);
 
+    User findUserByUserId(UUID id);
     Page<User> getAllByAccount_Empty(Pageable page);
 
     User findUserByRolesAndUserId(Role role, UUID UserId);

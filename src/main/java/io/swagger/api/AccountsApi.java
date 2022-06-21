@@ -7,6 +7,7 @@ package io.swagger.api;
 
 import io.swagger.model.AccountDTO;
 import io.swagger.model.AccountIbanDTO;
+import io.swagger.model.AccountsAmountDTO;
 import io.swagger.model.NewAccountDTO;
 import io.swagger.model.UpdateAccountDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @Validated
@@ -82,6 +84,24 @@ public interface AccountsApi {
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<List<AccountIbanDTO>> getAccountByName(@Parameter(in = ParameterIn.PATH, description = "The name of the owner of the account", required=true, schema=@Schema()) @PathVariable("name") String name);
+
+
+    @Operation(summary = "Gets total balance of userId", description = "Gets totalBalance by userId  Permissions: Customers (only if it is their own information) ", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Result of the selected ccount", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
+
+            @ApiResponse(responseCode = "400", description = "Bad request. Name is not in the right format."),
+
+            @ApiResponse(responseCode = "401", description = "Unauthorized or authorization information is missing or invalid."),
+
+            @ApiResponse(responseCode = "404", description = "An account belonging to the specified person was not found."),
+
+            @ApiResponse(responseCode = "5XX", description = "Unexpected error.") })
+    @RequestMapping(value = "/accounts/totalBalance/{userId}",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<AccountsAmountDTO> getTotalBalanceByUserID(@Parameter(in = ParameterIn.PATH, description = "UserId of user", required=true, schema=@Schema()) @PathVariable("userId") UUID userId);
 
 
     @Operation(summary = "Update account information", description = "Update Account information.  However, it is only possible to change the type of the account, and the amount limit.  Permissions: - Employees - Customers (only if it is their own information) ", security = {

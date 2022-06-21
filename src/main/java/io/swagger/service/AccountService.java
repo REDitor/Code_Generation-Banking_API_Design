@@ -1,10 +1,14 @@
 package io.swagger.service;
 
 import io.swagger.model.entity.Account;
+import io.swagger.model.entity.Transaction;
+import io.swagger.model.entity.User;
 import io.swagger.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,9 +31,6 @@ public class AccountService  {
         return accountRepository.getAccountByIBAN(IBAN);
     }
 
-    public List<Account> getAccountByUserId(UUID UserId){
-        return accountRepository.findAllByUser(UserId);
-    }
 
     public String generateIban() {
         String latestIbanNumber = accountRepository.getLatestIban();
@@ -56,5 +57,13 @@ public class AccountService  {
 
     public List<Account> getAccountByName(String name) {
         return accountRepository.findAllByName(name);
+    }
+
+    public Double totalAmountFromAccounts(User user) {
+        List<Account> accountsOfUser = accountRepository.findAllByUser(user);
+
+        Double amount = accountsOfUser.stream().mapToDouble(Account::getBalance).sum();
+
+        return amount;
     }
 }

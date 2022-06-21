@@ -125,6 +125,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
+    public User getUserById(UUID id) {
+        return userRepository.findUserByUserId(id);
+    }
+
     public LoginDTO login(String username, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
