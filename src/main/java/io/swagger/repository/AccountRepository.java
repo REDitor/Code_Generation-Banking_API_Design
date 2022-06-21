@@ -23,6 +23,4 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 
     @Query("SELECT a FROM Account a WHERE a.user.firstName LIKE %?1% OR a.user.lastName LIKE %?1%")
     List<Account> findAllByName(String name);
-
-    List<Account> findAllByUser_FirstNameOrUser_LastName(String name);
 }

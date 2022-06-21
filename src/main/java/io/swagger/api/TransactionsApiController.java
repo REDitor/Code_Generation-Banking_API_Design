@@ -44,9 +44,6 @@ import java.util.UUID;
 @Api(tags = "Transactions")
 public class TransactionsApiController implements TransactionsApi {
 
-    //TODO: map iban instead of whole account
-    //TODO: add checks for datetime params
-
     private static final Logger log = LoggerFactory.getLogger(TransactionsApiController.class);
 
     private final ObjectMapper objectMapper;
