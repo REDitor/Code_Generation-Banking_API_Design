@@ -1,5 +1,6 @@
 package io.swagger.repository;
 
+import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "WHERE ur.roles = '1'", nativeQuery = true)
     Page<User> getAllCustomers(Pageable page);
 
-    Page<User> getAllByFirstNameOrLastName(Pageable page, String firstName, String lastName);
+    Page<User> getAllByFirstNameIsLikeOrLastNameIsLike(Pageable page, String firstName, String lastName);
     Page<User> getAllByFirstNameOrLastNameAndAccount_Empty(Pageable page, String firstName, String lastName);
 
 
@@ -47,5 +48,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Page<User> getAllByAccount_Empty(Pageable page);
 
+    User findUserByRolesAndUserId(Role role, UUID UserId);
+
+    User findByUserIdAndRolesIs( UUID UserId, Role role);
 
 }

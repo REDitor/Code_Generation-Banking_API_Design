@@ -17,6 +17,7 @@ import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.apache.logging.log4j.message.Message;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.*;
@@ -53,6 +55,9 @@ public class CustomersApiController extends UserApiController implements Custome
     @Autowired
     private UserService userService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @org.springframework.beans.factory.annotation.Autowired
     public CustomersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -60,78 +65,100 @@ public class CustomersApiController extends UserApiController implements Custome
         this.modelMapper = new ModelMapper();
     }
 
-    //@PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
-        User newUser = modelMapper.map(body, User.class);
+        return createUser(body, Role.ROLE_CUSTOMER);
+    }
 
-        ResponseEntity validation;
-        // Make sure all the fields got filled properly and heck if username is already in use
-        validation = checkUserBody(newUser);
-        if (validation != null) return validation;
+    @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    public ResponseEntity<UserDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserDTO body) {
+        try {
+            User updatedUser = modelMapper.map(body, User.class);
 
-        validation = checkUserName(newUser.getUsername());
-        if (validation != null) return validation;
+            // Make sure all the fields got filled properly
+            checkUserBody(updatedUser, true);
 
-        // Set proper role for user and add user to database
-        newUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
-        newUser = userService.add(newUser);
+            User loggedUser = userService.getLoggedUser(request);
 
-        return responseEntityUserOk(newUser);
+            // If logged user is a customer, ensure its only possible to change his information
+            if(!loggedUser.getRoles().contains(Role.ROLE_EMPLOYEE) && loggedUser.getuserId() != userID){
+                return new ResponseEntity(new ErrorMessageDTO("Not authorized to changed other user data."), HttpStatus.UNAUTHORIZED);
+            }
+
+            // Check if customer exists and retrieve information
+            User userToUpdate = userService.getOneCustomer(userID);
+            if (userToUpdate == null) {
+                return new ResponseEntity(new ErrorMessageDTO("Customer not found."), HttpStatus.NOT_FOUND);
+            }
+
+            // Only update role of customer, if an employee is doing it
+            if (loggedUser.getRoles().contains(Role.ROLE_EMPLOYEE)) {
+                updatedUser.setRoles(
+                        convertStringRoleToObjectRoleList(body.getRoles())
+                );
+            }
+            updatedUser.setuserId(userID);
+
+            // If password has been updated, then encode it
+            if (updatedUser.getPassword() != ""){
+                updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            }else{
+                updatedUser.setPassword(userToUpdate.getPassword());
+            }
+
+            updatedUser = userService.save(updatedUser);
+
+            return responseEntityUserOk(updatedUser);
+        }catch (Exception e) {
+            return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
     public ResponseEntity<UserDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
-        // CHeck if provided userId is valid
-        ResponseEntity validation = checkUserIDParameter(userID.toString());
+        try {
+            // CHeck if provided userId is valid
+            checkUserIDParameter(userID.toString());
 
-        if (validation != null)
-            return validation;
+            User userInformation = userService.getLoggedUser(request);
+            // Check if user is a Customer, if he is, make sure he is only able to access his own information
+            if (userInformation.getRoles().contains(Role.ROLE_CUSTOMER) && !userInformation.getuserId().equals(userID)) {
+                return new ResponseEntity(new ErrorMessageDTO("Unauthorized or authorization information is missing or invalid."), HttpStatus.UNAUTHORIZED);
+            }
 
-        // Get JWT token and the information of the authenticated user
-        String receivedToken = jwtTokenProvider.resolveToken(request);
-        jwtTokenProvider.validateToken(receivedToken);
-        String authenticatedUserUsername = jwtTokenProvider.getUsername(receivedToken);
-        User userInformation = userService.getUserByUsername(authenticatedUserUsername);
+            // Get requested user information
+            User receivedUser = userService.getOneCustomer(userID);
+            if (receivedUser == null) {
+                return new ResponseEntity(new ErrorMessageDTO("Customer not found."), HttpStatus.NOT_FOUND);
+            }
 
-        // Check if user is a Customer, if he is, make sure he is only able to access his own information
-        if (userInformation.getRoles().contains(Role.ROLE_CUSTOMER) && !userInformation.getuserId().equals(userID)) {
-            return new ResponseEntity(new ErrorMessageDTO("Unauthorized or authorization information is missing or invalid."), HttpStatus.UNAUTHORIZED);
+            return responseEntityUserOk(receivedUser);
+        } catch (Exception e){
+            return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
         }
-
-        // Get requested user information
-        User receivedUser = userService.getOneCustomer(userID);
-        if (receivedUser == null) {
-            return new ResponseEntity(new ErrorMessageDTO("Customer not found."), HttpStatus.NOT_FOUND);
-        }
-
-        return responseEntityUserOk(receivedUser);
-    }
-
-    public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit, @Parameter(in = ParameterIn.QUERY, description = "Get customers that have no accounts", schema = @Schema()) @Valid @RequestParam(value = "noAccounts", required = true) Boolean noAccounts) {
-
-        // Check if pagination was set
-        ResponseEntity validation = checkPagination(skip, limit);
-        if (validation != null)
-            return validation;
-
-        List<User> receivedUsers;
-
-        if (firstName != null || lastName != null) {
-             receivedUsers = userService.getAllByName(PageRequest.of(skip, limit), firstName, lastName);
-        } else if((firstName != null || lastName != null) && noAccounts == true) {
-            receivedUsers = userService.getAllNoAccountsByName(PageRequest.of(skip, limit), firstName, lastName);
-        } else if(noAccounts == true){
-            receivedUsers = userService.getAllNoAccounts(PageRequest.of(skip, limit));
-        } else {
-            receivedUsers = userService.getAll(PageRequest.of(skip, limit));
-        }
-
-        return responseEntityUserListOk(receivedUsers);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserDTO body) {
-        return updateUser(userID, body);
+    public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit, @Parameter(in = ParameterIn.QUERY, description = "Get customers that have no accounts", schema = @Schema()) @Valid @RequestParam(value = "noAccounts", required = true) Boolean noAccounts) {
+        try {
+            // Check if pagination was set
+            checkPagination(skip, limit);
+
+            List<User> receivedUsers;
+
+            if((firstName != null || lastName != null) && noAccounts == true) {
+                receivedUsers = userService.getAllNoAccountsByName(PageRequest.of(skip, limit), firstName, lastName);
+            } else if (firstName != null || lastName != null) {
+                receivedUsers = userService.getAllByName(PageRequest.of(skip, limit), firstName, lastName);
+            } else if(noAccounts == true){
+                receivedUsers = userService.getAllNoAccounts(PageRequest.of(skip, limit));
+            } else {
+                receivedUsers = userService.getAll(PageRequest.of(skip, limit));
+            }
+
+            return responseEntityUserListOk(receivedUsers);
+        } catch (Exception e){
+            return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }
