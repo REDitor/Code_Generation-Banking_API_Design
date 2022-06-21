@@ -106,21 +106,11 @@ public class TransactionsApiController implements TransactionsApi {
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<TransactionDTO>> transactionsIbanGet(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.QUERY, description = "search transaction from dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeFrom", required = false) String dateTimeFrom, @Parameter(in = ParameterIn.QUERY, description = "search transaction to dateTime", schema = @Schema()) @Valid @RequestParam(value = "dateTimeTo", required = false) String dateTimeTo) {
-        List<Transaction> transactions;
 
-        //Check if from and to date are set
-        if (dateTimeFrom == null && dateTimeTo == null)
-            transactions = transactionService.getAllByIBAN(iban);
-        else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-
-            LocalDateTime from = LocalDateTime.parse(dateTimeFrom, formatter);
-            LocalDateTime to = LocalDateTime.parse(dateTimeTo, formatter);
-            transactions = transactionService.getAllByIbanBetweenTimestamps(iban, from, to);
-        }
-
+        List<Transaction> transactions = this.getTransactionsByIban(iban, dateTimeFrom, dateTimeTo);
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
+        // fill dto with returned data
         for (Transaction transaction : transactions) {
             TransactionDTO transactionDTO = new TransactionDTO();
 
@@ -138,28 +128,18 @@ public class TransactionsApiController implements TransactionsApi {
 
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('EMPLOYEE')")
     public ResponseEntity<List<TransactionDTO>> transactionsGetByUserId(UUID userId, String dateTimeFrom, String dateTimeTo) {
-        List<Transaction> transactions;
 
-        //Check if from and to date are set
-        if (dateTimeFrom == null && dateTimeTo == null)
-            transactions = transactionService.getAllByUserId(userId);
-        else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-
-            LocalDateTime from = LocalDateTime.parse(dateTimeFrom, formatter);
-            LocalDateTime to = LocalDateTime.parse(dateTimeTo, formatter);
-            transactions = transactionService.getAllByUserIdBetweenTimestamps(userId, from, to);
-        }
-
+        List<Transaction> transactions = this.getTransactionsByUserId(userId, dateTimeFrom, dateTimeTo);
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
+        // fill dto with returned data
         for (Transaction transaction : transactions) {
             TransactionDTO transactionDTO = new TransactionDTO();
 
             transactionDTO.setTransactionId(transaction.getTransactionId());
             transactionDTO.setAmount(transaction.getAmount());
-            transactionDTO.setFrom(transaction.getFrom().getIBAN());
-            transactionDTO.setTo(transaction.getTo().getIBAN());
+            transactionDTO.setFrom(transaction.getFrom() == null ? null : transaction.getFrom().getIBAN());
+            transactionDTO.setTo(transaction.getTo() == null ? null : transaction.getTo().getIBAN());
             transactionDTO.setTimestamp(transaction.getTimestamp().toString());
             transactionDTO.setPerformedByID(null);
 
@@ -186,6 +166,7 @@ public class TransactionsApiController implements TransactionsApi {
 
         Transaction result = transactionService.add(newDeposit);
         TransactionDepositDTO successResponse = modelMapper.map(newDeposit, TransactionDepositDTO.class);
+        successResponse.setTo(newDeposit.getTo().getIBAN());
 
         return new ResponseEntity<TransactionDepositDTO>(successResponse, HttpStatus.CREATED);
     }
@@ -209,6 +190,7 @@ public class TransactionsApiController implements TransactionsApi {
 
         Transaction result = transactionService.add(newWithdrawal);
         TransactionWithdrawlDTO successResponse = modelMapper.map(newWithdrawal, TransactionWithdrawlDTO.class);
+        successResponse.setFrom(newWithdrawal.getFrom().getIBAN());
 
         return new ResponseEntity<TransactionWithdrawlDTO>(successResponse, HttpStatus.CREATED);
     }
@@ -281,5 +263,35 @@ public class TransactionsApiController implements TransactionsApi {
             return new ResponseEntity(new ErrorMessageDTO("Permission denied: Cannot deposit to savings account."), HttpStatus.FORBIDDEN);
 
         return null;
+    }
+
+    private List<Transaction> getTransactionsByIban(String iban, String dateTimeFrom, String dateTimeTo) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        //Check if from and to date are set
+        if (dateTimeFrom == null && dateTimeTo == null)
+            return transactionService.getAllByIBAN(iban);
+        else if (dateTimeFrom == null) {
+            return transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.now(), LocalDateTime.parse(dateTimeTo, formatter));
+        }
+        else if (dateTimeTo == null)
+            return transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.now());
+        else {
+            return transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeTo, formatter));
+        }
+    }
+
+    private List<Transaction> getTransactionsByUserId(UUID userId, String dateTimeFrom, String dateTimeTo) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        //Check if from and to date are set
+        if (dateTimeFrom == null && dateTimeTo == null)
+            return transactionService.getAllByUserId(userId);
+        else if (dateTimeFrom == null)
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.now(), LocalDateTime.parse(dateTimeTo, formatter));
+        else if (dateTimeFrom == null)
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.now());
+        else
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeTo, formatter));
     }
 }

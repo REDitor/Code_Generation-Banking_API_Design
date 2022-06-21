@@ -1,10 +1,10 @@
 package io.swagger.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
 import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.LoginDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.LoginInputDTO;
-import io.swagger.model.entity.User;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -17,14 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T14:26:03.164Z[GMT]")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Api(tags = "Authentication")
 @RestController
 public class LoginApiController implements LoginApi {
 

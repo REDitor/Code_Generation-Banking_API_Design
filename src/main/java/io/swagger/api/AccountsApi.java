@@ -11,28 +11,20 @@ import io.swagger.model.UpdateAccountDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.Size;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @Validated
@@ -71,6 +63,23 @@ public interface AccountsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<AccountDTO> getAccount(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required=true, schema=@Schema()) @PathVariable("iban") String iban);
+
+    @Operation(summary = "Gets a account by name", description = "Gets a ccount by name  Permissions: Customers (only if it is their own information) ", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Result of the selected ccount", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
+
+            @ApiResponse(responseCode = "400", description = "Bad request. Name is not in the right format."),
+
+            @ApiResponse(responseCode = "401", description = "Unauthorized or authorization information is missing or invalid."),
+
+            @ApiResponse(responseCode = "404", description = "An account belonging to the specified person was not found."),
+
+            @ApiResponse(responseCode = "5XX", description = "Unexpected error.") })
+    @RequestMapping(value = "/accounts/{iban}",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<AccountDTO> getAccountByName(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The name of the owner of the account", required=true, schema=@Schema()) @PathVariable("name") String name);
 
 
     @Operation(summary = "Update account information", description = "Update Account information.  However, it is only possible to change the type of the account, and the amount limit.  Permissions: - Employees - Customers (only if it is their own information) ", security = {

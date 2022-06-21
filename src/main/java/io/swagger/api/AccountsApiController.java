@@ -1,6 +1,7 @@
 package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
 import io.swagger.model.AccountDTO;
 import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.NewAccountDTO;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
+@Api(tags = "Accounts")
 public class AccountsApiController implements AccountsApi {
 
     private static final Logger log = LoggerFactory.getLogger(AccountsApiController.class);
@@ -81,12 +83,19 @@ public class AccountsApiController implements AccountsApi {
         if (iban == "NL01INHO0000000001")
             return new ResponseEntity(new ErrorMessageDTO("Permission Denied: Cannot access master account"), HttpStatus.FORBIDDEN);
 
-
         if (!userService.isEmployee(request) && !userService.accountOwnerIsLoggedUser(receivedAccount, request))
             return new ResponseEntity(new ErrorMessageDTO("Permission Denied: You do not own this account or do not have employee permissions"), HttpStatus.FORBIDDEN);
 
         AccountDTO response = modelMapper.map(receivedAccount, AccountDTO.class);
         return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<AccountDTO> getAccountByName(String name) {
+
+        Account receivedAccount = accountService.getAccountByName(name);
+
+
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")

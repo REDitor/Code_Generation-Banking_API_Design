@@ -54,4 +54,7 @@ public class AccountService  {
         return newIban;
     }
 
+    public Account getAccountByName(String name) {
+
+    }
 }

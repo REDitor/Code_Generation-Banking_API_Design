@@ -20,4 +20,9 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     Account getAccountByIBAN(String IBAN);
 
     List<Account> findAllByUser(UUID UserID);
+
+    @Query("SELECT a FROM Account a WHERE a.user.firstName LIKE ?1 OR a.user.lastName LIKE ?1 OR a.user.firstName a.user.lastName")
+    List<Account> findAllByUserName(String name);
+
+    List<Account> findAllByUser_FirstNameOrUser_LastName(String name);
 }

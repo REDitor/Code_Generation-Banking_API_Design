@@ -58,8 +58,6 @@ public class TransactionService {
         return fromAccount.getUser().getuserId() == toAccount.getUser().getuserId();
     }
 
-
-
     // returns true if amount is bigger than transaction limit for one transaction
     public boolean exceedsTransactionLimit(Double amount, HttpServletRequest request) {
         User user = userService.getLoggedUser(request);
