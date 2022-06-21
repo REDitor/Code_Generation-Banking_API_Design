@@ -3,6 +3,7 @@ package io.swagger.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.model.AccountDTO;
+import io.swagger.model.AccountIbanDTO;
 import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.NewAccountDTO;
 import io.swagger.model.UpdateAccountDTO;
@@ -29,6 +30,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
@@ -90,12 +92,27 @@ public class AccountsApiController implements AccountsApi {
         return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<AccountDTO> getAccountByName(String name) {
+    public ResponseEntity<List<AccountIbanDTO>> getAccountByName(String name) {
 
-        Account receivedAccount = accountService.getAccountByName(name);
+        List<Account> receivedAccounts = accountService.getAccountByName(name);
 
+        System.out.println("Received: " + receivedAccounts);
 
+        if (receivedAccounts.stream().count() <= 0)
+            return new ResponseEntity(new ErrorMessageDTO("No accounts found belonging to that person"), HttpStatus.NOT_FOUND);
+
+        List<AccountIbanDTO> ibanDTOs = new ArrayList<>();
+
+        receivedAccounts.forEach(account -> {
+            AccountIbanDTO ibanDTO = new AccountIbanDTO();
+            ibanDTO.setIBAN(account.getIBAN());
+            ibanDTO.setFirstName(account.getUser().getFirstName());
+            ibanDTO.setLastName(account.getUser().getLastName());
+
+            ibanDTOs.add(ibanDTO);
+        });
+
+        return new ResponseEntity<List<AccountIbanDTO>>(ibanDTOs, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")

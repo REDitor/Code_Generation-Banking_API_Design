@@ -54,7 +54,7 @@ public class AccountService  {
         return newIban;
     }
 
-    public Account getAccountByName(String name) {
-
+    public List<Account> getAccountByName(String name) {
+        return accountRepository.findAllByName(name);
     }
 }
