@@ -72,22 +72,15 @@ public class CustomersApiController extends UserApiController implements Custome
     @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
     public ResponseEntity<UserDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserDTO body) {
         try {
+            // Map body and make sure all the fields got filled properly
             User updatedUser = modelMapper.map(body, User.class);
 
-            // Make sure all the fields got filled properly
-            checkUserBody(updatedUser, true);
-
-            User loggedUser = userService.getLoggedUser(request);
+            updatedUser = updateChecks(updatedUser, userID);
 
             // If logged user is a customer, ensure its only possible to change his information
+            User loggedUser = userService.getLoggedUser(request);
             if(!loggedUser.getRoles().contains(Role.ROLE_EMPLOYEE) && loggedUser.getuserId() != userID){
                 return new ResponseEntity(new ErrorMessageDTO("Not authorized to changed other user data."), HttpStatus.UNAUTHORIZED);
-            }
-
-            // Check if customer exists and retrieve information
-            User userToUpdate = userService.getOneCustomer(userID);
-            if (userToUpdate == null) {
-                return new ResponseEntity(new ErrorMessageDTO("Customer not found."), HttpStatus.NOT_FOUND);
             }
 
             // Only update role of customer, if an employee is doing it
@@ -96,14 +89,8 @@ public class CustomersApiController extends UserApiController implements Custome
                         convertStringRoleToObjectRoleList(body.getRoles())
                 );
             }
-            updatedUser.setuserId(userID);
 
-            // If password has been updated, then encode it
-            if (updatedUser.getPassword() != ""){
-                updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-            }else{
-                updatedUser.setPassword(userToUpdate.getPassword());
-            }
+            updatedUser.setuserId(userID);
 
             updatedUser = userService.save(updatedUser);
 
@@ -116,7 +103,7 @@ public class CustomersApiController extends UserApiController implements Custome
     @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
     public ResponseEntity<UserDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
         try {
-            // CHeck if provided userId is valid
+            // Check if provided userId is valid
             checkUserIDParameter(userID.toString());
 
             User userInformation = userService.getLoggedUser(request);

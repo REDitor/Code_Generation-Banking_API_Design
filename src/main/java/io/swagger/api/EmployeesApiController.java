@@ -70,21 +70,7 @@ public class EmployeesApiController extends UserApiController implements Employe
         try {
             User updatedUser = modelMapper.map(body, User.class);
 
-            // Make sure all the fields got filled properly
-            checkUserBody(updatedUser, true);
-
-            // Get requested user information
-            User userToUpdate = userService.getOneCustomer(userId);
-            if (userToUpdate == null) {
-                return new ResponseEntity(new ErrorMessageDTO("Employee not found."), HttpStatus.NOT_FOUND);
-            }
-
-            // If password has been updated, then encode it
-            if (updatedUser.getPassword() != ""){
-                updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-            }else{
-                updatedUser.setPassword(userToUpdate.getPassword());
-            }
+            updateChecks(updatedUser, userId);
 
             // Check which roles have been selected, and assign enum to class
             updatedUser.setRoles(convertStringRoleToObjectRoleList(body.getRoles()));
