@@ -95,9 +95,11 @@ public class TransactionsApiController implements TransactionsApi {
         // save transaction
         Transaction result = transactionService.add(newTransaction);
 
-        TransactionDTO successResponse = modelMapper.map(newTransaction, TransactionDTO.class);
-        successResponse.setFrom(newTransaction.getFrom().getIBAN());
-        successResponse.setTo(newTransaction.getTo().getIBAN());
+        TransactionDTO successResponse = modelMapper.map(result, TransactionDTO.class);
+        successResponse.setFrom(result.getFrom().getIBAN());
+        successResponse.setTo(result.getTo().getIBAN());
+        successResponse.setPerformedByID(userService.getLoggedUser(request).getuserId());
+
         return new ResponseEntity<TransactionDTO>(successResponse, HttpStatus.CREATED);
     }
 
@@ -138,7 +140,7 @@ public class TransactionsApiController implements TransactionsApi {
             transactionDTO.setFrom(transaction.getFrom() == null ? null : transaction.getFrom().getIBAN());
             transactionDTO.setTo(transaction.getTo() == null ? null : transaction.getTo().getIBAN());
             transactionDTO.setTimestamp(transaction.getTimestamp().toString());
-            transactionDTO.setPerformedByID(null);
+            transactionDTO.setPerformedByID(userService.getLoggedUser(request).getuserId());
 
             transactionDTOs.add(transactionDTO);
         }
@@ -279,15 +281,16 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     private List<Transaction> getTransactionsByUserId(UUID userId, String dateTimeFrom, String dateTimeTo) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
         //Check if from and to date are set
-        if (dateTimeFrom == null && dateTimeTo == null)
+        if ((dateTimeFrom == null && dateTimeTo == null) || (dateTimeFrom == "" && dateTimeTo == ""))
             return transactionService.getAllByUserId(userId);
-        else if (dateTimeFrom == null)
-            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.now(), LocalDateTime.parse(dateTimeTo, formatter));
-        else if (dateTimeFrom == null)
-            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.now());
+        else if (dateTimeFrom == null || dateTimeFrom == "")
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(LocalDateTime.now().toString(), formatter), LocalDateTime.parse(dateTimeTo, formatter));
+        else if (dateTimeTo == null || dateTimeTo == ""){
+            String dateTimeNow = LocalDateTime.now().format(formatter);
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeNow, formatter)); }
         else
             return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeTo, formatter));
     }

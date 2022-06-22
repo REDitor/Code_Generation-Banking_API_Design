@@ -36,67 +36,77 @@ public class UserService implements UserDetailsService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    // Add new User
     public User add(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
+    // Get one
     public User getOneCustomer(UUID userID) {
-        return userRepository.getOneCustomer(userID);
+        return userRepository.findUserByUserIdAndRolesContaining(userID, Role.ROLE_CUSTOMER);
     }
 
     public User getOneEmployee(UUID userID) {
-        return userRepository.getOneEmployee(userID);
+        return userRepository.findUserByUserIdAndRolesContaining(userID, Role.ROLE_EMPLOYEE);
     }
 
+    // Get all
     public List<User> getAll(Pageable page) {
-        Page<User> customerPage = userRepository.getAllCustomers(page);
-
-        return customerPage.getContent();
-    }
-
-    public List<User> getAllByName(Pageable page, String firstName, String lastName) {
-        Page<User> customerPage = userRepository.getAllByFirstNameIsLikeOrLastNameIsLike(page, firstName, lastName);
-
-        return customerPage.getContent();
-    }
-
-    public List<User> getAllNoAccountsByName(Pageable page, String firstName, String lastName) {
-        Page<User> customerPage = userRepository.getAllByFirstNameOrLastNameAndAccount_Empty(page, firstName, lastName);
-
-        return customerPage.getContent();
-    }
-
-    public List<User> getAllNoAccounts(Pageable page) {
-        Page<User> customerPage = userRepository.getAllByAccount_Empty(page);
-
-        return customerPage.getContent();
-    }
-
-
-
-    public List<User> getAllEmployeesByName(Pageable page, String firstName, String lastName) {
-        Page<User> customerPage = userRepository.getAllEmployeesByName(page, firstName, lastName);
+        Page<User> customerPage = userRepository.findAllByRolesContaining(page, Role.ROLE_CUSTOMER);
 
         return customerPage.getContent();
     }
 
     public List<User> getAllEmployees(Pageable page) {
-        Page<User> customerPage = userRepository.getAllEmployees(page);
+        Page<User> customerPage = userRepository.findAllByRolesContaining(page, Role.ROLE_EMPLOYEE);
 
         return customerPage.getContent();
     }
 
+    //Get all by name
+    public List<User> getAllByName(Pageable page, String firstName, String lastName) {
+        Page<User> customerPage = userRepository.getAllByFirstNameIsLikeOrLastNameIsLikeAndRolesContaining(page, firstName, lastName, Role.ROLE_CUSTOMER);
+
+        return customerPage.getContent();
+    }
+
+    public List<User> getAllEmployeesByName(Pageable page, String firstName, String lastName) {
+        Page<User> customerPage = userRepository.getAllByFirstNameIsLikeOrLastNameIsLikeAndRolesContaining(page, firstName, lastName, Role.ROLE_EMPLOYEE);;
+
+        return customerPage.getContent();
+    }
+
+    //Get all without accounts
+    public List<User> getAllNoAccounts(Pageable page) {
+        Page<User> customerPage = userRepository.getAllByAccount_EmptyAndRolesContaining(page, Role.ROLE_CUSTOMER);
+
+        return customerPage.getContent();
+    }
+
+    public List<User> getAllNoAccountsByName(Pageable page, String firstName, String lastName) {
+        Page<User> customerPage = userRepository.getAllByFirstNameOrLastNameAndAccount_EmptyAndRolesContaining(page, firstName, lastName, Role.ROLE_CUSTOMER);
+
+        return customerPage.getContent();
+    }
+
+    // Get by Username
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    // Get by Id
+    public User getUserById(UUID id) {
+        return userRepository.findUserByUserId(id);
+    }
+
+    // Other
     public User put(User user) {
         user = userRepository.save(user);
         return user;
     }
 
     public User save(User user) {
-        return userRepository.save(user);
-    }
-
-    public User saveEmployee(User user) {
         return userRepository.save(user);
     }
 
@@ -115,13 +125,6 @@ public class UserService implements UserDetailsService {
                 .credentialsExpired(false)
                 .disabled(false)
                 .build();
-    }
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    public User getUserById(UUID id) {
-        return userRepository.findUserByUserId(id);
     }
 
     public LoginDTO login(String username, String password) {

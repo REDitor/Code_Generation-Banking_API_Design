@@ -100,7 +100,7 @@ abstract public class UserApiController {
 
     public ResponseEntity<UserDTO> responseEntityUserOk(User user) {
         UserDTO response = modelMapper.map(user, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response,  HttpStatus.CREATED);
+        return new ResponseEntity<UserDTO>(response,  HttpStatus.OK);
     }
 
     public ResponseEntity<List<UserDTO>> responseEntityUserListOk(List<User> user) {
@@ -122,7 +122,6 @@ abstract public class UserApiController {
             newUser = userService.add(newUser);
 
             return responseEntityUserOk(newUser);
-
         } catch (Exception e) {
             return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
         }
@@ -139,7 +138,7 @@ abstract public class UserApiController {
                     givenRoles.add(Role.ROLE_EMPLOYEE);
                     break;
                 default:
-                    throw new Exception("Bad request. Invalid request body.");
+                    throw new Exception("Bad request. Invalid roles.");
             }
         }
 

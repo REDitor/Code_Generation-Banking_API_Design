@@ -101,7 +101,7 @@ public class AccountsApiController implements AccountsApi {
 
         System.out.println("Received: " + receivedAccounts);
 
-        if (receivedAccounts.stream().count() <= 0)
+        if (receivedAccounts.size() <= 0)
             return new ResponseEntity(new ErrorMessageDTO("No accounts found belonging to that person"), HttpStatus.NOT_FOUND);
 
         List<AccountIbanDTO> ibanDTOs = new ArrayList<>();

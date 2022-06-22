@@ -46,9 +46,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
                 new User("InHolland", "Bank", LocalDate.parse("1997-12-07"), "Somestreet", 247, "1234AB", "Haarlem",
                         "The Netherlands", 5000, 10000, Arrays.asList(Role.ROLE_EMPLOYEE, Role.ROLE_CUSTOMER), "sander@gmail.com", "InHollandBank123", "secret123"),
                 new User("Sander", "Harks", LocalDate.parse("1997-12-07"), "Someotherotherstreet", 321, "2314AB", "Haarlem",
-                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_EMPLOYEE), "sander@gmail.com", "SanderHarks123", "secret123"),
+                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "sander@gmail.com", "SanderHarks123", "secret123"),
                 new User("Bruno", "Marques", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
-                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "bruno@gmail.com", "BrunoMarques123", "secret123")
+                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_EMPLOYEE), "bruno@gmail.com", "BrunoMarques123", "secret123")
         );
 
         // store users in db
@@ -63,14 +63,11 @@ public class CustomApplicationRunner implements ApplicationRunner {
         accountRepository.save(new Account(accountService.generateIban(), bank, AccountType.ACCOUNT_TYPE_CURRENT, 100000000, "open", 0));
         accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_CURRENT, 500, "open", 0));
         accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0));
-        accountRepository.save(new Account(accountService.generateIban(), bruno, AccountType.ACCOUNT_TYPE_CURRENT, 750, "open", 0));
 
         Account accountSander = accountRepository.findAccountByIBAN("NL01INHO0000000002");
         Account accountSanderSavings = accountRepository.findAccountByIBAN("NL01INHO0000000003");
-        Account accountBruno = accountRepository.findAccountByIBAN("NL01INHO0000000004");
 
         transactionRepository.save(new Transaction(LocalDateTime.now(), accountSander, accountSanderSavings, 11.23, sander));
-        transactionRepository.save(new Transaction(LocalDateTime.now(), accountSander, accountBruno, 11.23, sander));
 
         // check if data was stored correctly
         System.out.println("\nUSERS:");

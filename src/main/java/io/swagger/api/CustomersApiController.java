@@ -79,11 +79,9 @@ public class CustomersApiController extends UserApiController implements Custome
 
             updatedUser = updateChecks(updatedUser, userToUpdate);
 
-            // If logged user is a customer, ensure its only possible to change his information
             User loggedUser = userService.getLoggedUser(request);
 
-            Boolean result = loggedUser.getuserId().equals(userID);
-
+            // If logged user is a customer, ensure its only possible to change his information
             if(!loggedUser.getRoles().contains(Role.ROLE_EMPLOYEE) && !loggedUser.getuserId().equals(userID)){
                 return new ResponseEntity(new ErrorMessageDTO("Not authorized to changed other user data."), HttpStatus.UNAUTHORIZED);
             }
@@ -115,8 +113,8 @@ public class CustomersApiController extends UserApiController implements Custome
 
             User userInformation = userService.getLoggedUser(request);
             // Check if user is a Customer, if he is, make sure he is only able to access his own information
-            if (userInformation.getRoles().contains(Role.ROLE_CUSTOMER) && !userInformation.getuserId().equals(userID)) {
-                return new ResponseEntity(new ErrorMessageDTO("Unauthorized or authorization information is missing or invalid."), HttpStatus.UNAUTHORIZED);
+            if (!userInformation.getRoles().contains(Role.ROLE_EMPLOYEE) && !userInformation.getuserId().equals(userID)) {
+                return new ResponseEntity(new ErrorMessageDTO("You cannot access information that does not belong to you!"), HttpStatus.UNAUTHORIZED);
             }
 
             // Get requested user information

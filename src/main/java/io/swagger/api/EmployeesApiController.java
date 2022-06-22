@@ -68,7 +68,7 @@ public class EmployeesApiController extends UserApiController implements Employe
             User updatedUser = modelMapper.map(body, User.class);
             User userToUpdate = userService.getOneEmployee(userId);
 
-            updateChecks(updatedUser, userToUpdate);
+            updatedUser = updateChecks(updatedUser, userToUpdate);
 
             // Check which roles have been selected, and assign enum to class
             updatedUser.setRoles(convertStringRoleToObjectRoleList(body.getRoles()));
