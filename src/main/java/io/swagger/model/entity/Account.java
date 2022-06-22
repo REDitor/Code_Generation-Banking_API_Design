@@ -23,10 +23,6 @@ public class Account {
     private String status;
     private Integer minimumBalance;
 
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "UserID")
-//    @JsonIgnore
-//    private List<Transaction> transactions = new ArrayList<>();
-
     public Account(String IBAN, User user, AccountType type, double balance, String status, Integer minimumBalance) {
         this.IBAN = IBAN;
         this.user = user;
