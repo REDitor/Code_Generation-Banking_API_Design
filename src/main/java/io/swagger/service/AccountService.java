@@ -55,9 +55,9 @@ public class AccountService  {
         return newIban;
     }
 
-    /*public Account getAccountByName(String name) {
-        return null;
-    }*/
+    public List<Account> getAccountByName(String name) {
+        return accountRepository.findAllByName(name);
+    }
 
     public Double totalAmountFromAccounts(User user) {
         List<Account> accountsOfUser = accountRepository.findAllByUser(user);

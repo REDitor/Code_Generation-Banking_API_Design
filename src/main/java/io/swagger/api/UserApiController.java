@@ -2,7 +2,6 @@ package io.swagger.api;
 
 import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.NewUserDTO;
-import io.swagger.model.UpdateUserDTO;
 import io.swagger.model.UserDTO;
 import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
@@ -17,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,7 +100,7 @@ abstract public class UserApiController {
 
     public ResponseEntity<UserDTO> responseEntityUserOk(User user) {
         UserDTO response = modelMapper.map(user, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response,  HttpStatus.OK);
+        return new ResponseEntity<UserDTO>(response,  HttpStatus.CREATED);
     }
 
     public ResponseEntity<List<UserDTO>> responseEntityUserListOk(List<User> user) {

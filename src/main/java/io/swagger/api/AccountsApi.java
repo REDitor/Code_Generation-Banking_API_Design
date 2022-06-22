@@ -6,6 +6,7 @@
 package io.swagger.api;
 
 import io.swagger.model.AccountDTO;
+import io.swagger.model.AccountIbanDTO;
 import io.swagger.model.AccountsAmountDTO;
 import io.swagger.model.NewAccountDTO;
 import io.swagger.model.UpdateAccountDTO;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
@@ -66,7 +68,7 @@ public interface AccountsApi {
         method = RequestMethod.GET)
     ResponseEntity<AccountDTO> getAccount(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required=true, schema=@Schema()) @PathVariable("iban") String iban);
 
-    /*@Operation(summary = "Gets a account by name", description = "Gets a ccount by name  Permissions: Customers (only if it is their own information) ", security = {
+    @Operation(summary = "Gets a account by name", description = "Gets a ccount by name  Permissions: Customers (only if it is their own information) ", security = {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Result of the selected ccount", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
@@ -78,11 +80,11 @@ public interface AccountsApi {
             @ApiResponse(responseCode = "404", description = "An account belonging to the specified person was not found."),
 
             @ApiResponse(responseCode = "5XX", description = "Unexpected error.") })
-    @RequestMapping(value = "/accounts/{iban}",
+    @RequestMapping(value = "/accounts/ibans/{name}",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<AccountDTO> getAccountByName(@Size(min=18,max=18) @Parameter(in = ParameterIn.PATH, description = "The name of the owner of the account", required=true, schema=@Schema()) @PathVariable("name") String name);
-*/
+    ResponseEntity<List<AccountIbanDTO>> getAccountByName(@Parameter(in = ParameterIn.PATH, description = "The name of the owner of the account", required=true, schema=@Schema()) @PathVariable("name") String name);
+
 
     @Operation(summary = "Gets total balance of userId", description = "Gets totalBalance by userId  Permissions: Customers (only if it is their own information) ", security = {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })

@@ -116,7 +116,6 @@ public class UserService implements UserDetailsService {
                 .disabled(false)
                 .build();
     }
-
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }

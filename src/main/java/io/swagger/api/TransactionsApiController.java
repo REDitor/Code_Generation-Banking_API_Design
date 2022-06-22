@@ -44,9 +44,6 @@ import java.util.UUID;
 @Api(tags = "Transactions")
 public class TransactionsApiController implements TransactionsApi {
 
-    //TODO: map iban instead of whole account
-    //TODO: add checks for datetime params
-
     private static final Logger log = LoggerFactory.getLogger(TransactionsApiController.class);
 
     private final ObjectMapper objectMapper;
@@ -205,7 +202,7 @@ public class TransactionsApiController implements TransactionsApi {
             return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account or do not have employee permissions."), HttpStatus.FORBIDDEN);
 
         // check if a savings account is involved AND if so if both accounts are owned by the same user
-        if ((transactionService.isSavingsAccount(fromAccount) || transactionService.isSavingsAccount(toAccount)) && !transactionService.hasSameOwner(fromAccount, toAccount))
+        if ((transactionService.isSavingsAccount(fromAccount) || transactionService.isSavingsAccount(toAccount)) && !transactionService.hasSameOwner(fromAccount, toAccount) && !userService.isEmployee(request))
             return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this savings account"), HttpStatus.FORBIDDEN);
 
         // check if transaction amount exceeds account balance

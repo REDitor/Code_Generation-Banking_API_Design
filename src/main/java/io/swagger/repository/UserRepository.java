@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -44,7 +43,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Page<User> getAllByFirstNameOrLastNameAndAccount_Empty(Pageable page, String firstName, String lastName);
 
     User findByUsername(String username);
+
     User findUserByUserId(UUID id);
+
     Page<User> getAllByAccount_Empty(Pageable page);
 
     User findUserByRolesAndUserId(Role role, UUID UserId);
