@@ -48,7 +48,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
                 new User("Sander", "Harks", LocalDate.parse("1997-12-07"), "Someotherotherstreet", 321, "2314AB", "Haarlem",
                         "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "sander@gmail.com", "SanderHarks123", "secret123"),
                 new User("Bruno", "Marques", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
-                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_EMPLOYEE), "bruno@gmail.com", "BrunoMarques123", "secret123")
+                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_EMPLOYEE), "bruno@gmail.com", "BrunoMarques123", "secret123"),
+                new User("dummy123", "dummy123", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
+                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "bruno@gmail.com", "dummyCustomer", "secret123")
         );
 
         // store users in db

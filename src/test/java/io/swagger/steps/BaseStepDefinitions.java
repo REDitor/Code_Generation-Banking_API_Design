@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import io.swagger.service.UserService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 @SpringBootTest(classes = CucumberContextConfig.class)
 @Slf4j
@@ -16,13 +18,19 @@ public class BaseStepDefinitions {
 
     @Value("${io.swagger}")
     private String baseUrl;
+    public final HttpHeaders httpHeaders = new HttpHeaders();
 
-    UserService userService = new UserService();
+    public UserService userService = new UserService();
 
     public String getBaseUrl() {
         return baseUrl + port;
     }
 
+    public void setHttpHeaders(String token) {
+        httpHeaders.clear();
+        httpHeaders.add("Authorization",  "Bearer " + token);
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+    }
     public LoginDTO authenticate() {
 
         LoginDTO result = userService.login("BrunoMarques123", "secret123");
