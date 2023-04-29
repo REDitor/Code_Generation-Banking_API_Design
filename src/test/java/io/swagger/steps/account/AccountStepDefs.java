@@ -24,8 +24,8 @@ import java.util.UUID;
 
 public class AccountStepDefs extends BaseStepDefinitions implements En {
 
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODIyMDcwMTksImV4cCI6MTY4MjIxMDYxOX0.8NUjXwUrR9KOcmyC55MHK0NU69zKmDdi841ICUvmY_o";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODIzNzE4MzUsImV4cCI6MTY4MjM3NTQzNX0.I4MMPS3An4Hh6lbAkCstvlk9M84yqRbA4ohPn6nG-V8";
+    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4Mjc4MzMyMSwiZXhwIjoxNjgyNzg2OTIxfQ.dlYr2lrSsaoWhkcju6aL4B6gjYLCjuNbSgTzlYTI3t8";
+    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODI3ODMzNTIsImV4cCI6MTY4Mjc4Njk1Mn0.fzi_GfLe2tz1mimBN-nsOEBnml2oByUUKwQKoYrgpzU";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -39,10 +39,10 @@ public class AccountStepDefs extends BaseStepDefinitions implements En {
     private LoginDTO dto;
 
     public AccountStepDefs() {
-        Given("^I have an valid token for role \"([^\"]*)\" to access accounts$", (String role) -> {
+        Given("^I have an valid token for role \"([^\"]*)\"$", (String role) -> {
             if (role.equals("admin")) {
                 setHttpHeaders(VALID_TOKEN_ADMIN);
-            } else {
+            } else if(role.equals("user")) {
                 setHttpHeaders(VALID_TOKEN_USER);
             }
         });
@@ -61,6 +61,7 @@ public class AccountStepDefs extends BaseStepDefinitions implements En {
         });
 
         And("^i get a user without an account$", () -> {
+            setHttpHeaders(VALID_TOKEN_ADMIN);
             request = new HttpEntity<>(mapper.writeValueAsString(newAccountDTO), httpHeaders);
             response = restTemplate.exchange(getBaseUrl() + "/customers?skip=0&limit=1&noAccounts=true", HttpMethod.GET, new HttpEntity<>(null, httpHeaders), String.class);
             String result = response.getBody();
@@ -82,6 +83,18 @@ public class AccountStepDefs extends BaseStepDefinitions implements En {
         When("^I call get accounts by IBAN \"([^\"]*)\"$", (String iban) -> {
             request = new HttpEntity<>(null, httpHeaders);
             response = restTemplate.exchange(getBaseUrl() + "/accounts/" + iban, HttpMethod.GET, new HttpEntity<>(null, httpHeaders), String.class);
+            status = response.getStatusCodeValue();
+        });
+
+        When("^Fetching accounts by the name \"([^\"]*)\"$", (String name) -> {
+            request = new HttpEntity<>(null, httpHeaders);
+            response = restTemplate.exchange(getBaseUrl() + "/accounts/ibans/" + name, HttpMethod.GET, new HttpEntity<>(null, httpHeaders), String.class);
+            status = response.getStatusCodeValue();
+        });
+
+        When("I call get customers without accounts", () -> {
+            request = new HttpEntity<>(null, httpHeaders);
+            response = restTemplate.exchange(getBaseUrl() + "/customers?skip=0&limit=5&noAccounts=true", HttpMethod.GET, new HttpEntity<>(null, httpHeaders), String.class);
             status = response.getStatusCodeValue();
         });
 

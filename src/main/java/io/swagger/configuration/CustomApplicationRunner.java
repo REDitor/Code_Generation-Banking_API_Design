@@ -49,8 +49,12 @@ public class CustomApplicationRunner implements ApplicationRunner {
                         "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "sander@gmail.com", "SanderHarks123", "secret123"),
                 new User("Bruno", "Marques", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
                         "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_EMPLOYEE), "bruno@gmail.com", "BrunoMarques123", "secret123"),
-                new User("dummy123", "dummy123", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
-                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "bruno@gmail.com", "dummyCustomer", "secret123")
+                new User("dummy1", "dummy123", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
+                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "bruno@gmail.com", "dummyCustomer1", "secret123"),
+                new User("dummy2", "dummy123", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
+                        "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "bruno@gmail.com", "dummyCustomer2", "secret123"),
+                new User("dummy3", "dummy123", LocalDate.parse("1997-12-07"), "Someotherstreet", 123, "4321AB", "Haarlem",
+                "The Netherlands", 500, 2000, Arrays.asList(Role.ROLE_CUSTOMER), "bruno@gmail.com", "dummyCustomer3", "secret123")
         );
 
         // store users in db
@@ -64,7 +68,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         // store new accounts in db
         accountRepository.save(new Account(accountService.generateIban(), bank, AccountType.ACCOUNT_TYPE_CURRENT, 100000000, "open", 0));
         accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_CURRENT, 500, "open", 0));
-        accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), bruno, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0));
 
         Account accountSander = accountRepository.findAccountByIBAN("NL01INHO0000000002");
         Account accountSanderSavings = accountRepository.findAccountByIBAN("NL01INHO0000000003");
