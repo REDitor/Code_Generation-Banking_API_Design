@@ -23,9 +23,8 @@ import java.util.UUID;
 
 
 public class AccountStepDefs extends BaseStepDefinitions implements En {
-
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4Mjc4MzMyMSwiZXhwIjoxNjgyNzg2OTIxfQ.dlYr2lrSsaoWhkcju6aL4B6gjYLCjuNbSgTzlYTI3t8";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODI3ODMzNTIsImV4cCI6MTY4Mjc4Njk1Mn0.fzi_GfLe2tz1mimBN-nsOEBnml2oByUUKwQKoYrgpzU";
+    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NDYyMDU4NCwiZXhwIjoxNjg0NjI0MTg0fQ.IChFSNoviy824a07ZR2TaI5yU7jUw_zT7C8-moZdGrU";
+    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODQ2MjMwNjAsImV4cCI6MTY4NDYyNjY2MH0.JeitinRcUG-ZKtOvM16YctCGTCybd-IKgek_txOrxL8";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -37,6 +36,8 @@ public class AccountStepDefs extends BaseStepDefinitions implements En {
     private UUID randomUserID;
 
     private LoginDTO dto;
+
+    private JSONObject amount;
 
     public AccountStepDefs() {
         Given("^I have an valid token for role \"([^\"]*)\"$", (String role) -> {
@@ -96,6 +97,20 @@ public class AccountStepDefs extends BaseStepDefinitions implements En {
             request = new HttpEntity<>(null, httpHeaders);
             response = restTemplate.exchange(getBaseUrl() + "/customers?skip=0&limit=5&noAccounts=true", HttpMethod.GET, new HttpEntity<>(null, httpHeaders), String.class);
             status = response.getStatusCodeValue();
+        });
+
+        When("^I get the total balance using the UserID", () -> {
+            request = new HttpEntity<>(null, httpHeaders);
+            response = restTemplate.exchange(getBaseUrl() + "/accounts/totalBalance/" + randomUserID, HttpMethod.GET, new HttpEntity<>(null, httpHeaders), String.class);
+            status = response.getStatusCodeValue();
+            if(status.equals(200)) {
+                amount = new JSONObject(response.getBody());
+            }
+        });
+
+        Then("^the balance amount should be (.+)$", (Double selectedAmount) -> {
+            Double storedAmount = amount.getDouble("totalBalance");
+            Assertions.assertEquals(storedAmount, selectedAmount);
         });
 
         Then("^the response status code should be (\\d+)$", (Integer code) -> {
