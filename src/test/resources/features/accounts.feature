@@ -80,4 +80,4 @@ Feature: Everything related to accounts
       When I get the total balance using the UserID
       Then the response status code should be 403
 
-    # Update account
+    # Update accounts
