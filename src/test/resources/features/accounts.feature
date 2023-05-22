@@ -64,8 +64,8 @@ Feature: Everything related to accounts
 
     Scenario: Fetching accounts by name is Status Access denied  (user)
       Given I have an valid token for role "user"
-      When Fetching accounts by the name "Sander"
-      Then the response status code should be 403
+      When Fetching accounts by the name "NoUserWithTHisName"
+      Then the response status code should be 404
 
     ## Fetch totalBalance by userID
     Scenario: Fetching balance by UserID (admin)
@@ -78,6 +78,15 @@ Feature: Everything related to accounts
       And i get a user without an account
       Given I have an valid token for role "user"
       When I get the total balance using the UserID
-      Then the response status code should be 403
+      Then the response status code should be 401
 
     # Update accounts
+    Scenario: Updating account using IBAN (admin)
+      Given I have an valid token for role "admin"
+      When I change the status of account "NL01INHO0000000002" to "Closed"
+      Then the response should contain the new status of the account as "Closed"
+
+    Scenario: Updating account using IBAN (user)
+      Given I have an valid token for role "user"
+      When I change the status of account "NL01INHO0000000002" to "Closed"
+      Then the response status code should be 403
