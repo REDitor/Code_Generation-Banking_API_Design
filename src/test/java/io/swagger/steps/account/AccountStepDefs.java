@@ -3,29 +3,24 @@ package io.swagger.steps.account;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
-import io.swagger.model.AccountDTO;
 import io.swagger.model.LoginDTO;
 import io.swagger.model.NewAccountDTO;
-import io.swagger.model.UserDTO;
-import io.swagger.model.entity.AccountType;
-import io.swagger.model.entity.User;
-import io.swagger.service.UserService;
+import io.swagger.model.UpdateAccountDTO;
 import io.swagger.steps.BaseStepDefinitions;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.json.*;
+import springfox.documentation.spring.web.json.Json;
 
-import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 
 public class AccountStepDefs extends BaseStepDefinitions implements En {
-
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4Mjc4MzMyMSwiZXhwIjoxNjgyNzg2OTIxfQ.dlYr2lrSsaoWhkcju6aL4B6gjYLCjuNbSgTzlYTI3t8";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODI3ODMzNTIsImV4cCI6MTY4Mjc4Njk1Mn0.fzi_GfLe2tz1mimBN-nsOEBnml2oByUUKwQKoYrgpzU";
+    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NDY2NzM2NiwiZXhwIjoxNjg0NjcwOTY2fQ.qU4TV5fAS2zgS82s2bjGMVIFSW2lJXnEws8LeHyeTTg";
+    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODQ2NjUwODEsImV4cCI6MTY4NDY2ODY4MX0.2oC-suyuVLfev5ZT6Xou-Po4-xlOKFe1EgzddBFVPmE";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -35,8 +30,7 @@ public class AccountStepDefs extends BaseStepDefinitions implements En {
     private Integer status;
     private NewAccountDTO newAccountDTO;
     private UUID randomUserID;
-
-    private LoginDTO dto;
+    private JSONObject amount;
 
     public AccountStepDefs() {
         Given("^I have an valid token for role \"([^\"]*)\"$", (String role) -> {
@@ -98,8 +92,42 @@ public class AccountStepDefs extends BaseStepDefinitions implements En {
             status = response.getStatusCodeValue();
         });
 
+        When("^I get the total balance using the UserID", () -> {
+            request = new HttpEntity<>(null, httpHeaders);
+            response = restTemplate.exchange(getBaseUrl() + "/accounts/totalBalance/" + randomUserID, HttpMethod.GET, new HttpEntity<>(null, httpHeaders), String.class);
+            status = response.getStatusCodeValue();
+            if(status.equals(200)) {
+                amount = new JSONObject(response.getBody());
+            }
+        });
+
+        Then("^the balance amount should be (.+)$", (Double selectedAmount) -> {
+            Double storedAmount = amount.getDouble("totalBalance");
+            Assertions.assertEquals(storedAmount, selectedAmount);
+        });
+
         Then("^the response status code should be (\\d+)$", (Integer code) -> {
             Assertions.assertEquals(code, status);
+        });
+
+        When("^I change the status of account \"([^\"]*)\" to \"([^\"]*)\"$", (String IBAN, String givenStatus) -> {
+
+            String object = "{\n" +
+                            "  \"MinimumBalance\": 0,\n" +
+                            "  \"Status\": \"" + givenStatus + "\",\n" +
+                            "  \"Type\": \"Current\"\n" +
+                            "}";
+
+            request = new HttpEntity<>(object, httpHeaders);
+            response = restTemplate.exchange(getBaseUrl() + "/accounts/NL01INHO0000000001", HttpMethod.PUT, request, String.class);
+            status = response.getStatusCodeValue();
+        });
+        Then("^the response should contain the new status of the account as \"([^\"]*)\"$", (String status) -> {
+            String result = response.getBody();
+            JSONObject jsonArray = new JSONObject(result);
+            String statusResponse = jsonArray.getString("Status");
+
+            Assertions.assertEquals(status, statusResponse);
         });
     }
 }
