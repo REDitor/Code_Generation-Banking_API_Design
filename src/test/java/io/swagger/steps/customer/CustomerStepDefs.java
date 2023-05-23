@@ -17,10 +17,13 @@ import org.springframework.http.ResponseEntity;
 import com.google.gson.Gson;
 import com.google.gson.FieldNamingPolicy;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class CustomerStepDefs extends BaseStepDefinitions implements En {
 
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NDg2MzI1MywiZXhwIjoxNjg0ODY2ODUzfQ.NbZfv0trBwwWh-VYxju-TqSZUItMmeuUd8HCDo6Z7oY";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODQ4NjAwODEsImV4cCI6MTY4NDg2MzY4MX0.JIwG0KcceLMl6r1lAD6EjcVtuEM1c3Fdt1boFwpLBro";
+    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NDg3Njc3MSwiZXhwIjoxNjg0ODgwMzcxfQ.80KTjyGkrQMZyYkB7aXUia6Zwo87yI2PDakxmDQVn6I";
+    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODQ4NzY3NDcsImV4cCI6MTY4NDg4MDM0N30.EuHvSoJXM1ipoX1jTLdnsjxYfgzqAA_XoRF2pn0nkXQ";
+
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -72,7 +75,7 @@ public class CustomerStepDefs extends BaseStepDefinitions implements En {
                     objectResult = new JSONObject(response.getBody());
                 }
         });
-        When("^I make a post request to create new customer$", () -> {
+        When("^I make a post request to create new customer with the following username \"([^\"]*)\"$", (String username) -> {
             String customer = "{\n" +
                     "  \"BirthDate\": \"2023-05-23\",\n" +
                     "  \"City\": \"Amsterdam\",\n" +
@@ -85,7 +88,7 @@ public class CustomerStepDefs extends BaseStepDefinitions implements En {
                     "  \"Password\": \"Test..123\",\n" +
                     "  \"StreetName\": \"Pietersbergweg\",\n" +
                     "  \"TransactionAmountLimit\": 2000,\n" +
-                    "  \"Username\": \"brumarq\",\n" +
+                    "  \"Username\": \"" + username + "\",\n" +
                     "  \"ZipCode\": \"0987 MB\"\n" +
                     "}";
 
@@ -123,10 +126,8 @@ public class CustomerStepDefs extends BaseStepDefinitions implements En {
                     "    \"Password\": \"test..123\"\n" +
                     "}";
 
-            HttpHeaders adminTokenHeaders = new HttpHeaders(httpHeaders); // Create a copy of httpHeaders for ADMIN token
-
-            request = new HttpEntity<>(updatedCustomer, adminTokenHeaders);
-            response = restTemplate.exchange(getBaseUrl() + "/customers/" + userId, HttpMethod.PUT, request, String.class);
+            request = new HttpEntity<>(updatedCustomer, httpHeaders);
+                response = restTemplate.exchange(getBaseUrl() + "/customers/" + userId, HttpMethod.PUT, request, String.class);
             status = response.getStatusCodeValue();
         });
 

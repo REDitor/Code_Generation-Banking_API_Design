@@ -83,7 +83,7 @@ public class CustomersApiController extends UserApiController implements Custome
 
             // If logged user is a customer, ensure its only possible to change his information
             if(!loggedUser.getRoles().contains(Role.ROLE_EMPLOYEE) && !loggedUser.getuserId().equals(userID)){
-                return new ResponseEntity(new ErrorMessageDTO("Not authorized to changed other user data."), HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity(new ErrorMessageDTO("Not authorized to changed other user data."), HttpStatus.FORBIDDEN);
             }
 
             // Only update role of customer, if an employee is doing it

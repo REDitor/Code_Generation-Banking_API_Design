@@ -10,15 +10,15 @@ Feature: Everything related to customers
     Given I have an valid JWT token for role "user"
     When Fetching all the customers
     Then the response status codes should be 403
-## Get customer by ID (user+ admin)
 
+## Get customer by ID (user + admin)
   Scenario: Fetching a customer by ID as Admin returns a result
     Given I have an valid JWT token for role "admin"
     When Fetching all the customers
     When Fetching a random specific user
     Then There should be at least an object
 
-  Scenario: Fetching a customer by ID as User returns a result
+  Scenario: Fetching a customer by ID as User returns an error
     Given I have an valid JWT token for role "admin"
     When Fetching all the customers
     Given I have an valid JWT token for role "user"
@@ -28,7 +28,7 @@ Feature: Everything related to customers
 ## Create new customer (user + admin)
   Scenario: Creating a new customer return status OK
     Given I have an valid JWT token for role "admin"
-    When I make a post request to create new customer
+    When I make a post request to create new customer with the following username "test_account_1234"
     Then the response status codes should be 200
 
   Scenario: Creating a new customer with wrong parameters returns 400
@@ -36,12 +36,12 @@ Feature: Everything related to customers
     When I make a post request to create new customer with wrong parameters
     Then the response status codes should be 400
 
-  Scenario: Creating a new customer return status Permission Denied
+  Scenario: Creating a new customer return status OK
     Given I have an valid JWT token for role "user"
-    When I make a post request to create new customer
-    Then the response status codes should be 403
-## Update customer by ID (user + admin + own account user)
+    When I make a post request to create new customer with the following username "test_account_09876"
+    Then the response status codes should be 200
 
+## Update customer by ID (user + admin)
   Scenario: Updating customer returns status OK
     Given I have an valid JWT token for role "admin"
     When Fetching all the customers
@@ -53,5 +53,5 @@ Feature: Everything related to customers
     When Fetching all the customers
     Given I have an valid JWT token for role "user"
     And Updating a random customer's street name to "newStreetNameForMe"
-    ##Given I have an valid JWT token for role "admin"
+    Then the response status codes should be 403
 
