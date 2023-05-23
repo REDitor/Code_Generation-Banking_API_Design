@@ -19,7 +19,7 @@ import org.springframework.http.ResponseEntity;
 public class TransactionStepDefs extends BaseStepDefinitions implements En {
 
     private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4Mjc4MzMyMSwiZXhwIjoxNjgyNzg2OTIxfQ.dlYr2lrSsaoWhkcju6aL4B6gjYLCjuNbSgTzlYTI3t8";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODI3ODMzNTIsImV4cCI6MTY4Mjc4Njk1Mn0.fzi_GfLe2tz1mimBN-nsOEBnml2oByUUKwQKoYrgpzU";
+    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODQ4MzI0MzIsImV4cCI6MTY4NDgzNjAzMn0.Gt0GxC6q8HCCABXcjikp8neD_QMA_OYuBdH6BHYeyvU";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
