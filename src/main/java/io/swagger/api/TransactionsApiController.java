@@ -50,10 +50,7 @@ public class TransactionsApiController implements TransactionsApi {
 
     private final HttpServletRequest request;
 
-    @Autowired
     private TransactionService transactionService;
-
-    @Autowired
     private UserService userService;
 
     private final ModelMapper modelMapper;
@@ -63,11 +60,12 @@ public class TransactionsApiController implements TransactionsApi {
 
     private JwtTokenProvider jwtTokenProvider;
 
-    @org.springframework.beans.factory.annotation.Autowired
-    public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    @Autowired
+    public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request, TransactionService transactionService, UserService userService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.modelMapper = new ModelMapper();
+        this.userService = userService;
     }
 
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('EMPLOYEE')")

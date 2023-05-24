@@ -5,6 +5,7 @@ import io.swagger.model.LoginDTO;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
+import io.swagger.repository.AccountRepository;
 import io.swagger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,6 @@ import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -35,6 +35,10 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     // Add new User
     public User add(User user) {

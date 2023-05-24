@@ -1,9 +1,11 @@
 package io.swagger.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.repository.AccountRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +16,11 @@ import java.util.UUID;
 
 @Service
 public class AccountService  {
-
-    @Autowired
     private AccountRepository accountRepository;
+
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     public Account add(Account account) {
 

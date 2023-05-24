@@ -44,17 +44,16 @@ public class EmployeesApiController extends UserApiController implements Employe
     private final HttpServletRequest request;
     private final ModelMapper modelMapper;
 
-    @Autowired
     private UserService userService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    @org.springframework.beans.factory.annotation.Autowired
-    public EmployeesApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    @Autowired
+    public EmployeesApiController(ObjectMapper objectMapper, HttpServletRequest request, UserService userService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.modelMapper = new ModelMapper();
+        this.userService = userService;
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")

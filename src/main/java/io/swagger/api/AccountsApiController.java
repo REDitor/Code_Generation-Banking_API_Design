@@ -23,9 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -35,9 +33,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.web.bind.annotation.RestController;
+
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
 @Api(tags = "Accounts")
+@RequestMapping("acccounts")
 public class AccountsApiController implements AccountsApi {
 
     private static final Logger log = LoggerFactory.getLogger(AccountsApiController.class);
@@ -46,21 +47,20 @@ public class AccountsApiController implements AccountsApi {
 
     private final HttpServletRequest request;
 
-    @Autowired
     private AccountService accountService;
-    @Autowired
     private UserService userService;
-
     private final ModelMapper modelMapper;
 
-    @org.springframework.beans.factory.annotation.Autowired
-    public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request, AccountService accountService, UserService userService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.modelMapper = new ModelMapper();
+        this.accountService = accountService;
+        this.userService = userService;
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
+    @PostMapping
     public ResponseEntity<AccountDTO> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewAccountDTO body) {
         Account newAccount = modelMapper.map(body, Account.class);
         User user = userService.getOneCustomer(body.getUserID());

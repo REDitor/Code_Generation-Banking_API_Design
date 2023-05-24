@@ -53,17 +53,16 @@ public class CustomersApiController extends UserApiController implements Custome
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
     private UserService userService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    @org.springframework.beans.factory.annotation.Autowired
-    public CustomersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    @Autowired
+    public CustomersApiController(ObjectMapper objectMapper, HttpServletRequest request, UserService userService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.modelMapper = new ModelMapper();
+        this.userService = userService;
     }
 
     public ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
