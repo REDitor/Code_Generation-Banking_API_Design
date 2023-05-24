@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-30T12:05:25.016Z[GMT]")
 @RestController
 @Api(tags = "Accounts")
-@RequestMapping("acccounts")
+@RequestMapping("accounts")
 public class AccountsApiController implements AccountsApi {
 
     private static final Logger log = LoggerFactory.getLogger(AccountsApiController.class);
@@ -79,6 +79,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    @GetMapping("{iban}")
     public ResponseEntity<AccountDTO> getAccount(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required = true, schema = @Schema()) @PathVariable("iban") String iban) {
 
         User loggedUser = userService.getLoggedUser(request);
@@ -134,7 +135,7 @@ public class AccountsApiController implements AccountsApi {
         accountService.add(updatedAccount);
         AccountDTO response = modelMapper.map(updatedAccount, AccountDTO.class);
 
-        return new ResponseEntity<AccountDTO>(response,HttpStatus.OK);
+        return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
     }
     @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
 
