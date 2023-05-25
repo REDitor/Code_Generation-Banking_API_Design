@@ -454,15 +454,44 @@ class CustomersApiControllerTest {
     }
 
     @Test
-    void updateCustomer() {
+    void getCustomer_withInvalidUserID_returnsBadRequest() throws Exception {
+        // Arrange
+        UUID userID = UUID.randomUUID();
+
+        // Mock the behavior of the userService.getLoggedUser(request) method
+        User loggedUser = new User();
+        loggedUser.setRoles(Collections.singletonList(Role.ROLE_CUSTOMER));
+        when(userService.getLoggedUser(request)).thenReturn(loggedUser);
+
+        // Mock the behavior of the userService.getOneCustomer(userID) method
+        when(userService.getOneCustomer(userID)).thenReturn(null);
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(get("/customers/{userID}", userID.toString()))
+                .andReturn().getResponse();
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.getContentAsString()).isNotNull();
     }
 
     @Test
-    void getCustomer() {
-    }
+    void getCustomers_withInvalidPaginationValues_returnsBadRequest() throws Exception {
+        // Arrange
+        int skip = -1; // Invalid value for skip
+        int limit = 20; // Valid value for limit
+        boolean noAccounts = false;
 
-    @Test
-    void getCustomers() {
+        // Act
+        MockHttpServletResponse response = mvc.perform(get("/customers")
+                        .param("skip", Integer.toString(skip))
+                        .param("limit", Integer.toString(limit))
+                        .param("noAccounts", Boolean.toString(noAccounts)))
+                .andReturn().getResponse();
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.getContentAsString()).isNotNull();
     }
 
     // Helper method to convert an object to JSON string

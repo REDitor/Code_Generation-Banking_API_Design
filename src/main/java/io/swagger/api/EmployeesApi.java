@@ -101,11 +101,11 @@ public interface EmployeesApi {
         @ApiResponse(responseCode = "404", description = "A user with the specified ID was not found."),
         
         @ApiResponse(responseCode = "5XX", description = "Unexpected error.") })
-    @RequestMapping(value = "/employees/{userId}",
+    @RequestMapping(value = "/employees/{userID}",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<UserDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("userId") UUID userId, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserDTO body);
+    ResponseEntity<UserDTO> updateEmployee(@Parameter(in = ParameterIn.PATH, description = "The employeeId of the employee to update", required=true, schema=@Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UpdateUserDTO body);
 
 }
 
