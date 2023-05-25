@@ -107,12 +107,13 @@ public class CustomersApiController extends UserApiController implements Custome
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    @GetMapping("{userID}")
     public ResponseEntity<UserDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
         try {
-            // Check if provided userId is valid
+            //Check if provided userId is valid
             checkUserIDParameter(userID.toString());
-
             User userInformation = userService.getLoggedUser(request);
+
             // Check if user is a Customer, if he is, make sure he is only able to access his own information
             if (!userInformation.getRoles().contains(Role.ROLE_EMPLOYEE) && !userInformation.getuserId().equals(userID)) {
                 return new ResponseEntity(new ErrorMessageDTO("You cannot access information that does not belong to you!"), HttpStatus.UNAUTHORIZED);
@@ -131,6 +132,7 @@ public class CustomersApiController extends UserApiController implements Custome
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
+    @GetMapping()
     public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit, @Parameter(in = ParameterIn.QUERY, description = "Get customers that have no accounts", schema = @Schema()) @Valid @RequestParam(value = "noAccounts", required = true) Boolean noAccounts) {
         try {
             // Check if pagination was set
@@ -153,6 +155,4 @@ public class CustomersApiController extends UserApiController implements Custome
             return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
         }
     }
-
-
 }
