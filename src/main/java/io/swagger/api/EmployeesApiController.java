@@ -1,6 +1,7 @@
 package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.annotations.Api;
 import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.NewUserDTO;
@@ -46,11 +47,13 @@ public class EmployeesApiController extends UserApiController implements Employe
 
     private UserService userService;
 
-    @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
-    public EmployeesApiController(ObjectMapper objectMapper, HttpServletRequest request, UserService userService) {
+    public EmployeesApiController(ObjectMapper objectMapper, HttpServletRequest request, UserService userService, PasswordEncoder passwordEncoder) {
+        super(userService, passwordEncoder);
         this.objectMapper = objectMapper;
+        this.objectMapper.registerModule(new JavaTimeModule());
+
         this.request = request;
         this.modelMapper = new ModelMapper();
         this.userService = userService;

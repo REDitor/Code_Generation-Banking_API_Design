@@ -1,6 +1,7 @@
 package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.annotations.Api;
 import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.ErrorMessageDTO;
@@ -22,11 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -40,6 +37,7 @@ import java.util.UUID;
 @RestController
 @Api(tags = "Customers")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@RequestMapping("customers")
 public class CustomersApiController extends UserApiController implements CustomersApi {
 
     private static final Logger log = LoggerFactory.getLogger(CustomersApiController.class);
@@ -55,21 +53,25 @@ public class CustomersApiController extends UserApiController implements Custome
 
     private UserService userService;
 
-    @Autowired
     PasswordEncoder passwordEncoder;
-    @Autowired
-    public CustomersApiController(ObjectMapper objectMapper, HttpServletRequest request, UserService userService) {
+
+    public CustomersApiController(ObjectMapper objectMapper, HttpServletRequest request, UserService userService, PasswordEncoder passwordEncoder) {
+        super(userService, passwordEncoder);
         this.objectMapper = objectMapper;
+        this.objectMapper.registerModule(new JavaTimeModule());
+
         this.request = request;
         this.modelMapper = new ModelMapper();
-        this.userService = userService;
+        this.userService = userService; // Initialize the userService field
     }
 
+    @PostMapping
     public ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
         return createUser(body, Role.ROLE_CUSTOMER);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    @PutMapping("{userID}")
     public ResponseEntity<UserDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserDTO body) {
         try {
             // Map body and make sure all the fields got filled properly

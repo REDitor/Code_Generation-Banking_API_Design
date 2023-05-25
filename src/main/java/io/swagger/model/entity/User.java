@@ -3,7 +3,7 @@ package io.swagger.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.threeten.bp.LocalDate;
+import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;

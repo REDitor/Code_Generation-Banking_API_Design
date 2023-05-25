@@ -86,7 +86,7 @@ public class AccountsApiController implements AccountsApi {
 
         Account receivedAccount = accountService.getAccountByIBAN(iban);
 
-        if (iban == "NL01INHO0000000001")
+        if (iban.equals("NL01INHO0000000001"))
             return new ResponseEntity(new ErrorMessageDTO("Permission Denied: Cannot access master account"), HttpStatus.FORBIDDEN);
 
         if (!userService.isEmployee(request) && !userService.accountOwnerIsLoggedUser(receivedAccount, request))
@@ -95,7 +95,7 @@ public class AccountsApiController implements AccountsApi {
         AccountDTO response = modelMapper.map(receivedAccount, AccountDTO.class);
         return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
     }
-
+    @GetMapping("/ibans/{name}")
     public ResponseEntity<List<AccountIbanDTO>> getAccountByName(String name) {
 
         List<Account> receivedAccounts = accountService.getAccountByName(name);
@@ -120,6 +120,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
+    @PutMapping("{iban}")
     public ResponseEntity<AccountDTO> updateAccount(@Size(min = 18, max = 18) @Parameter(in = ParameterIn.PATH, description = "The Iban of the account", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Fields that need to be updated", schema = @Schema()) @Valid @RequestBody UpdateAccountDTO body) {
         if(!(body.getMinimumBalance() >= 0 &&
                 body.getStatus().length() > 1 &&
@@ -127,6 +128,7 @@ public class AccountsApiController implements AccountsApi {
         ){
             return new ResponseEntity(new ErrorMessageDTO("Bad request. Invalid request body."), HttpStatus.BAD_REQUEST);
         }
+
         Account oldAccountDetails = accountService.getAccountByIBAN(iban);
         Account updatedAccount = modelMapper.map(body, Account.class);
         updatedAccount.setIBAN(iban);
@@ -137,8 +139,9 @@ public class AccountsApiController implements AccountsApi {
 
         return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
 
+    @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    @GetMapping("/total/{userId}")
     public ResponseEntity<AccountsAmountDTO> getTotalBalanceByUserID(@Parameter(in = ParameterIn.PATH, description = "UserId of user", required=true, schema=@Schema()) @PathVariable("userId") UUID userId) {
         User user = userService.getUserById(userId);
         Double totalAmount = accountService.totalAmountFromAccounts(user);
@@ -154,6 +157,4 @@ public class AccountsApiController implements AccountsApi {
 
         return new ResponseEntity<AccountsAmountDTO>(response,HttpStatus.OK);
     }
-
-
 }

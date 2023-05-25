@@ -1,5 +1,7 @@
 package io.swagger.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.NewUserDTO;
 import io.swagger.model.UserDTO;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,10 +24,13 @@ import java.util.regex.Pattern;
 
 abstract public class UserApiController {
 
-    @Autowired
     private UserService userService;
-    @Autowired
     PasswordEncoder passwordEncoder;
+
+    public UserApiController(UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     private final ModelMapper modelMapper =  new ModelMapper();
 
@@ -168,8 +174,4 @@ abstract public class UserApiController {
 
         return updatedUser;
     }
-
-
-
-
 }
