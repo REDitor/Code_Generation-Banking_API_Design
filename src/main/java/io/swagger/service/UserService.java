@@ -27,17 +27,17 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
     private UserRepository userRepository;
 
-    @Autowired
     JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
     AuthenticationManager authenticationManager;
 
     PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     // Add new User
