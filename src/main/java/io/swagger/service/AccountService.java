@@ -44,17 +44,16 @@ public class AccountService  {
         }
 
         int checkDigits = Integer.parseInt(latestIbanNumber.substring(2, 4));
-        long bankAccountNumber = Integer.parseInt(latestIbanNumber.substring(8, 18));;
+        long bankAccountNumber = Long.parseLong(latestIbanNumber.substring(8, 18));
 
         if (bankAccountNumber == 9999999999L) {
-            bankAccountNumber = 0000000001L;
-            checkDigits =+ 1;
-        }
-        else {
+            bankAccountNumber = 1L;
+            checkDigits += 1;
+        } else {
             bankAccountNumber += 1;
         }
 
-        String newIban = "NL"+String.format("%02d", checkDigits)+"INHO"+String.format("%010d", bankAccountNumber);
+        String newIban = "NL" + String.format("%02d", checkDigits) + "INHO" + String.format("%010d", bankAccountNumber);
 
         return newIban;
     }

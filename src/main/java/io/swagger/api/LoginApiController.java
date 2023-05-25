@@ -14,9 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -25,6 +24,7 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Api(tags = "Authentication")
 @RestController
+@RequestMapping("login")
 public class LoginApiController implements LoginApi {
 
     private static final Logger log = LoggerFactory.getLogger(LoginApiController.class);
@@ -33,15 +33,15 @@ public class LoginApiController implements LoginApi {
 
     private final HttpServletRequest request;
 
-    @Autowired
     UserService userService;
 
-    @org.springframework.beans.factory.annotation.Autowired
-    public LoginApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public LoginApiController(UserService userService, ObjectMapper objectMapper, HttpServletRequest request) {
+        this.userService = userService;
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
+    @PostMapping
     public ResponseEntity<LoginDTO> login(@Parameter(in = ParameterIn.DEFAULT, description = "Login Information", schema=@Schema()) @Valid @RequestBody LoginInputDTO body) {
         String token = "";
 

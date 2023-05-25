@@ -33,11 +33,11 @@ public class UserService implements UserDetailsService {
     @Autowired
     AuthenticationManager authenticationManager;
 
-    @Autowired
     PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Add new User
