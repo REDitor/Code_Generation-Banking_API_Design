@@ -8,7 +8,7 @@ public class CustomerStepDefs extends BaseStepDefinitions implements En {
     private Integer status;
 
     public CustomerStepDefs() {
-        Then("^the response status code should be (\\d+)$", (Integer code) -> {
+        Then("^the response status code should be this (\\d+)$", (Integer code) -> {
             Assertions.assertEquals(code, status);
         });
     }
