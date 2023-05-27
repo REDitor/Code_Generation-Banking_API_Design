@@ -34,7 +34,9 @@ public class CustomerStepDefs extends BaseStepDefinitions implements En {
     private JSONObject objectResult;
 
     public CustomerStepDefs() {
+
         Then("^the response status codes should be (\\d+)$", (Integer code) -> {
+
             Assertions.assertEquals(code, status);
         });
 

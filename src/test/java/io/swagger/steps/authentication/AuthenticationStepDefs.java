@@ -9,6 +9,7 @@ public class AuthenticationStepDefs extends BaseStepDefinitions implements En {
 
     public AuthenticationStepDefs() {
         Then("^the response status codings should be (\\d+)$", (Integer code) -> {
+
             Assertions.assertEquals(code, status);
         });
     }
