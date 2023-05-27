@@ -19,8 +19,8 @@ import java.util.UUID;
 
 
 public class AccountStepDefs extends BaseStepDefinitions implements En {
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NDY2NzM2NiwiZXhwIjoxNjg0NjcwOTY2fQ.qU4TV5fAS2zgS82s2bjGMVIFSW2lJXnEws8LeHyeTTg";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODQ2NjUwODEsImV4cCI6MTY4NDY2ODY4MX0.2oC-suyuVLfev5ZT6Xou-Po4-xlOKFe1EgzddBFVPmE";
+    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NTIwMTA1OSwiZXhwIjoxNjg1MjA0NjU5fQ.GLd3CRzR67U2I397tUbdFuUKXlq-qyL_CDCi_3KReog";
+    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODUyMDA5OTIsImV4cCI6MTY4NTIwNDU5Mn0.CVNOpjDomVZ-db0-AGFSQtzHUHN0xOIuOqLjo2RlfYs";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();

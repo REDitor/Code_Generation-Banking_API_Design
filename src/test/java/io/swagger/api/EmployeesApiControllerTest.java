@@ -254,6 +254,19 @@ class EmployeesApiControllerTest {
     }
 
     @Test
+    void getEmployee_withInvalidEmployeeId_returnsBadRequest() throws Exception {
+        // Arrange
+        String invalidEmployeeId = "invalid-employee-id";
+
+        MockHttpServletResponse response = mvc.perform(get("/employees/{employeeId}", invalidEmployeeId))
+                .andReturn().getResponse();
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.getContentAsString()).isNotNull();
+    }
+
+    @Test
     void getEmployees_withoutFilters_returnsAllEmployees() throws Exception {
 
         User employees1 = new User();
@@ -332,19 +345,6 @@ class EmployeesApiControllerTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isNotNull();
         assertThat(response.getContentAsString()).contains("Doe");
-    }
-
-    @Test
-    void getEmployee_withInvalidEmployeeId_returnsBadRequest() throws Exception {
-        // Arrange
-        String invalidEmployeeId = "invalid-employee-id";
-
-        MockHttpServletResponse response = mvc.perform(get("/employees/{employeeId}", invalidEmployeeId))
-                .andReturn().getResponse();
-
-        // Assert
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.getContentAsString()).isNotNull();
     }
 
     @Test
