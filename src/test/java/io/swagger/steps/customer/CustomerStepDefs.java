@@ -21,9 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 
 public class CustomerStepDefs extends BaseStepDefinitions implements En {
 
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NDg3Njc3MSwiZXhwIjoxNjg0ODgwMzcxfQ.80KTjyGkrQMZyYkB7aXUia6Zwo87yI2PDakxmDQVn6I";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODQ4NzY3NDcsImV4cCI6MTY4NDg4MDM0N30.EuHvSoJXM1ipoX1jTLdnsjxYfgzqAA_XoRF2pn0nkXQ";
-
+    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NTIwMTg4OCwiZXhwIjoxNjg1MjA1NDg4fQ.-3FipSXzdneByaF3uPSj1hsOIk00IE69JUPfWmrC95M";
+    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODUyMDE5MDMsImV4cCI6MTY4NTIwNTUwM30.1MxSr-DMqHjHKKe8evCLYTh3I3_Bxlu6jXZRE5mcCVQ";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 
