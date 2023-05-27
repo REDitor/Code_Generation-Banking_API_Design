@@ -12,8 +12,9 @@ import io.swagger.service.AccountService;
 import io.swagger.service.UserService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import org.threeten.bp.LocalDate;
+import java.time.LocalDate;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Component
 @Transactional
+@Profile("!test")
 public class CustomApplicationRunner implements ApplicationRunner {
 
     private UserRepository userRepository;

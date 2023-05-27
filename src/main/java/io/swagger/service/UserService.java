@@ -5,6 +5,7 @@ import io.swagger.model.LoginDTO;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Role;
 import io.swagger.model.entity.User;
+import io.swagger.repository.AccountRepository;
 import io.swagger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,17 +25,20 @@ import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
     AuthenticationManager authenticationManager;
 
-    @Autowired
     PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,JwtTokenProvider jwtTokenProvider) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     // Add new User
     public User add(User user) {

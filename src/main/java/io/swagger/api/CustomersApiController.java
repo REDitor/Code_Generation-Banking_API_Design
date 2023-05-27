@@ -1,6 +1,7 @@
 package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.annotations.Api;
 import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.ErrorMessageDTO;
@@ -22,11 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -40,6 +37,7 @@ import java.util.UUID;
 @RestController
 @Api(tags = "Customers")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@RequestMapping("customers")
 public class CustomersApiController extends UserApiController implements CustomersApi {
 
     private static final Logger log = LoggerFactory.getLogger(CustomersApiController.class);
@@ -53,24 +51,27 @@ public class CustomersApiController extends UserApiController implements Custome
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     PasswordEncoder passwordEncoder;
 
-    @org.springframework.beans.factory.annotation.Autowired
-    public CustomersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public CustomersApiController(ObjectMapper objectMapper, HttpServletRequest request, UserService userService, PasswordEncoder passwordEncoder) {
+        super(userService, passwordEncoder);
         this.objectMapper = objectMapper;
+        this.objectMapper.registerModule(new JavaTimeModule());
+
         this.request = request;
         this.modelMapper = new ModelMapper();
+        this.userService = userService; // Initialize the userService field
     }
 
+    @PostMapping
     public ResponseEntity<UserDTO> createCustomer(@Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody NewUserDTO body) {
         return createUser(body, Role.ROLE_CUSTOMER);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    @PutMapping("{userID}")
     public ResponseEntity<UserDTO> updateCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID, @Parameter(in = ParameterIn.DEFAULT, description = "New customer details", schema = @Schema()) @Valid @RequestBody UpdateUserDTO body) {
         try {
             // Map body and make sure all the fields got filled properly
@@ -83,7 +84,7 @@ public class CustomersApiController extends UserApiController implements Custome
 
             // If logged user is a customer, ensure its only possible to change his information
             if(!loggedUser.getRoles().contains(Role.ROLE_EMPLOYEE) && !loggedUser.getuserId().equals(userID)){
-                return new ResponseEntity(new ErrorMessageDTO("Not authorized to changed other user data."), HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity(new ErrorMessageDTO("Not authorized to changed other user data."), HttpStatus.FORBIDDEN);
             }
 
             // Only update role of customer, if an employee is doing it
@@ -106,12 +107,13 @@ public class CustomersApiController extends UserApiController implements Custome
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') || hasRole('CUSTOMER')")
+    @GetMapping("{userID}")
     public ResponseEntity<UserDTO> getCustomer(@Parameter(in = ParameterIn.PATH, description = "The userID of the customer", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
         try {
-            // Check if provided userId is valid
+            //Check if provided userId is valid
             checkUserIDParameter(userID.toString());
-
             User userInformation = userService.getLoggedUser(request);
+
             // Check if user is a Customer, if he is, make sure he is only able to access his own information
             if (!userInformation.getRoles().contains(Role.ROLE_EMPLOYEE) && !userInformation.getuserId().equals(userID)) {
                 return new ResponseEntity(new ErrorMessageDTO("You cannot access information that does not belong to you!"), HttpStatus.UNAUTHORIZED);
@@ -130,6 +132,7 @@ public class CustomersApiController extends UserApiController implements Custome
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
+    @GetMapping()
     public ResponseEntity<List<UserDTO>> getCustomers(@Parameter(in = ParameterIn.QUERY, description = "search for this substring", schema = @Schema()) @Valid @RequestParam(value = "firstName", required = false) String firstName, @Parameter(in = ParameterIn.QUERY, description = "search for lastname", schema = @Schema()) @Valid @RequestParam(value = "lastName", required = false) String lastName, @Min(0) @Parameter(in = ParameterIn.QUERY, description = "number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(0) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "maximum number of records to return", schema = @Schema(allowableValues = {}, maximum = "50")) @Valid @RequestParam(value = "limit", required = false) Integer limit, @Parameter(in = ParameterIn.QUERY, description = "Get customers that have no accounts", schema = @Schema()) @Valid @RequestParam(value = "noAccounts", required = true) Boolean noAccounts) {
         try {
             // Check if pagination was set
@@ -152,6 +155,4 @@ public class CustomersApiController extends UserApiController implements Custome
             return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
         }
     }
-
-
 }

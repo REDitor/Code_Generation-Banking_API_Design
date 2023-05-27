@@ -20,7 +20,6 @@ public class BaseStepDefinitions {
     private String baseUrl;
     public final HttpHeaders httpHeaders = new HttpHeaders();
 
-    public UserService userService = new UserService();
 
     public String getBaseUrl() {
         return baseUrl + port;
@@ -30,11 +29,5 @@ public class BaseStepDefinitions {
         httpHeaders.clear();
         httpHeaders.add("Authorization",  "Bearer " + token);
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-    }
-    public LoginDTO authenticate() {
-
-        LoginDTO result = userService.login("BrunoMarques123", "secret123");
-
-        return result;
     }
 }

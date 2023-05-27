@@ -1,9 +1,11 @@
 package io.swagger.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.repository.AccountRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +16,11 @@ import java.util.UUID;
 
 @Service
 public class AccountService  {
-
-    @Autowired
     private AccountRepository accountRepository;
+
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     public Account add(Account account) {
 
@@ -40,17 +44,16 @@ public class AccountService  {
         }
 
         int checkDigits = Integer.parseInt(latestIbanNumber.substring(2, 4));
-        long bankAccountNumber = Integer.parseInt(latestIbanNumber.substring(8, 18));;
+        long bankAccountNumber = Long.parseLong(latestIbanNumber.substring(8, 18));
 
         if (bankAccountNumber == 9999999999L) {
-            bankAccountNumber = 0000000001L;
-            checkDigits =+ 1;
-        }
-        else {
+            bankAccountNumber = 1L;
+            checkDigits += 1;
+        } else {
             bankAccountNumber += 1;
         }
 
-        String newIban = "NL"+String.format("%02d", checkDigits)+"INHO"+String.format("%010d", bankAccountNumber);
+        String newIban = "NL" + String.format("%02d", checkDigits) + "INHO" + String.format("%010d", bankAccountNumber);
 
         return newIban;
     }

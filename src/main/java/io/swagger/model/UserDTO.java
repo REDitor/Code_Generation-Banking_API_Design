@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.threeten.bp.LocalDate;
+import java.time.LocalDate;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
