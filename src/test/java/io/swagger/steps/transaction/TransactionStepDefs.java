@@ -21,8 +21,8 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(classes = CucumberContextConfig.class)
 public class TransactionStepDefs extends BaseStepDefinitions implements En {
 
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NTIwMTg4OCwiZXhwIjoxNjg1MjA1NDg4fQ.-3FipSXzdneByaF3uPSj1hsOIk00IE69JUPfWmrC95M";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODUyMDE5MDMsImV4cCI6MTY4NTIwNTUwM30.1MxSr-DMqHjHKKe8evCLYTh3I3_Bxlu6jXZRE5mcCVQ";
+    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NTI3NzQ4MCwiZXhwIjoxNjg1MjgxMDgwfQ.X58CeDXAGf8U9RW2u7hVlpQWvoV_lC0U96g1x6MSJnE";
+    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODUyNzc0MzUsImV4cCI6MTY4NTI4MTAzNX0.I7WDMkU9PQKXdu-atn7ABvW3cMOoQ802oudKMm0PV_s";
     private static final String INVALID_TOKEN = "InvalidToken";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
