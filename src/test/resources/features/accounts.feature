@@ -56,6 +56,11 @@ Feature: Everything related to accounts
       When I call get customers without accounts
       Then the response status code should be 403
 
+  Scenario: Fetching customers with invalid token returns error
+    Given I have an invalid token
+    When I call get customers without accounts
+    Then the response status code should be 403
+
     ## Fetch accounts by name
     Scenario: Fetching accounts by name is Status OK  (admin)
       Given I have an valid token for role "admin"

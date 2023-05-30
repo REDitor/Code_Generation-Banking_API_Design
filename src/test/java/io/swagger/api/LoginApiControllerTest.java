@@ -111,7 +111,7 @@ class LoginApiControllerTest {
                         .content(mapper.writeValueAsString(loginInputDTO)))
                 .andReturn().getResponse();
 
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
         assertThat(response.getContentAsString()).isNotNull();
 
         String errorMessage = response.getContentAsString();
