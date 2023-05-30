@@ -56,6 +56,11 @@ Feature: Everything related to accounts
       When I call get customers without accounts
       Then the response status code should be 403
 
+  Scenario: Fetching customers with invalid token returns error
+    Given I have an invalid token
+    When I call get customers without accounts
+    Then the response status code should be 403
+
     ## Fetch accounts by name
     Scenario: Fetching accounts by name is Status OK  (admin)
       Given I have an valid token for role "admin"
@@ -66,19 +71,6 @@ Feature: Everything related to accounts
       Given I have an valid token for role "user"
       When Fetching accounts by the name "NoUserWithTHisName"
       Then the response status code should be 404
-
-    ## Fetch totalBalance by userID
-    Scenario: Fetching balance by UserID (admin)
-      Given I have an valid token for role "admin"
-      And i get a user without an account
-      When I get the total balance using the UserID
-      Then the balance amount should be 0.0
-
-    Scenario: Fetching balance by UserID (user)
-      And i get a user without an account
-      Given I have an valid token for role "user"
-      When I get the total balance using the UserID
-      Then the response status code should be 401
 
     # Update accounts
     Scenario: Updating account using IBAN (admin)

@@ -48,7 +48,7 @@ public class LoginApiController implements LoginApi {
         LoginDTO result = userService.login(body.getUsername(), body.getPassword());
 
         if (result == null){
-            return new ResponseEntity(new ErrorMessageDTO("Wrong login credentials."), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity(new ErrorMessageDTO("Wrong login credentials."), HttpStatus.FORBIDDEN);
         }
 
         return new ResponseEntity<LoginDTO>(result,  HttpStatus.OK);
