@@ -3,7 +3,7 @@ Feature: Transactions
   #Transaction creation
   Scenario: Create a transaction
     Given I have a valid token for role "user" or role "admin"
-    And I have a transaction object with amount "11.23" and from "NL01INHO0000000001" and to "NL01INHO0000000002"
+    And I have a transaction object with amount "11.23" and from "NL01INHO0000000002" and to "NL01INHO0000000004"
     When I call the post transaction endpoint
     Then I receive status code 201
     And I receive a response body with a transaction object
@@ -16,7 +16,7 @@ Feature: Transactions
 
   Scenario: Create a transaction with an invalid token
     Given I have an invalid token
-    And I have a transaction object with amount "11.23" and from "NL01INHO0000000001" and to "NL01INHO0000000002"
+    And I have a transaction object with amount "11.23" and from "NL01INHO0000000002" and to "NL01INHO0000000004"
     When I call the post transaction endpoint
     Then I receive status code 403
 
@@ -53,7 +53,7 @@ Feature: Transactions
 
   Scenario: Deposit to account with a different owner
     Given I have a valid token for role "user"
-    And I have a transaction object with amount "11.23" and to "NL01INHO0000000001"
+    And I have a transaction object with amount "11.23" and to "NL01INHO0000000004"
     When I call the post deposit endpoint
     Then I receive status code 401
 
@@ -65,13 +65,13 @@ Feature: Transactions
 
   Scenario: Deposit directly to a savings account
     Given I have a valid token for role "user"
-    And I have a transaction object with amount "11.23" and to "NL01INHO0000000004"
+    And I have a transaction object with amount "11.23" and to "NL01INHO0000000003"
     When I call the post deposit endpoint
     Then I receive status code 403
 
   Scenario: Deposit to non existent IBAN
     Given I have a valid token for role "user"
-    And I have a transaction object with amount "11.23" and to "NL01INHO0000000005"
+    And I have a transaction object with amount "11.23" and to "NL01INHO0000012345"
     When I call the post deposit endpoint
     Then I receive status code 404
 
@@ -85,7 +85,7 @@ Feature: Transactions
 
   Scenario: Withdraw from account with different owner
     Given I have a valid token for role "user"
-    And I have a transaction object with amount "11.23" (higher or equal to account balance) and from "NL01INHO0000000001"
+    And I have a transaction object with amount "11.23" (higher or equal to account balance) and from "NL01INHO0000000004"
     When I call the post withdraw endpoint
     Then I receive status code 401
 
@@ -97,12 +97,12 @@ Feature: Transactions
 
   Scenario: Withdraw directly from savings account
     Given I have a valid token for role "user"
-    And I have a transaction object with amount "11.23" (higher or equal to account balance) and from "NL01INHO0000000004"
+    And I have a transaction object with amount "11.23" (higher or equal to account balance) and from "NL01INHO0000000003"
     When I call the post deposit endpoint
     Then I receive status code 403
 
   Scenario: Withdraw from non existent IBAN
     Given I have a valid token for role "user"
-    And I have a transaction object with amount "11.23" (higher or equal to account balance) and from "NL01INHO0000000005"
+    And I have a transaction object with amount "11.23" (higher or equal to account balance) and from "NL01INHO0000012345"
     When I call the post withdraw endpoint
     Then I receive status code 404
