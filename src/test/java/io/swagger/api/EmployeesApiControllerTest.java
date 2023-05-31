@@ -112,7 +112,7 @@ class EmployeesApiControllerTest {
                 .andReturn().getResponse();
 
         // Assert
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.getContentAsString()).isNotNull();
 
         UserDTO userDTO = mapper.readValue(response.getContentAsString(), UserDTO.class);
