@@ -221,51 +221,43 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     private ResponseEntity verifyWithdrawal(Transaction newWithdrawal) {
-        try {
-            if (transactionService.isNegativeOrZero(newWithdrawal.getAmount()))
-                return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
+        if (transactionService.isNegativeOrZero(newWithdrawal.getAmount()))
+            return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
 
-            // check if the account money is transferred from belongs to the logged user
-            if (!userService.accountOwnerIsLoggedUser(newWithdrawal.getFrom(), request))
-                return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.UNAUTHORIZED);
+        // check if the account money is transferred from belongs to the logged user
+        if (!userService.accountOwnerIsLoggedUser(newWithdrawal.getFrom(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
 
-            // check if a savings account is involved AND if so if both accounts are owned by the same user
-            if (transactionService.isSavingsAccount(newWithdrawal.getFrom()))
-                return new ResponseEntity(new ErrorMessageDTO("Permission denied: Cannot withdraw from savings account"), HttpStatus.FORBIDDEN);
+        // check if a savings account is involved AND if so if both accounts are owned by the same user
+        if (transactionService.isSavingsAccount(newWithdrawal.getFrom()))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: Cannot withdraw from savings account"), HttpStatus.FORBIDDEN);
 
-            // check if transaction amount exceeds account balance
-            if (transactionService.exceedsBalance(newWithdrawal.getFrom(), newWithdrawal.getAmount(), request))
-                return new ResponseEntity(new ErrorMessageDTO("Your balance is too low"), HttpStatus.NOT_ACCEPTABLE);
+        // check if transaction amount exceeds account balance
+        if (transactionService.exceedsBalance(newWithdrawal.getFrom(), newWithdrawal.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Your balance is too low"), HttpStatus.NOT_ACCEPTABLE);
 
-            // check if transaction exceeds transaction limit
-            if (transactionService.exceedsTransactionLimit(newWithdrawal.getAmount(), request))
-                return new ResponseEntity(new ErrorMessageDTO("Transaction amount exceeds the transaction limit. Please try a lower amount"), HttpStatus.NOT_ACCEPTABLE);
+        // check if transaction exceeds transaction limit
+        if (transactionService.exceedsTransactionLimit(newWithdrawal.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Transaction amount exceeds the transaction limit. Please try a lower amount"), HttpStatus.NOT_ACCEPTABLE);
 
-            // check if transaction exceeds the daily limit
-            if (transactionService.exceedsDailyLimit(newWithdrawal.getAmount(), request))
-                return new ResponseEntity(new ErrorMessageDTO("Daily limit reached. Please try again tomorrow."), HttpStatus.NOT_ACCEPTABLE);
-        } catch (NullPointerException npe) {
-            return new ResponseEntity(new ErrorMessageDTO("Account not found: The account you are trying to deposit to does not exist"), HttpStatus.NOT_FOUND);
-        }
+        // check if transaction exceeds the daily limit
+        if (transactionService.exceedsDailyLimit(newWithdrawal.getAmount(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Daily limit reached. Please try again tomorrow."), HttpStatus.NOT_ACCEPTABLE);
 
         return null;
     }
 
     private ResponseEntity verifyDeposit(Transaction newDeposit) {
-        try {
-            if (transactionService.isNegativeOrZero(newDeposit.getAmount()))
-                return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
+        if (transactionService.isNegativeOrZero(newDeposit.getAmount()))
+            return new ResponseEntity(new ErrorMessageDTO("Amount cannot be lower than or equal to 0"), HttpStatus.NOT_ACCEPTABLE);
 
-            // check if the account money is transferred from belongs to the logged user
-            if (!userService.accountOwnerIsLoggedUser(newDeposit.getTo(), request))
-                return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.UNAUTHORIZED);
+        // check if the account money is transferred from belongs to the logged user
+        if (!userService.accountOwnerIsLoggedUser(newDeposit.getTo(), request))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: You do not own this account."), HttpStatus.FORBIDDEN);
 
-            // check if a savings account is involved AND if so if both accounts are owned by the same user
-            if (transactionService.isSavingsAccount(newDeposit.getTo()))
-                return new ResponseEntity(new ErrorMessageDTO("Permission denied: Cannot deposit to savings account."), HttpStatus.FORBIDDEN);
-        } catch (NullPointerException npe) {
-            return new ResponseEntity(new ErrorMessageDTO("Account not found: The account you are trying to deposit to does not exist"), HttpStatus.NOT_FOUND);
-        }
+        // check if a savings account is involved AND if so if both accounts are owned by the same user
+        if (transactionService.isSavingsAccount(newDeposit.getTo()))
+            return new ResponseEntity(new ErrorMessageDTO("Permission denied: Cannot deposit to savings account."), HttpStatus.FORBIDDEN);
 
         return null;
     }
@@ -278,7 +270,8 @@ public class TransactionsApiController implements TransactionsApi {
             return transactionService.getAllByIBAN(iban);
         else if (dateTimeFrom == null) {
             return transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.now(), LocalDateTime.parse(dateTimeTo, formatter));
-        } else if (dateTimeTo == null)
+        }
+        else if (dateTimeTo == null)
             return transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.now());
         else {
             return transactionService.getAllByIbanBetweenTimestamps(iban, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeTo, formatter));
@@ -286,17 +279,17 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     private List<Transaction> getTransactionsByUserId(UUID userId, String dateTimeFrom, String dateTimeTo) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
         //Check if from and to date are set
         if ((dateTimeFrom == null && dateTimeTo == null) || (dateTimeFrom == "" && dateTimeTo == ""))
             return transactionService.getAllByUserId(userId);
         else if (dateTimeFrom == null || dateTimeFrom == "")
             return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(LocalDateTime.now().toString(), formatter), LocalDateTime.parse(dateTimeTo, formatter));
-        else if (dateTimeTo == null || dateTimeTo == "") {
+        else if (dateTimeTo == null || dateTimeTo == ""){
             String dateTimeNow = LocalDateTime.now().format(formatter);
-            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeNow, formatter));
-        } else
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeNow, formatter)); }
+        else
             return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeTo, formatter));
     }
 }
