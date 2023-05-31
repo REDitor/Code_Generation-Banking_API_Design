@@ -70,6 +70,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         // store new accounts in db
         accountRepository.save(new Account(accountService.generateIban(), bank, AccountType.ACCOUNT_TYPE_CURRENT, 100000000, "open", 0));
         accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_CURRENT, 500, "open", 0));
+        accountRepository.save(new Account(accountService.generateIban(), sander, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0));
         accountRepository.save(new Account(accountService.generateIban(), bruno, AccountType.ACCOUNT_TYPE_SAVINGS, 10000, "open", 0));
 
         Account accountBank = accountRepository.findAccountByIBAN("NL01INHO0000000001");
