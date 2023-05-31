@@ -1,11 +1,9 @@
 package io.swagger.steps;
 
-import io.swagger.model.LoginDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import io.swagger.service.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -18,9 +16,8 @@ public class BaseStepDefinitions {
 
     @Value("${io.swagger}")
     private String baseUrl;
+
     public final HttpHeaders httpHeaders = new HttpHeaders();
-
-
     public String getBaseUrl() {
         return baseUrl + port;
     }
@@ -31,3 +28,4 @@ public class BaseStepDefinitions {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
     }
 }
+

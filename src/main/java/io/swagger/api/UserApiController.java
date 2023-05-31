@@ -109,6 +109,11 @@ abstract public class UserApiController {
         return new ResponseEntity<UserDTO>(response,  HttpStatus.OK);
     }
 
+    public ResponseEntity<UserDTO> responseEntityUserCreated(User user) {
+        UserDTO response = modelMapper.map(user, UserDTO.class);
+        return new ResponseEntity<UserDTO>(response,  HttpStatus.CREATED);
+    }
+
     public ResponseEntity<List<UserDTO>> responseEntityUserListOk(List<User> user) {
         List<UserDTO> entityToDto = modelMapper.map(user, new TypeToken<List<UserDTO>>(){}.getType());
         return new ResponseEntity<List<UserDTO>>(entityToDto,  HttpStatus.OK);
@@ -127,7 +132,7 @@ abstract public class UserApiController {
             newUser.setRoles(Collections.singletonList(role));
             newUser = userService.add(newUser);
 
-            return responseEntityUserOk(newUser);
+            return responseEntityUserCreated(newUser);
         } catch (Exception e) {
             return new ResponseEntity(new ErrorMessageDTO(e.getMessage().toString()), HttpStatus.BAD_REQUEST);
         }

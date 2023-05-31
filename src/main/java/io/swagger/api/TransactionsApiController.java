@@ -55,17 +55,17 @@ public class TransactionsApiController implements TransactionsApi {
 
     private final ModelMapper modelMapper;
 
-    @Autowired
     private AccountRepository accountRepository;
 
     private JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request, TransactionService transactionService, UserService userService) {
+    public TransactionsApiController(AccountRepository accountRepository, ObjectMapper objectMapper, HttpServletRequest request, TransactionService transactionService, UserService userService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.modelMapper = new ModelMapper();
         this.userService = userService;
+        this.transactionService = transactionService;
+        this.accountRepository = accountRepository;
     }
 
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('EMPLOYEE')")

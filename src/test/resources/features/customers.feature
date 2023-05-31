@@ -29,7 +29,7 @@ Feature: Everything related to customers
   Scenario: Creating a new customer return status OK
     Given I have an valid JWT token for role "admin"
     When I make a post request to create new customer with the following username "test_account_1234"
-    Then the response status codes should be 200
+    Then the response status codes should be 201
 
   Scenario: Creating a new customer with wrong parameters returns 400
     Given I have an valid JWT token for role "admin"
@@ -39,7 +39,7 @@ Feature: Everything related to customers
   Scenario: Creating a new customer return status OK
     Given I have an valid JWT token for role "user"
     When I make a post request to create new customer with the following username "test_account_09876"
-    Then the response status codes should be 200
+    Then the response status codes should be 201
 
 ## Update customer by ID (user + admin)
   Scenario: Updating customer returns status OK
