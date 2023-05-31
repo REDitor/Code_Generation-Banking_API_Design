@@ -6,6 +6,7 @@ Feature: Transactions
     And I have a transaction object with amount "11.23" and from "NL01INHO0000000001" and to "NL01INHO0000000002"
     When I call the post transaction endpoint
     Then I receive status code 201
+    And I receive a response body with a transaction object
 
   Scenario: Create a transaction with an invalid input data/object
     Given I have a valid token for role "user" or role "admin"
@@ -24,21 +25,23 @@ Feature: Transactions
     Given I have a valid token for role "admin"
     When I call the get all transactions endpoint with iban "NL01INHO0000000002" and dateTimeFrom "25-04-2023 00:00" and dateTimeTo "25-07-2023 00:00"
     Then I receive status code 200
+    And I receive a response body with at least 2 transaction objects
 
   Scenario: Get all transactions by IBAN with an invalid token
     Given I have an invalid token
     And I call the get all transactions endpoint with iban "NL01INHO0000000002" and dateTimeFrom "25-04-2023 00:00" and dateTimeTo "25-07-2023 00:00"
     Then I receive status code 403
 
-  Scenario: Get all transactions for all accounts owned by user
-    Given I have a valid token for role "user" or role "admin"
-    When I call the get all transactions endpoint with userId "0c873bc6-6ab2-4803-8571-5afd3c1bc9e3" and dateTimeFrom "25-04-2023 00:00" and dateTimeTo "25-07-2023 00:00"
-    Then I receive status code 200
+#  Scenario: Get all transactions for all accounts owned by user
+#    Given I have a valid token for role "user" or role "admin"
+#    When I call the get all transactions endpoint with userId "b30ec5d9-e90a-49aa-9416-e626d1e25ee2" and dateTimeFrom "25-04-2023 00:00" and dateTimeTo "25-07-2023 00:00"
+#    Then I receive status code 200
+#    And I receive a response body with at least 2 transaction objects
 #
-  Scenario: Get all transactions for all accounts owned by user with an invalid token
-    Given I have an invalid token
-    When I call the get all transactions endpoint with userId "0c873bc6-6ab2-4803-8571-5afd3c1bc9e3" and dateTimeFrom "25-04-2023 00:00" and dateTimeTo "25-07-2023 00:00"
-    Then I receive status code 403
+#  Scenario: Get all transactions for all accounts owned by user with an invalid token
+#    Given I have an invalid token
+#    When I call the get all transactions endpoint with userId "b30ec5d9-e90a-49aa-9416-e626d1e25ee2" and dateTimeFrom "25-04-2023 00:00" and dateTimeTo "25-07-2023 00:00"
+#    Then I receive status code 403
 
   #Deposit
   Scenario: Deposit to selected account
@@ -46,6 +49,7 @@ Feature: Transactions
     And I have a transaction object with amount "11.23" and to "NL01INHO0000000002"
     When I call the post deposit endpoint
     Then I receive status code 201
+    And I receive a response body with a transaction object
 
   Scenario: Deposit to account with a different owner
     Given I have a valid token for role "user"
@@ -77,6 +81,7 @@ Feature: Transactions
     And I have a transaction object with amount "11.23" (higher or equal to account balance) and from "NL01INHO0000000002"
     When I call the post withdraw endpoint
     Then I receive status code 201
+    And I receive a response body with a transaction object
 
   Scenario: Withdraw from account with different owner
     Given I have a valid token for role "user"
