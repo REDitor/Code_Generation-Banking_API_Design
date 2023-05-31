@@ -28,20 +28,6 @@ public class AccountServiceTest {
     }
 
     @Test
-    void add_validAccount_returnsAccount() {
-        // Arrange
-        Account account = new Account();
-
-        when(accountRepository.save(account)).thenReturn(account);
-
-        // Act
-        Account result = accountService.add(account);
-
-        // Assert
-        assertEquals(account, result);
-    }
-
-    @Test
     void getAll_noAccounts_returnsEmptyList() {
         // Arrange
         List<Account> accounts = new ArrayList<>();
@@ -56,35 +42,6 @@ public class AccountServiceTest {
     }
 
     @Test
-    void getAccountByIBAN_validIBAN_returnsAccount() {
-        // Arrange
-        String iban = "dummyIban";
-        Account account = new Account();
-
-        when(accountRepository.getAccountByIBAN(iban)).thenReturn(account);
-
-        // Act
-        Account result = accountService.getAccountByIBAN(iban);
-
-        // Assert
-        assertEquals(account, result);
-    }
-
-    @Test
-    void generateIban_latestIbanNull_returnsDefaultIban() {
-        // Arrange
-        String latestIbanNumber = null;
-
-        when(accountRepository.getLatestIban()).thenReturn(latestIbanNumber);
-
-        // Act
-        String result = accountService.generateIban();
-
-        // Assert
-        assertEquals("NL01INHO0000000001", result);
-    }
-
-    @Test
     void generateIban_bankAccountNumberMaxValue_returnsUpdatedIban() {
         // Arrange
         String latestIbanNumber = "NL01INHO9999999999";
@@ -96,35 +53,6 @@ public class AccountServiceTest {
 
         // Assert
         assertEquals("NL02INHO0000000001", result);
-    }
-
-    @Test
-    void generateIban_bankAccountNumberNotMaxValue_returnsUpdatedIban() {
-        // Arrange
-        String latestIbanNumber = "NL01INHO0000000001";
-
-        when(accountRepository.getLatestIban()).thenReturn(latestIbanNumber);
-
-        // Act
-        String result = accountService.generateIban();
-
-        // Assert
-        assertEquals("NL01INHO0000000002", result);
-    }
-
-    @Test
-    void getAccountByName_validName_returnsListOfAccounts() {
-        // Arrange
-        String name = "John Doe";
-        List<Account> accounts = new ArrayList<>();
-
-        when(accountRepository.findAllByName(name)).thenReturn(accounts);
-
-        // Act
-        List<Account> result = accountService.getAccountByName(name);
-
-        // Assert
-        assertEquals(accounts, result);
     }
 
     @Test

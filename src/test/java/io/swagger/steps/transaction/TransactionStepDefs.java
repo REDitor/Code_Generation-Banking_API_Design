@@ -16,8 +16,8 @@ import org.springframework.http.ResponseEntity;
 
 public class TransactionStepDefs extends BaseStepDefinitions implements En {
 
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NTUzNDUzMiwiZXhwIjoxNjg1NTM4MTMyfQ.XtIzyh7sLh1DSixDSuwjfVzxQSM86ZkIwuUOmoc97JQ";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODU1MzQ1NzgsImV4cCI6MTY4NTUzODE3OH0.7a0klyBtSqhgnL8CkmBlfDYfbV8xVs0dx2kUuUHRy_Y";
+    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NTU1ODkxOCwiZXhwIjoxNjg1NTYyNTE4fQ.tBVX8ieBAVgzdHH7E7XabRGTxvZ-ZLuAwwtDpE1DrYc";
+    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODU1NTg5NDMsImV4cCI6MTY4NTU2MjU0M30.6DQc8VEGygn4QyBBZUuEaAad5yaGpqlO8jnZQAJZp7Q";
     private static final String INVALID_TOKEN = "InvalidToken";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
