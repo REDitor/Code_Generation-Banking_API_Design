@@ -2,6 +2,7 @@ package io.swagger.steps.transaction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java8.En;
+import io.swagger.TokenHolder;
 import io.swagger.model.TransactionDTO;
 import io.swagger.repository.AccountRepository;
 import io.swagger.steps.BaseStepDefinitions;
@@ -16,9 +17,9 @@ import org.springframework.http.ResponseEntity;
 
 public class TransactionStepDefs extends BaseStepDefinitions implements En {
 
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NTUzNDUzMiwiZXhwIjoxNjg1NTM4MTMyfQ.XtIzyh7sLh1DSixDSuwjfVzxQSM86ZkIwuUOmoc97JQ";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODU1MzQ1NzgsImV4cCI6MTY4NTUzODE3OH0.7a0klyBtSqhgnL8CkmBlfDYfbV8xVs0dx2kUuUHRy_Y";
-    private static final String INVALID_TOKEN = "InvalidToken";
+//    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NTUzNDUzMiwiZXhwIjoxNjg1NTM4MTMyfQ.XtIzyh7sLh1DSixDSuwjfVzxQSM86ZkIwuUOmoc97JQ";
+//    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODU1MzQ1NzgsImV4cCI6MTY4NTUzODE3OH0.7a0klyBtSqhgnL8CkmBlfDYfbV8xVs0dx2kUuUHRy_Y";
+//    private static final String INVALID_TOKEN = "InvalidToken";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
     private ResponseEntity<String> response;
@@ -31,20 +32,20 @@ public class TransactionStepDefs extends BaseStepDefinitions implements En {
     public TransactionStepDefs() {
         Given("^I have a valid token for role \"([^\"]*)\" or role \"([^\"]*)\"$", (String roleUser, String roleAdmin) -> {
             if (roleAdmin.equals("admin")) {
-                setHttpHeaders(VALID_TOKEN_ADMIN);
+                setHttpHeaders(TokenHolder.VALID_TOKEN_ADMIN);
             } else if (roleUser.equals("user")) {
-                setHttpHeaders(VALID_TOKEN_USER);
+                setHttpHeaders(TokenHolder.VALID_TOKEN_USER);
             }
         });
         Given("^I have a valid token for role \"([^\"]*)\"$", (String role) -> {
             if (role.equals("admin")) {
-                setHttpHeaders(VALID_TOKEN_ADMIN);
+                setHttpHeaders(TokenHolder.VALID_TOKEN_ADMIN);
             } else if (role.equals("user")) {
-                setHttpHeaders(VALID_TOKEN_USER);
+                setHttpHeaders(TokenHolder.VALID_TOKEN_USER);
             }
         });
         Given("^I have an invalid token$", () -> {
-            setHttpHeaders(INVALID_TOKEN);
+            setHttpHeaders(TokenHolder.INVALID_TOKEN);
         });
         And("^I receive a response body with a transaction object$", () -> {
             Assert.assertTrue(objectResult.length() > 0);
