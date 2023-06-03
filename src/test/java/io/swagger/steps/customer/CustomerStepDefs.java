@@ -3,6 +3,7 @@ package io.swagger.steps.customer;
 import com.google.gson.GsonBuilder;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java8.En;
+import io.swagger.TokenHolder;
 import io.swagger.model.UpdateUserDTO;
 import io.swagger.steps.BaseStepDefinitions;
 import org.json.JSONArray;
@@ -21,8 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 
 public class CustomerStepDefs extends BaseStepDefinitions implements En {
 
-    private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NTU1ODkxOCwiZXhwIjoxNjg1NTYyNTE4fQ.tBVX8ieBAVgzdHH7E7XabRGTxvZ-ZLuAwwtDpE1DrYc";
-    private static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODU1NTg5NDMsImV4cCI6MTY4NTU2MjU0M30.6DQc8VEGygn4QyBBZUuEaAad5yaGpqlO8jnZQAJZp7Q";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -41,9 +40,9 @@ public class CustomerStepDefs extends BaseStepDefinitions implements En {
 
         Given("^I have an valid JWT token for role \"([^\"]*)\"$", (String role) -> {
             if (role.equals("admin")) {
-                setHttpHeaders(VALID_TOKEN_ADMIN);
+                setHttpHeaders(TokenHolder.VALID_TOKEN_ADMIN);
             } else if (role.equals("user")) {
-                setHttpHeaders(VALID_TOKEN_USER);
+                setHttpHeaders(TokenHolder.VALID_TOKEN_USER);
             }
         });
 
