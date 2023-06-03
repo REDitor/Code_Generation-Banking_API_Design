@@ -20,8 +20,7 @@ import java.util.UUID;
 
 
 public class AccountStepDefs extends BaseStepDefinitions implements En {
-//    private static final String VALID_TOKEN_USER = "";
-//    private static final String VALID_TOKEN_ADMIN = "";
+  
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 
