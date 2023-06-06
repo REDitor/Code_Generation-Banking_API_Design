@@ -285,14 +285,14 @@ public class TransactionsApiController implements TransactionsApi {
 
     private List<Transaction> getTransactionsByUserId(UUID userId, String dateTimeFrom, String dateTimeTo) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String dateTimeNow = LocalDateTime.now().format(formatter);
 
         //Check if from and to date are set
         if ((dateTimeFrom == null && dateTimeTo == null) || (dateTimeFrom == "" && dateTimeTo == ""))
             return transactionService.getAllByUserId(userId);
         else if (dateTimeFrom == null || dateTimeFrom == "")
-            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(LocalDateTime.now().toString(), formatter), LocalDateTime.parse(dateTimeTo, formatter));
+            return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeNow, formatter), LocalDateTime.parse(dateTimeTo, formatter));
         else if (dateTimeTo == null || dateTimeTo == "") {
-            String dateTimeNow = LocalDateTime.now().format(formatter);
             return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeNow, formatter));
         } else
             return transactionService.getAllByUserIdBetweenTimestamps(userId, LocalDateTime.parse(dateTimeFrom, formatter), LocalDateTime.parse(dateTimeTo, formatter));

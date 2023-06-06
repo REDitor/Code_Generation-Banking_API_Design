@@ -39,6 +39,8 @@ public class TransactionStepDefs extends BaseStepDefinitions implements En {
                 setHttpHeaders(TokenHolder.VALID_TOKEN_ADMIN);
             } else if (role.equals("user")) {
                 setHttpHeaders(TokenHolder.VALID_TOKEN_USER);
+            } else if (role.equals("thief")) {
+                setHttpHeaders(TokenHolder.VALID_TOKEN_THIEF);
             }
         });
         Given("^I have an invalid token$", () -> {
@@ -121,6 +123,5 @@ public class TransactionStepDefs extends BaseStepDefinitions implements En {
                 objectResult = new JSONObject(response.getBody());
             }
         });
-
     }
 }
