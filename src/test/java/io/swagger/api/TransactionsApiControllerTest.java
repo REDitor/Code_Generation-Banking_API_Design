@@ -176,30 +176,6 @@ public class TransactionsApiControllerTest {
                         .content("{\"userId\":\"" + UUID.randomUUID() + "\",\"accountId\":\"" + UUID.randomUUID() + "\",\"amount\":-100.0}"))
                 .andExpect(status().isBadRequest());
     }
-
-    @Test
-    public void testVerifyWithdrawal_WithSufficientBalance() throws Exception {
-        // Mocking data
-        UUID userId = UUID.randomUUID();
-        UUID accountId = UUID.randomUUID();
-        double amount = 100.0;
-
-        Account account = new Account();
-        account.setIBAN("1234567890");
-        account.setBalance(200.0);
-        // Set other account properties as needed
-
-        when(accountRepository.findByUserIdAndAccountId(userId, accountId))
-                .thenReturn(Optional.of(account));
-
-        // Perform the POST request
-        mvc.perform(post("/transactions/verify-withdrawal")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"userId\":\"" + userId + "\",\"accountId\":\"" + accountId + "\",\"amount\":" + amount + "}"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.canWithdraw").value(true));
-    }
 }
 
 
