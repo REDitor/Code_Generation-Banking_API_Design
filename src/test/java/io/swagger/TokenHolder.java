@@ -2,8 +2,8 @@ package io.swagger;
 
 public class TokenHolder {
 
-    public static final String VALID_TOKEN_ADMIN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCcnVub01hcnF1ZXMxMjMiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn1dLCJpYXQiOjE2ODYwNjEzMTMsImV4cCI6MTY4NjA2NDkxM30.mF-h0BIAK1atnqPIpiORMD96E6YNCtTiENQqZtafov4";
-    public static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTYW5kZXJIYXJrczEyMyIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NjA2MTMzOSwiZXhwIjoxNjg2MDY0OTM5fQ.QNLNlDHnBMSsP9TAX57rExJiSB6Rw25-HZJl1b_CTe4";
-    public static final String VALID_TOKEN_THIEF = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkdW1teUN1c3RvbWVyMSIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfQ1VTVE9NRVIifV0sImlhdCI6MTY4NjA2MTM2MSwiZXhwIjoxNjg2MDY0OTYxfQ.0UOaThKH5C-AxDkpbLT9oVx2DFr97UnygdQ_JE3Zh3Q";
+    public static final String VALID_TOKEN_ADMIN = "";
+    public static final String VALID_TOKEN_USER = "";
+    public static final String VALID_TOKEN_THIEF = "";
     public static final String INVALID_TOKEN = "InvalidToken";
 }
