@@ -4,9 +4,7 @@ import io.swagger.model.entity.Account;
 import io.swagger.model.entity.AccountType;
 import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
-import io.swagger.repository.AccountRepository;
 import io.swagger.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;

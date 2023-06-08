@@ -1,7 +1,5 @@
 package io.swagger.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.model.ErrorMessageDTO;
 import io.swagger.model.NewUserDTO;
 import io.swagger.model.UserDTO;
@@ -10,12 +8,10 @@ import io.swagger.model.entity.User;
 import io.swagger.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

@@ -1,6 +1,5 @@
 package io.swagger.api;
 
-import io.swagger.api.ApiResponseMessage;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -3,7 +3,6 @@ package io.swagger.steps.employee;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java8.En;
 import io.swagger.TokenHolder;
-import io.swagger.model.UserDTO;
 import io.swagger.steps.BaseStepDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -1,20 +1,16 @@
 package io.swagger.steps.login;
 
-        import com.google.gson.GsonBuilder;
-        import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
-        import io.cucumber.java8.En;
-        import io.swagger.model.UpdateUserDTO;
-        import io.swagger.steps.BaseStepDefinitions;
-        import org.json.JSONArray;
-        import org.json.JSONObject;
-        import org.junit.Assert;
-        import org.junit.jupiter.api.Assertions;
-        import org.springframework.boot.test.web.client.TestRestTemplate;
-        import org.springframework.http.*;
-        import com.google.gson.Gson;
-        import com.google.gson.FieldNamingPolicy;
-
-        import java.lang.reflect.InvocationTargetException;
+import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java8.En;
+import io.swagger.steps.BaseStepDefinitions;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 public class LoginStepDefs extends BaseStepDefinitions implements En {
     private final TestRestTemplate restTemplate = new TestRestTemplate();

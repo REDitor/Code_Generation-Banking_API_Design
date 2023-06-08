@@ -4,15 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java8.En;
 import io.swagger.TokenHolder;
 import io.swagger.model.TransactionDTO;
-import io.swagger.repository.AccountRepository;
 import io.swagger.steps.BaseStepDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 public class TransactionStepDefs extends BaseStepDefinitions implements En {

@@ -1,10 +1,6 @@
 package io.swagger.configuration;
 
-import io.swagger.model.entity.Account;
-import io.swagger.model.entity.AccountType;
-import io.swagger.model.entity.Role;
-import io.swagger.model.entity.Transaction;
-import io.swagger.model.entity.User;
+import io.swagger.model.entity.*;
 import io.swagger.repository.AccountRepository;
 import io.swagger.repository.TransactionRepository;
 import io.swagger.repository.UserRepository;
@@ -14,9 +10,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import java.time.LocalDate;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;

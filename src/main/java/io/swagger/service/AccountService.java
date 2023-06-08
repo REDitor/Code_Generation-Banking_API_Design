@@ -1,18 +1,11 @@
 package io.swagger.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.entity.Account;
-import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.repository.AccountRepository;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class AccountService  {
