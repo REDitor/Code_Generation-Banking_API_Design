@@ -33,7 +33,6 @@ public class TransactionServiceTest {
 
     @Test
     void getAllByIBANReturnsTransactions() {
-        // Arrange
         List<Transaction> transactions = new ArrayList<>();
 
         Account account = new Account();
@@ -50,16 +49,13 @@ public class TransactionServiceTest {
 
         when(transactionRepository.findAllByIBAN(account.getIBAN())).thenReturn(transactions);
 
-        // Act
         List<Transaction> result = transactionService.getAllByIBAN(account.getIBAN());
 
-        // Assert
         assertFalse(result.isEmpty());
     }
 
     @Test
     void getAllByUserId() {
-        // Arrange
         User user = new User();
         List<Transaction> transactions = new ArrayList<>();
 
@@ -76,16 +72,13 @@ public class TransactionServiceTest {
 
         when(transactionRepository.findAllByUserId(user.getuserId())).thenReturn(transactions);
 
-        // Act
         List<Transaction> result = transactionService.getAllByUserId(user.getuserId());
 
-        // Assert
         assertFalse(result.isEmpty());
     }
 
     @Test
     void getAllByUserIdBetweenTimestamps() {
-        // Arrange
         User user = new User();
         List<Transaction> transactions = new ArrayList<>();
 
@@ -107,10 +100,8 @@ public class TransactionServiceTest {
 
         when(transactionRepository.findAllByUserIdBetweenTimeStamps(user.getuserId(), LocalDateTime.parse("2022-01-01T00:00:01"), LocalDateTime.parse("2022-12-31T00:00:01"))).thenReturn(transactions);
 
-        // Act
         List<Transaction> result = transactionService.getAllByUserIdBetweenTimestamps(user.getuserId(), LocalDateTime.parse("2022-01-01T00:00:01"), LocalDateTime.parse("2022-12-31T00:00:01"));
 
-        // Assert
         assertFalse(result.isEmpty());
     }
 }

@@ -30,35 +30,26 @@ public class AccountServiceTest {
 
     @Test
     void getAll_noAccounts_returnsEmptyList() {
-        // Arrange
         List<Account> accounts = new ArrayList<>();
 
         when(accountRepository.findAll()).thenReturn(accounts);
 
-        // Act
         List<Account> result = accountService.getAll(new Account());
-
-        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
     void generateIban_bankAccountNumberMaxValue_returnsUpdatedIban() {
-        // Arrange
         String latestIbanNumber = "NL01INHO9999999999";
 
         when(accountRepository.getLatestIban()).thenReturn(latestIbanNumber);
 
-        // Act
         String result = accountService.generateIban();
-
-        // Assert
         assertEquals("NL02INHO0000000001", result);
     }
 
     @Test
     void totalAmountFromAccounts_validUser_returnsTotalAmount() {
-        // Arrange
         User user = new User();
         List<Account> accounts = new ArrayList<>();
 
@@ -75,10 +66,8 @@ public class AccountServiceTest {
 
         when(accountRepository.findAllByUser(user)).thenReturn(accounts);
 
-        // Act
         Double result = accountService.totalAmountFromAccounts(user);
 
-        // Assert
         assertEquals(600.0, result.doubleValue());
     }
 }

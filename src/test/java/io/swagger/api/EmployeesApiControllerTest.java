@@ -75,14 +75,12 @@ class EmployeesApiControllerTest {
 
     @Test
     void createEmployee_withValidRequestBody_returnsUserDTO() throws Exception {
-        // Arrange
         User user = new User();
         user.setFirstName("Bruno");
 
         when(userService.add(any(User.class))).thenReturn(user);
         when(userService.getUserByUsername(any(String.class))).thenReturn(null);
 
-        // Act
         MockHttpServletResponse response = mvc.perform(post("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
@@ -102,7 +100,6 @@ class EmployeesApiControllerTest {
                                 "}"))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.getContentAsString()).isNotNull();
 
@@ -112,7 +109,6 @@ class EmployeesApiControllerTest {
 
     @Test
     void updateEmployee_withValidData_returnsUser() throws Exception {
-        // Arrange
         UUID userID = UUID.randomUUID();
 
         User updatedUser = new User();
@@ -121,7 +117,7 @@ class EmployeesApiControllerTest {
         updatedUser.setFirstName("Silvia");
 
         User loggedUser = new User();
-        loggedUser.setuserId(UUID.randomUUID()); // Different user ID than the one being updated
+        loggedUser.setuserId(UUID.randomUUID());
         loggedUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
 
         when(userService.getOneEmployee(userID)).thenReturn(updatedUser);
@@ -133,7 +129,6 @@ class EmployeesApiControllerTest {
                         .content("{\"FirstName\":\"Silvia\",\"LastName\":\"Coimbra Marques\",\"BirthDate\": \"1997-12-07\",\"StreetName\":\"Pietersbergweg\",\"HouseNumber\":1234,\"ZipCode\":\"0987 MB\",\"City\":\"Amsterdam\",\"Country\":\"Netherlands\",\"Roles\": [\"Customer\"],\"Email\":\"test@gmail.com\",\"Username\":\"dummyTest\",\"Password\":\"secret123\",\"TransactionAmountLimit\":2000,\"DailyLimit\":500}"))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isNotNull();
 
@@ -142,8 +137,6 @@ class EmployeesApiControllerTest {
     }
     @Test
     void updateEmployee_withInvalidUserID_returnsBadRequest() throws Exception {
-        // Arrange
-        // Arrange
         UUID userID = UUID.randomUUID();
 
         User updatedUser = new User();
@@ -152,7 +145,7 @@ class EmployeesApiControllerTest {
         updatedUser.setFirstName("Silvia");
 
         User loggedUser = new User();
-        loggedUser.setuserId(UUID.randomUUID()); // Different user ID than the one being updated
+        loggedUser.setuserId(UUID.randomUUID());
         loggedUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
 
         when(userService.getOneEmployee(userID)).thenReturn(updatedUser);
@@ -164,14 +157,12 @@ class EmployeesApiControllerTest {
                         .content("{\"FirstName\":\"Silvia\",\"LastName\":\"Coimbra Marques\",\"BirthDate\": \"1997-12-07\",\"StreetName\":\"Pietersbergweg\",\"HouseNumber\":1234,\"ZipCode\":\"0987 MB\",\"City\":\"Amsterdam\",\"Country\":\"Netherlands\",\"Roles\": [\"Customer\"],\"Email\":\"test@gmail.com\",\"Username\":\"dummyTest\",\"Password\":\"secret123\",\"TransactionAmountLimit\":2000,\"DailyLimit\":500}"))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(response.getContentAsString()).isNotNull();
     }
 
     @Test
     void getEmployee_asEmployee_withValidEmployeeID_returnsUser() throws Exception {
-        // Arrange
         UUID userID = UUID.randomUUID();
 
         User loggedUser = new User();
@@ -184,11 +175,9 @@ class EmployeesApiControllerTest {
         when(userService.getLoggedUser(request)).thenReturn(loggedUser);
         when(userService.getOneEmployee(userID)).thenReturn(requestedUser);
 
-        // Act
         MockHttpServletResponse response = mvc.perform(get("/employees/{employeeId}", userID.toString()))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isNotNull();
 
@@ -198,7 +187,6 @@ class EmployeesApiControllerTest {
 
     @Test
     void getEmployee_asEmployee_withMatchingID_returnsUser() throws Exception {
-        // Arrange
         UUID userID = UUID.randomUUID();
 
         User loggedUser = new User();
@@ -212,11 +200,9 @@ class EmployeesApiControllerTest {
         when(userService.getLoggedUser(request)).thenReturn(loggedUser);
         when(userService.getOneEmployee(userID)).thenReturn(requestedUser);
 
-        // Act
         MockHttpServletResponse response = mvc.perform(get("/employees/{employeeId}", userID.toString()))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isNotNull();
 
@@ -226,7 +212,6 @@ class EmployeesApiControllerTest {
 
     @Test
     void getEmployee_withInvalidEmployeeID_returnsNotFound() throws Exception {
-        // Arrange
         UUID userID = UUID.randomUUID();
         User loggedUser = new User();
         loggedUser.setRoles(Collections.singletonList(Role.ROLE_EMPLOYEE));
@@ -235,31 +220,26 @@ class EmployeesApiControllerTest {
         when(userService.getLoggedUser(request)).thenReturn(loggedUser);
         when(userService.getOneEmployee(userID)).thenReturn(null);
 
-        // Act
         MockHttpServletResponse response = mvc.perform(get("/employees/{employeeId}", userID.toString()))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(response.getContentAsString()).isNotNull();
     }
 
     @Test
     void getEmployee_withInvalidEmployeeId_returnsBadRequest() throws Exception {
-        // Arrange
         String invalidEmployeeId = "invalid-employee-id";
 
         MockHttpServletResponse response = mvc.perform(get("/employees/{employeeId}", invalidEmployeeId))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(response.getContentAsString()).isNotNull();
     }
 
     @Test
     void getEmployees_withoutFilters_returnsAllEmployees() throws Exception {
-
         User employees1 = new User();
         employees1.setFirstName("John");
         employees1.setFirstName("Doe");
@@ -268,7 +248,6 @@ class EmployeesApiControllerTest {
         employees2.setFirstName("John");
         employees2.setFirstName("Doe");
 
-        // Arrange
         List<User> employees = Arrays.asList(
                 employees1,
                 employees2
@@ -276,13 +255,11 @@ class EmployeesApiControllerTest {
 
         when(userService.getAllEmployees(any(Pageable.class))).thenReturn(employees);
 
-        // Act
         MockHttpServletResponse response = mvc.perform(get("/employees")
                         .param("limit", "10")
                         .param("offset", "0"))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isNotNull();
         assertThat(response.getContentAsString()).contains("Doe");
@@ -290,7 +267,6 @@ class EmployeesApiControllerTest {
 
     @Test
     void getEmployees_withFirstNameFilter_returnsEmployeesWithMatchingFirstName() throws Exception {
-        // Arrange
         String firstName = "John";
         List<User> customers = Arrays.asList(
                 new User("John", "Doe", null, null, null, null, null, null, null, null, null, null, null, null),
@@ -300,14 +276,12 @@ class EmployeesApiControllerTest {
 
         when(userService.getAllEmployeesByName(any(Pageable.class), eq(firstName), isNull())).thenReturn(customers);
 
-        // Act
         MockHttpServletResponse response = mvc.perform(get("/employees")
                         .param("firstName", firstName)
                         .param("limit", "10")
                         .param("offset", "0"))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isNotNull();
         assertThat(response.getContentAsString()).contains("John");
@@ -315,7 +289,6 @@ class EmployeesApiControllerTest {
 
     @Test
     void getEmployees_withLastNameFilter_returnsEmployeesWithMatchingLastName() throws Exception {
-        // Arrange
         String lastName = "Doe";
         List<User> customers = Arrays.asList(
                 new User("John", "Doe", null, null, null, null, null, null, null, null, null, null, null, null),
@@ -325,14 +298,12 @@ class EmployeesApiControllerTest {
 
         when(userService.getAllEmployeesByName(any(Pageable.class), isNull(), eq(lastName))).thenReturn(customers);
 
-        // Act
         MockHttpServletResponse response = mvc.perform(get("/employees")
                         .param("lastName", lastName)
                         .param("limit", "10")
                         .param("offset", "0"))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isNotNull();
         assertThat(response.getContentAsString()).contains("Doe");
@@ -340,7 +311,6 @@ class EmployeesApiControllerTest {
 
     @Test
     void getEmployees_withInvalidPaginationValues_returnsBadRequest() throws Exception {
-        // Arrange
         Integer offset = -1;
         Integer limit = 10;
 
@@ -349,7 +319,6 @@ class EmployeesApiControllerTest {
                         .param("limit", limit.toString()))
                 .andReturn().getResponse();
 
-        // Assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(response.getContentAsString()).isNotNull();
     }

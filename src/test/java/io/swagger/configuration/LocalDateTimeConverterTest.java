@@ -10,7 +10,6 @@ class LocalDateTimeConverterTest {
 
     @Test
     void convert_shouldConvertValidDateStringToLocalDateTime() {
-        // Arrange
         LocalDateTimeConverter converter = new LocalDateTimeConverter("yyyy-MM-dd HH:mm:ss");
         String dateString = "2023-05-31 12:30:00";
         LocalDateTime expected = LocalDateTime.of(2023, 5, 31, 12, 30, 0);

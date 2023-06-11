@@ -18,13 +18,13 @@ public class NewAccountDTO   {
   @JsonProperty("userID")
   private UUID UserID = null;
 
-  @JsonProperty("Type")
+  @JsonProperty("type")
   private String type = null;
 
-  @JsonProperty("Status")
+  @JsonProperty("status")
   private String status = null;
 
-  @JsonProperty("MinimumBalance")
+  @JsonProperty("minimumBalance")
   private Integer minimumBalance = null;
 
   /**
