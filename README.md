@@ -44,6 +44,7 @@ VALID_TOKEN_THIEF credentials:
 </pre>
 
 8. When all valid tokens are inserted, do the following:
+   - Build the project 
    - Right-click on the [swagger](src/test/java/io/swagger) directory (src/test/java/io/swagger)
    - Select "More Run/Debug" and "Run Tests in io.swagger with Coverage"
-9. A window should appear on the right of your IDE where you can inspect the tests' code coverage of each class.
+10. A window should appear on the right of your IDE where you can inspect the tests' code coverage of each class.
