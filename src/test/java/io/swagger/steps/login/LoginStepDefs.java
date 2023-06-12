@@ -36,6 +36,16 @@ public class LoginStepDefs extends BaseStepDefinitions implements En {
             request = new HttpEntity<>(customer, httpHeaders);
             response = restTemplate.exchange(getBaseUrl() + "/login/", HttpMethod.POST, request, String.class);
             status = response.getStatusCodeValue();
+
+            if (status.equals(200)) {
+                objectResult = new JSONObject(response.getBody());
+            }
+        });
+
+        Then("^I get a token$", () -> {
+            String token = objectResult.getString("jwtToken");
+
+            Assertions.assertNotNull(token);
         });
 
 
